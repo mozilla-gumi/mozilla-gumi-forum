@@ -1,0 +1,14 @@
+<table summary="ranking" width="90%">
+  <tr><th>発言ランキング</th></tr>
+</table>
+・集計発言数:[% total %]回<br>
+・最終発言日から[% RDEL %]日経過すると自動的に削除されます。
+<form action="[% cgi_f %]" method="[% met %]">
+<input type="hidden" name="mode" value="ran">
+[% nf %]
+[% pf %]
+<table summary="ranklist">
+  <tr><td>
+    <table summary="list">
+      <tr><th colspan="6">BEST 10</th></tr>
+      <tr><th>順位</th><th>名前</th><th>発言回数</th><th>最終発言日</th><th>グラフ</th><th>*</th></tr>

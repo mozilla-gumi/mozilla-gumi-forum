@@ -1,0 +1,227 @@
+/*
+ * Contributor(s): Gashu
+ *                 Ryuzi Kambe
+ *                 Mitsuhiro Wada
+ *                 Noriyuki Nakajima
+ */
+
+/* ===== monochrome.css =================================================
+  == Styles that apply for Child Tree CSS customized version.
+  == ( Mozilla-gumi monochrome scheme )
+  ======================================================================= */
+body {
+	background-color:	#fff;
+	color:	#000;
+	margin:	0;
+	line-height:	1.3;
+}
+h1 {
+	font-size:	1.2em;
+	text-align:	center;
+	border-bottom-style:	double;
+}
+
+h2 {
+  margin-left: 1%;
+}	
+h1 img {
+	display       : none;
+}
+
+th {
+	background-color:black;
+	color:white;
+  white-space: nowrap;
+
+	}
+
+h2 {
+	margin-top    : 0.5em;
+	margin-bottom : 0.5em;
+/*
+	display       : none;
+*/
+}
+h3, p, ul, dl {
+	margin-top    : 0.5em;
+	margin-bottom : 0.5em;
+}
+p {
+	text-indent   : 1em;
+}
+hr {
+	display       : none;
+}
+a:link, a:visited {
+	color:	#333;
+}
+
+div.Caption03c,
+div.Caption01c
+{
+  width: 97%;
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: 0.5em;
+  text-align: center;
+}
+
+div.Caption03r,
+div.Caption01r
+{
+  width: 97%;
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: 0.5em;
+  text-align: right;
+}
+
+div.Caption01l
+{
+	font-size: 1.2em;
+}
+
+div.Caption03l,
+div.Caption03r,
+div.Caption03c
+{
+	font-size: 1.4em;
+}
+div.Caption03l,
+div.Caption01l
+{
+  width: 97%;
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: 0.5em;
+  text-align: left;
+}
+
+/* Hyper links for Menu */
+a.MenuAct:link,
+a.MenuAct:visited,
+a.Menu:link,
+a.Menu:visited
+{
+  padding: 0.5em;
+}
+
+a.MenuAct:link,
+a.MenuAct:visited
+{
+  border: 2px dotted black;
+}
+
+a.Menu:link,
+a.Menu:visited
+{
+  border: 2px solid black;
+}
+
+a.Menu:hover:active,
+a.MenuAct:hover:active
+{
+  background-color: black;
+  color: white;
+}
+
+table.Tree
+{
+  width: 98%;
+  margin-left: auto;
+  margin-right: auto;
+  white-space: nowrap;  
+}
+
+td.Highlight
+{  
+  font-weight: bold;
+}
+
+/* submition form */
+table.Submittion
+{
+  border : 2px solid black;
+  padding: 1em;
+  margin-right : auto;
+  margin-left: auto;
+}
+
+span.ArtId {
+font-style: italic;
+}
+
+div.Menu
+{
+  line-height: 2.5em;
+  margin-bottom: 1.0em;
+  margin-top: 1.0em;
+
+}
+
+/* comment area in articles */
+div.ArtComment {
+  margin-left: 2%;
+}
+
+div.Counter
+{
+  width: 100%;
+  text-align: center;
+  border-bottom-style:	double;
+
+}
+
+/* article main */
+div.ArtList,
+div.Forms,
+div.ArtMain
+{
+  width: 90%;
+  padding: 0.5%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 2px solid black;
+}
+
+div.ArtList
+{
+	line-height: 2em;
+}
+
+div.Forms
+{
+background-color:black;
+color:white;
+margin-bottom:1em;
+margin-top:1em;
+}
+
+/* article child ( for reply ) */
+div.ArtChild
+{
+  border-top: 2px solid black;  
+  text-align: left;
+  font-size : 1.0em;
+  margin-left: 10%;
+}
+
+div.Admin
+{	display       : none;
+}
+
+div.Caption01List
+{
+  width: 100%;
+  text-align: center;
+  background-color: black;
+  color: white;
+}
+/* credit */
+div.Credit
+{
+  width: 100%;
+  margin-top:1em;
+  text-align:center;
+  border-top-style:	double;
+}

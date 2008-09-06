@@ -1,0 +1,453 @@
+/*
+ * Contributor(s): Gashu
+ *                 Ryuzi Kambe
+ *
+ */
+
+/* ===== cbbs.css =======================================================
+  == Styles that apply for Child Tree CSS customized version.
+  ======================================================================= */
+body
+{
+  color: #003366;
+  background-color: #C7D0D9;
+  margin           : 0 0 2em 0;
+}
+
+hr{
+  border: none;
+  height: 1px;
+  background-color: #B3BBC8;
+  width: 98%;
+}
+
+li {
+  margin-left           : 5%;
+}
+
+th,td {
+  border: 1px solid #C7D0D9;
+}
+
+th
+{
+  font-size: 0.9em;
+  white-space: nowrap;
+  font-weight: bold;
+  background-color: #E0ECF6;
+}
+
+h1 {
+  color: #ffffff;
+  font-size: 1.5em;
+  font-weight: bold; 
+  font-family: Verdena, Arial, Helvetica, sans-serif;
+  margin: 0;
+}
+
+h2 {
+  font-size: 1.3em;
+  font-weight: bold;
+  font-family: Verdena, Arial, Helvetica, sans-serif;
+  margin-left: 1%;
+}
+
+h3 {
+  font-size: 1.1em;
+  font-weight: bold;
+  font-family: Verdena, Arial, Helvetica, sans-serif;
+  color: #003399;
+  margin-left: 1%;
+}
+
+h4 {
+  font-size: 1.0em;
+  font-weight: bold;
+  font-family: Verdena, Arial, Helvetica, sans-serif;
+  color: #003399;
+  margin-left: 1%;
+}
+
+a:link {
+  color: #0000ff;
+}
+
+a:visited {
+  color: purple;
+}
+
+/* Hyper links for Menu */
+a.MenuAct:link,
+a.MenuAct:visited,
+a.Menu:link,
+a.Menu:visited
+{
+  color: #003366;
+  text-decoration: none;
+  padding: 2px 8px 2px 8px;
+  margin-bottom: 2px;
+  font-weight: bold;
+  border: 1px solid #003366;
+  border-style: outset;
+}
+
+a.Menu:link,
+a.Menu:visited {
+  background-color: #B3BBC8;
+}
+
+/* Active State */
+a.MenuAct:link,
+a.MenuAct:visited {
+  background-color: #C7D0D9;
+}
+
+a.MenuAct:hover,
+a.Menu:hover {
+  text-decoration: underline;
+}
+
+a.MenuAct:hover:active,
+a.Menu:hover:active
+{
+  color: white;
+  border: 1px solid #003366;
+  border-style: inset;
+}
+
+/* small caption 1 */
+div.Caption01c,
+div.Caption01r,
+div.Caption01l
+{
+  width: 98%;
+  margin-right: auto;
+  margin-left:  auto;
+  margin-top: 0.3em;
+  margin-bottom: 0.5em;
+}
+
+/* small caption 1 center */
+div.Caption01c
+{
+  font-size: 0.9em;
+  text-align: center;
+}
+
+/* small caption 1 right */
+div.Caption01r
+{
+  font-size: 0.8em;
+  text-align: right;
+  color: #39598E;
+  font-weight: bold;
+}
+
+/* small caption 1 left */
+div.Caption01l 
+{
+  font-size: 0.8em;
+  text-align: left;
+  font-weight: bold;
+}
+
+/* caption for article List */
+div.Caption01List
+{
+  width: 100%;
+  margin-bottom: 0.3em;
+  text-align: center;
+  background-color: #E0ECF6;
+}
+
+/* large caption 1 */
+div.Caption03c,
+div.Caption03r,
+div.Caption03l
+{
+  width: 97%;
+  margin-right: auto;
+  margin-left: auto;
+  font-size: 1.1em;
+  margin-bottom: 0.5em;
+  font-weight: bold;
+}
+
+/* large caption 1 center */
+div.Caption03c {
+  text-align: center;
+}
+
+/* large caption 1 right */
+div.Caption03r {
+  text-align: right;
+}
+
+/* large caption 1 left */
+div.Caption03l {
+  text-align: left;
+}
+
+/* article list in thread view */
+div.ArtList
+{
+  width: 90%;
+  font-size: 0.9em;
+  padding: 0.5%;
+  margin-left: auto;
+  margin-right : auto;
+  background-color: white;
+  line-height: 1.5em;
+}
+
+/* menu */
+div.Menu
+{
+  font-size: 0.8em;
+  white-space: nowrap;
+  text-align: center;
+  margin-top: 1.5em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Error Messages */
+div.ErrMsg 
+{
+  text-align: center;
+  width : 100%;
+  font-size: 1.5em;
+  margin-bottom: 1.5em;
+  font-weight : bold;
+  color : #000000;
+}
+
+/* forms (edit/delete, search)*/
+div.Forms
+{
+  font-size : 0.8em;
+  margin-left: 5%;
+}
+
+/* comment area in articles */
+div.ArtComment {
+  margin-left: 2%;
+}
+
+/* article main */
+div.ArtMain
+{
+  background-color: white;
+  width: 90%;
+  padding: 0.5%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* article child ( for reply ) */
+div.ArtChild
+{
+  text-align: left;
+  font-size : 1.0em;
+  margin-left: 10%;
+}
+
+/* article header */
+div.ArtHead
+{
+  padding: 0.5%;
+  background-color: #E0ECF6;
+  color: #008080;
+  font-size: 1.0em;
+  margin-bottom:0.2em;
+}
+
+/* credit */
+div#Credit
+{
+  font-family: Verdana, Helvetica, Arial, sans-serif;  
+  margin-top:1em;
+  font-size : 0.7em;
+  margin-right: auto;
+  margin-left: auto;
+  text-align:center;
+}
+
+/* counter */
+div.Counter
+{
+  font-family: Verdana, Helvetica, Arial, sans-serif;
+  color: white;
+  margin-left:1%;
+  font-size : 0.7em;
+}
+
+/* for administration */
+div.Admin
+{
+  margin-top:1em;
+  display: none;
+  color: white;
+  width: 99%;
+  text-align: right;
+  font-size: 0.8em;
+}
+
+/* article id */
+span.ArtId {
+  color: #008080;
+}
+
+/* quoted comment */
+span.Quoted {
+  color: #666666;
+}
+
+/* submition form */
+table.Submittion
+{
+  background-color: #B3BBC8;
+  border : none;
+  padding: 1%;
+  margin-right : auto;
+  margin-left: auto;
+  font-size: 0.8em;
+}
+
+/* table for tree view */
+table.Tree
+{
+  width: 95%;
+  font-size: 0.9em;
+  margin-left: auto;
+  margin-right: auto;
+  white-space: nowrap;  
+}
+
+/* table for topic view */
+table.Topics
+{
+  background-color: white;
+  width: 90%;
+  border: none;
+  font-size: 0.9em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* highlighted cells for tree */
+td.Highlight
+{  
+  background-color: #E0ECF6;
+  border: 1px solid #E0ECF6;
+}
+
+/* hidden elements */
+hr.Hidden,
+div.Hidden {
+  display: none;
+}
+
+/* used in tree view */
+b.Highlight {
+  background-color: #E0ECF6;
+}
+
+/* highlighted text used in search function */
+b.SearchMarker {
+  background-color: #F9FF06;  
+}
+
+/* banner */
+div.banner
+{
+  width: 100%;
+  color: inherit;
+}
+
+div.banner a
+{
+  color: inherit;
+  text-decoration: none;
+}
+
+/* add by victory */
+div#copyright
+{
+  text-align: center;
+}
+
+strong.Highlight {
+  background-color: #E0ECF6;
+}
+
+strong.SearchMarker {
+  background-color: #F9FF06;
+}
+
+a img{
+  border: 0;
+}
+
+strong.red{
+  color: red;
+}
+
+div.postinfo{
+  font-size: smaller;
+}
+
+div span.name{
+  font-size: larger;
+}
+
+span.ArtId{
+  font-size: smaller;
+}
+
+td.justify{
+  text-align: justify;
+}
+
+span#ua{
+  font-size: larger;
+}
+
+span.col_black{
+  color: #000000;
+}
+span.col_blue{
+  color: #0000ff;
+}
+span.col_green{
+  color: #00ff00;
+}
+span.col_aqua{
+  color: #00ffff;
+}
+span.col_red{
+  color: #ff0000;
+}
+span.col_pink{
+  color: #ff00ff;
+}
+span.col_yellow{
+  color: #ffff00;
+}
+
+div.kanri
+{
+  text-align: right;
+  font-size : 0.8em;
+  margin-right: 5%;
+}
+
+img.bbsmile{
+  margin: 1px;
+}
+
+td textarea{
+  margin: auto;
+}
+
+

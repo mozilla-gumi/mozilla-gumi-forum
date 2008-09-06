@@ -1,0 +1,389 @@
+/*
+ * Contributor(s): Gashu
+ *                 Ryuzi Kambe
+ *                 Mitsuhiro Wada
+ *                 Designer of CJ-Club(www.cj-c.com)
+ */
+
+/* ===== cbbs.css =======================================================
+  == Styles that apply for Child Tree CSS customized version.
+  == ( CJ-C alike scheme )
+  ======================================================================= */
+body
+{
+  color: #4F4F4F;
+  background-color: #FFE9D0;
+  margin           : 0 0 2em 0;
+  font-family:  ‚l‚r ‚oƒSƒVƒbƒN;
+  font-size:10pt;
+
+}
+
+
+hr{
+  border: none;
+  height: 1px;
+  background-color: #FAD19A;
+  width: 95%;
+}
+
+ul {
+  margin-left           : 15%;
+  list-style: square;
+}
+
+th,td {
+  border: 1px solid #FFE9D0;
+}
+
+th
+{
+  font-size: 9pt;
+  white-space: nowrap;
+  font-weight: bold;
+  background-color: #FDC5B5;
+}
+
+h1 img {
+	display       : none;
+}
+
+h1 {
+  font-size: 16pt;
+  font-weight: bold; 
+  font-family: Verdena, Arial, Helvetica, sans-serif;
+  text-align: center;
+}
+
+h2 {
+  font-size: 10pt;
+  font-weight: bold;
+  font-family: Tahoma, MS UI Gothic;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  background-color: #F2BA7B;
+  width: 82%;
+}
+
+h3,
+h4 {
+  font-size: 10pt;
+  font-weight: bold;
+  font-family: Tahoma, MS UI Gothic;
+  margin-left: 10%;
+}
+
+
+a:link {
+  color: #4146A0;
+	text-decoration:none;
+
+}
+
+a:visited {
+  color: #2D862B;
+	text-decoration:none;
+}
+
+a:hover {
+  color: #F44646; 
+  text-decoration: underline;
+}
+
+/* Hyper links for Menu */
+a.MenuAct:link,
+a.MenuAct:visited,
+a.Menu:link,
+a.Menu:visited
+{
+  text-decoration: none;
+  padding: 2px 8px 2px 8px;
+  margin-bottom: 2px;
+  border: 2px solid #F2BA7B;
+}
+
+a.Menu:link,
+a.Menu:visited {
+}
+
+/* Active State */
+a.MenuAct:link,
+a.MenuAct:visited {
+  background-color: #FDC5B5;
+}
+
+a.MenuAct:hover,
+a.Menu:hover {
+  text-decoration: underline;
+}
+
+a.MenuAct:hover:active,
+a.Menu:hover:active
+{
+}
+
+/* small caption 1 */
+div.Caption01c,
+div.Caption01r,
+div.Caption01l
+{
+  width: 98%;
+  margin-right: auto;
+  margin-left:  auto;
+  margin-top: 0.3em;
+  margin-bottom: 0.5em;
+  font-family: Tahoma, MS UI Gothic;
+  font-size: 9pt;
+}
+
+/* small caption 1 center */
+div.Caption01c
+{
+
+  text-align: center;
+}
+
+/* small caption 1 right */
+div.Caption01r
+{
+  text-align: right;
+}
+
+/* small caption 1 left */
+div.Caption01l 
+{
+  text-align: left;
+}
+
+/* caption for article List */
+div.Caption01List
+{
+  width: 100%;
+  margin-bottom: 0.3em;
+  text-align: center;
+}
+
+/* large caption 1 */
+div.Caption03c,
+div.Caption03r,
+div.Caption03l
+{
+  font-family: Tahoma, MS UI Gothic;
+  width: 90%;
+  margin-right: auto;
+  margin-left: auto;
+  font-size: 10pt;
+  margin-bottom: 0.5em;
+/*
+  font-weight: bold;
+*/
+}
+
+/* large caption 1 center */
+div.Caption03c {
+  text-align: center;
+}
+
+/* large caption 1 right */
+div.Caption03r {
+  text-align: right;
+}
+
+/* large caption 1 left */
+div.Caption03l {
+  text-align: center;
+/*
+  text-align: left;
+*/
+}
+
+/* article list in thread view */
+div.ArtList
+{
+  border: 1px solid #FAD19A;
+
+  width: 80%;
+  font-size: 9pt;
+  padding: 0.5%;
+  margin-left: auto;
+  margin-right : auto;
+  background-color: white;
+  line-height: 1.5em;
+  font-family: Tahoma, MS UI Gothic;
+
+}
+
+/* menu */
+div.Menu
+{
+  font-size: 9pt;
+  font-family: Tahoma, MS UI Gothic;
+  white-space: nowrap;
+  text-align: center;
+  margin-top: 1.5em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Error Messages */
+div.ErrMsg 
+{
+  text-align: center;
+  width : 100%;
+  font-size: 1.5em;
+  margin-bottom: 1.5em;
+  font-weight : bold;
+  color : #000000;
+}
+
+/* forms (edit/delete, search)*/
+div.Forms
+{
+  font-family: Tahoma, MS UI Gothic;	
+  font-size : 9pt;
+  margin-left: 5%;
+}
+
+/* comment area in articles */
+div.ArtComment {
+  margin-left: 2%;
+}
+
+/* article main */
+div.ArtMain
+{
+  background-color: white;
+  width: 80%;
+  padding: 0.5%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid #FAD19A;
+}
+
+/* article child ( for reply ) */
+div.ArtChild
+{
+  text-align: left;
+  margin-left: 10%;
+}
+
+/* article header */
+div.ArtHead
+{
+  font-family: Tahoma, MS UI Gothic;
+  padding: 0.5%;
+  background-color: #FDC5B5;
+  margin-bottom:0.2em;
+}
+
+/* credit */
+div.Credit
+{
+  font-family: Verdana, Helvetica, Arial, sans-serif;  
+  margin-top:1em;
+  font-size : 0.7em;
+  margin-right: auto;
+  margin-left: auto;
+  text-align:center;
+}
+
+/* counter */
+div.Counter
+{
+  font-family: Verdana, Helvetica, Arial, sans-serif;
+  color: green;
+  margin-left:1%;
+  font-size : 0.7em;
+  text-align: center;
+}
+
+/* for administration */
+div.Admin
+{
+  display: none;
+
+  margin-top:1em;
+  width: 99%;
+  text-align: right;
+  font-size: 9pt;
+  font-family: Tahoma, MS UI Gothic;
+}
+
+/* article id */
+span.ArtId {
+  color: #FB8D64;
+  font-family: Tahoma;
+  font-size: 8pt;
+  font-weight: bold;
+}
+
+/* quoted comment */
+span.Quoted {
+  color: #969696;
+}
+
+/* submition form */
+table.Submittion
+{
+  background-color: #FAD19A;
+  border : none;
+  padding: 1%;
+  margin-right : auto;
+  margin-left: auto;
+  font-size: 9pt;
+  font-family: Tahoma, MS UI Gothic;
+}
+
+/* table for tree view */
+table.Tree
+{
+  width: 95%;
+  font-size: 10pt;
+  margin-left: auto;
+  margin-right: auto;
+  white-space: nowrap;  
+  font-family: Tahoma, MS UI Gothic;
+}
+
+/* table for topic view */
+table.Topics
+{
+  background-color: white;
+  width: 90%;
+  border: none;
+  font-size: 10pt;
+  font-family: Tahoma, MS UI Gothic;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* highlighted cells for tree */
+td.Highlight
+{  
+  background-color: #FAD19A;
+  border: 1px solid #FAD19A;
+}
+
+/* hidden elements */
+hr.Hidden,
+div.Hidden {
+  display: none;
+}
+
+/* used in tree view */
+b.Highlight {
+  background-color: #FDC5B5;
+}
+
+/* highlighted text used in search function */
+b.SearchMarker {
+  background-color: #F9FF06;  
+}
+
+/* banner */
+div.banner
+{
+  width: 100%;
+  color: inherit;
+}

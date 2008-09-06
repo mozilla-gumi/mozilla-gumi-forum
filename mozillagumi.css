@@ -1,0 +1,387 @@
+/*
+ * Contributor(s): Gashu
+ *                 Ryuzi Kambe
+ *                 Mitsuhiro Wada
+ *                 Noriyuki Nakajima
+ */
+
+/* ===== mozillagumi.css ================================================
+  == Styles that apply for Child Tree CSS customized version.
+  == ( Mozilla-gumi standard scheme )
+  ======================================================================= */
+body
+{
+  color: #003366;
+  background-color: white;
+  margin           : 0 0 2em 0;
+}
+
+hr{
+  height: 3px;
+  width: 98%;
+}
+
+p,
+li {
+  margin-left           : 1.5em;
+  margin-right          : 1.5em;  
+}
+
+th
+{
+  white-space: nowrap;
+  font-weight: bold;
+  background-color: #663366;
+  color: white;
+  background  : url("http://www.mozilla.gr.jp/images/toppng/h_bg.png") repeat;
+}
+
+h1 {
+  color: #ffffff;
+  font-size: 1.5em;
+  font-weight: bold; 
+  font-family: Verdena, Arial, Helvetica, sans-serif;
+  margin: 0;
+}
+
+h2 {
+  font-size: 1.3em;
+  font-weight: bold;
+  font-family: Verdena, Arial, Helvetica, sans-serif;
+  color: #003399;
+  margin-left: 0.5em;
+}
+
+h3 {
+  font-size: 1.1em;
+  font-weight: bold;
+  font-family: Verdena, Arial, Helvetica, sans-serif;
+  color: #003399;
+  margin-left: 0.5em;
+}
+
+h4 {
+  font-size: 1.0em;
+  font-weight: bold;
+  font-family: Verdena, Arial, Helvetica, sans-serif;
+  color: #003399;
+  margin-left: 0.5em;
+}
+
+a:link {
+	color            : #0000ff;
+	background-color : transparent;
+	text-decoration  : underline;
+}
+a:visited {
+	color            : #330033;
+	background-color : transparent;
+	text-decoration  : underline;
+}
+a:hover {
+	color            : #ff0000;
+	background-color : transparent;
+	text-decoration  : underline;
+}
+
+/* Hyper links for Menu */
+a.MenuAct:link,
+a.MenuAct:visited,
+a.Menu:link,
+a.Menu:visited
+{
+  color: #003366;
+  text-decoration: none;
+  padding: 0.2em 0.5em 0.2em 0.5em;
+  margin-bottom: 2px;
+  border: 1px solid #003366;
+}
+
+/* Active State */
+a.MenuAct:link,
+a.MenuAct:visited {
+  background-color: #b0c4de;
+  color: #296394;
+  border-color: #296394;
+}
+
+a.MenuAct:hover,
+a.Menu:hover {
+  text-decoration: underline;
+  color: #003366;
+  border-color: #003366;
+}
+
+a.MenuAct:hover:active,
+a.Menu:hover:active
+{
+  color: #296394;
+  background-color: #b0c4de;
+  border: 1px solid #296394;
+}
+
+/* small caption 1 */
+div.Caption01c,
+div.Caption01r,
+div.Caption01l
+{
+  width: 98%;
+  margin-right: auto;
+  margin-left:  auto;
+  margin-top: 0.3em;
+  margin-bottom: 0.5em;
+}
+
+/* small caption 1 center */
+div.Caption01c
+{
+  font-size: 0.9em;
+  text-align: center;
+}
+
+/* small caption 1 right */
+div.Caption01r
+{
+  font-size: 0.9em;
+  color: #296394;
+  text-align: right;
+}
+
+/* small caption 1 left */
+div.Caption01l 
+{
+  font-size: 0.9em;
+  text-align: left;
+  font-weight: bold;
+}
+
+/* caption for article List */
+div.Caption01List
+{
+  background  : url("http://www.mozilla.gr.jp/images/toppng/h_bg.png") repeat;
+  width: 100%;
+  margin-bottom: 0.3em;
+  text-align: center;
+  background-color: #663366;
+  color: white;
+}
+
+/* large caption 1 */
+div.Caption03c,
+div.Caption03r,
+div.Caption03l
+{
+  width: 97%;
+  margin-right: auto;
+  margin-left: auto;
+  font-size: 1.1em;
+  margin-bottom: 0.5em;
+  font-weight: bold;
+}
+
+/* large caption 1 center */
+div.Caption03c {
+  text-align: center;
+}
+
+/* large caption 1 right */
+div.Caption03r {
+  text-align: right;
+}
+
+/* large caption 1 left */
+div.Caption03l {
+  text-align: left;
+}
+
+/* article list in thread view */
+div.ArtList
+{
+  border: 2px solid #663366;
+  width: 90%;
+  font-size: 0.9em;
+  padding: 0.5%;
+  margin-left: auto;
+  margin-right : auto;
+  background-color: #FFFFE8;
+  line-height: 1.5em;
+}
+
+/* menu */
+div.Menu
+{
+  font-size: 0.9em;
+  white-space: nowrap;
+  text-align: center;
+  margin-top: 1.5em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Error Messages */
+div.ErrMsg 
+{
+  text-align: center;
+  width : 100%;
+  font-size: 1.5em;
+  margin-bottom: 1.5em;
+  font-weight : bold;
+  color : #000000;
+}
+
+/* forms (edit/delete, search)*/
+div.Forms
+{
+  font-size : 0.9em;
+  margin-left: 5%;
+}
+
+/* comment area in articles */
+div.ArtComment {
+  margin-left: 2%;
+}
+
+/* article main */
+div.ArtMain
+{
+  background-color: white;
+  width: 90%;
+  padding: 0.5%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 2px solid #ccc;
+}
+
+/* article child ( for reply ) */
+div.ArtChild
+{
+  text-align: left;
+  font-size : 1.0em;
+  margin-left: 10%;
+}
+
+/* article header */
+div.ArtHead
+{
+  padding: 0.5%;
+  background-color: #ccc;
+  color: black;
+  font-size: 1.0em;
+  margin-bottom:0.2em;
+}
+
+/* credit */
+div.Credit
+{
+  font-family: Verdana, Helvetica, Arial, sans-serif;  
+  margin-top:1em;
+  font-size : 0.7em;
+  margin-right: auto;
+  margin-left: auto;
+  text-align:center;
+}
+
+/* counter */
+div.Counter
+{
+  font-family: Verdana, Helvetica, Arial, sans-serif;
+  color: green;
+  margin-left:1%;
+  font-size : 0.7em;
+}
+
+/* for administration */
+div.Admin
+{
+  margin-top:1em;
+  display: none;
+  color: green;
+  width: 99%;
+  text-align: right;
+  font-size: 0.9em;
+}
+
+/* article id */
+span.ArtId {
+  color: green;
+}
+
+/* quoted comment */
+span.Quoted {
+  color: #666666;
+}
+
+/* submition form */
+table.Submittion
+{
+  background-color: #FFFFE8;
+  border : 1px solid black;
+  color: black;
+  padding: 1%;
+  margin-right : auto;
+  margin-left: auto;
+  font-size: 0.9em;
+}
+
+/* table for tree view */
+table.Tree
+{
+  width: 95%;
+  font-size: 0.9em;
+  margin-left: auto;
+  margin-right: auto;
+  white-space: nowrap;  
+}
+
+/* table for topic view */
+table.Topics
+{
+  background-color: white;
+  width: 90%;
+  border-width: 3px;
+  font-size: 0.9em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.Topics td
+{
+  line-height: 1.2em;
+}
+
+/* highlighted cells for tree */
+td.Highlight
+{  
+  background-color: #E7E7E7;
+  border: 1px solid #E7E7E7;
+}
+
+/* hidden elements */
+hr.Hidden,
+div.Hidden {
+  display: none;
+}
+
+/* used in tree view */
+b.Highlight {
+  background-color: #E7E7E7;
+}
+
+/* highlighted text used in search function */
+b.SearchMarker {
+  background-color: #F9FF06;  
+}
+
+/* banner */
+div.banner
+{
+  background-color: #663366;
+  background  : url("http://www.mozilla.gr.jp/images/toppng/h_bg.png") repeat;
+  width: 100%;
+  color: inherit;
+}
+
+div.banner h1 a
+{
+  color: white;
+}

@@ -1,0 +1,161 @@
+/*
+ * Contributor(s): Gashu
+ *                 Ryuzi Kambe
+ *                 Mitsuhiro Wada
+ *                 Kazu Yamamoto
+ *                 Tsukasa Maruyama
+ */
+
+/* ===== jlp.css ========================================================
+  == Styles that apply for Child Tree CSS customized version.
+  == ( Mozilla-gumi original JLP scheme )
+  ======================================================================= */
+body {
+	background-image: url("http://www.mozilla.gr.jp/jlp/bg.png");
+	background-color: #C0FFD0;
+	
+	color: black;
+}
+h1 {
+	font-family: Lucida Console, Arial, Helvetica, sans-serif;
+	color: white;
+	text-align: center;
+	font-size: 2em;
+	font-weight: normal;
+}
+
+h2 {
+	color: #000000;
+	background-image: url("http://www.mozilla.gr.jp/jlp/h2-back.png");
+	background-color: #88FF88;
+	text-align: center;
+	font-size: 1.4em;
+	font-weight: bold;
+	border-width: 1px 1px 1px 1px;
+	border-style: solid solid solid solid;
+	border-color:#00FF00;
+	margin: 1px 7% 1px 7%;
+	padding: 0 0 0 0;
+}
+
+div.Caption03l,
+h4,
+h3 {
+	color:#000000;
+	background-image: url("http://www.mozilla.gr.jp/jlp/h3-back.png");
+	background-color: #FFCCFF;
+	font-size: 1.2em;
+	font-weight: bold;
+	border-width: 1px 1px 1px 1px;
+	border-style: solid solid solid solid;
+	border-color:#8888FF;
+	margin-left: 5%;
+	margin-right: 50%;
+	padding: 0 2% 0 2%;
+}
+
+p {
+	margin-left: 10%;
+	margin-right: 10%;
+}
+td p {
+	margin-left: 1em;
+	margin-right: 1em;
+}
+
+div.Caption01List,
+th {
+	color:#000000;
+	font-weight: normal;
+	text-align: center;
+	background-image: url("http://www.mozilla.gr.jp/jlp/th-back.png");
+	background-color: #CCCCFF;
+}
+ul, ol, dl {
+	margin-left: 10%;
+	margin-right: 10%;
+}
+
+a:link {
+	color: #0000ff;
+	text-decoration: none;
+}
+a:visited {
+	color: #990099;
+	text-decoration: none;
+}
+a:hover {
+	color: #9900ff;
+	text-decoration: underline;
+}
+a:active {
+	color: #ff0000;
+	text-decoration: underline;
+}
+
+hr.Hidden,
+div.Admin { display: none; }
+
+div.Caption01c,
+div.Caption03c,
+div.Credit { text-align: center; }
+
+div.Caption01r,
+div.Caption03r { text-align: right; }
+
+div.ErrMsg,
+div.ArtList,
+div.ArtMain,
+div.ErrMsg,
+table.Submittion
+{ 
+  margin-left: auto;
+  margin-right: auto; 
+}
+
+div.Forms,
+div.Counter,
+div.ArtChild,
+table.Tree { margin-left: 5%; }
+
+hr {height:3px;}
+
+div.Caption03r,
+div.Caption03c
+{
+	font-size: 1.2em;
+	font-weight: bold;	
+}
+
+div.ArtList { 
+	background-color: #FFCCCC;
+	border-width: 0.4em;
+	border-style: ridge;
+	border-color: #C0FFD0;
+}
+
+div.ArtList,
+div.ArtMain { width:90%; }
+
+div.ErrMsg {
+	color: red;
+	font-weight: bold;
+}
+
+table.Tree{ white-space: nowrap; }
+
+table.Topics,
+table.Topics td,
+table.Topics th { border-color:#C0FFD0; }
+
+table.Topics { border-width:3px; } th
+{ 
+  font-weight:bold; 
+  white-space: nowrap;
+}
+
+a.MenuAct:link,
+a.MenuAct:visited,
+a.Menu:link,
+a.Menu:visited
+{ padding: 2px 4px 2px 4px; }
