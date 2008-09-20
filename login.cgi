@@ -5,10 +5,10 @@ require "./set.cgi";
 
 if ($obj_cgi->param('password')) {
     # processing mode
-    if (Forum->user->validate_password_admin($obj_cgi->param('pass')) == 0) {
+    if (Forum->user->validate_password_admin($obj_cgi->param('password')) == 0) {
         Forum->error->throw_error_user('invpass');
     }
-    print $cgi->redirect(-location => './');
+    print $obj_cgi->redirect(-location => './');
 } else {
     # login form mode
     print Forum->cgi->header();

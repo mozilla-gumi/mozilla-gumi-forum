@@ -8,6 +8,7 @@ use Encode::Guess qw/euc-jp shift-jis/;
 use Forum;
 use Forum::Template;
 use Forum::Config;
+use Forum::Error;
 
 our $obj_cgi        = Forum->cgi;
 our $obj_template   = Forum->template;
