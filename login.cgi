@@ -3,7 +3,7 @@
 require './common.pl';
 require "./set.cgi";
 
-if ($obj_cgi->param('password') ne '') {
+if ($obj_cgi->param('password')) {
     # processing mode
     if (Forum->user->validate_password_admin($obj_cgi->param('pass')) == 0) {
         Forum->error->throw_error_user('invpass');
