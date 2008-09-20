@@ -3,7 +3,7 @@
   [% IF topok == 1 %]
     <a class="Menu[% IF curT == 3 %]Act[% END %]" href="[% cgi_f %]?mode=new&amp;[% no %][% pp %]">新規投稿</a>
   [% END %]
-<a class="Menu[% IF curT == 2 %]Act[% END %]" href="[% cgi_f %]?mode=n_w&amp;[% no %][% pp %]">新着記事</a>
+  <a class="Menu[% IF curT == 2 %]Act[% END %]" href="[% cgi_f %]?mode=n_w&amp;[% no %][% pp %]">新着記事</a>
   [% IF TrON == 1 %]
     <a class="Menu[% IF curT == 5 %]Act[% END %]" href="[% cgi_f %]?H=T&amp;[% no %][% pp %][% Wf %]">ツリー表示</a>
   [% END %]
@@ -23,6 +23,7 @@
   [% IF klog_s == 1 %]
     <a class="Menu" href="[% srch %]?mode=log&amp;[% no %][% pp %]">過去ログ</a>
   [% END %]
+<a class="Menu" href="login.cgi">ログイン</a>
 <a class="Menu[% IF curT == 1 %]Act[% END %]" href="[% cgi_f %]?mode=man&amp;[% no %][% pp %]">ヘルプ</a>
 </div>
 <hr>
