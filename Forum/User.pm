@@ -29,6 +29,7 @@ use Forum::Constants;
 our %conf = {
     'uid'      => 0,
     'ua_id'    => 0,
+    'gid'      => 0,
 };
 
 sub new {
@@ -75,8 +76,7 @@ sub parse_ua {
     return $conf{'ua_id'};
 }
 
-
-# TEMPORARY HACK
+# TEMPORARY HACK - FIX : restore_cookie
 sub group_check {
     my ($self, $group) = @_;
     if (($group eq 'admin') && ($conf{'uid'} == 1)) {

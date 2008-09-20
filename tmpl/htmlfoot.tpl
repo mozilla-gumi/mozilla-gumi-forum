@@ -1,4 +1,4 @@
-[% IF kanrimode != 0 %]
+[% IF User.group_check('admin') == 1 %]
   <div class="kanri">
     <form action="[% cgi_f %]" method="[% met %]">[% nf %][% pf %]
       [% IF (i_mode != 0) || (mas_c != 0) %]
