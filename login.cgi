@@ -11,6 +11,7 @@ if ($obj_cgi->param('password') ne '') {
     print $cgi->redirect(-location => './');
 } else {
     # login form mode
+    print Forum->cgi->header();
     $obj_template->process('login.tmpl', \%tmplVars);
 }
 

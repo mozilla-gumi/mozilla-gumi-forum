@@ -46,6 +46,7 @@ sub _throw_error {
     Forum->dbh->db_unlock_tables(Forum::Constants::DB_UNLOCK_ABORT);
 
     Forum->template->set_vars('error', $err_id);
+    print Forum->cgi->header();
     Forum->template->process($fname, Forum->template->vars);
 
     exit;
