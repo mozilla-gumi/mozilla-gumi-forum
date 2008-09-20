@@ -19,13 +19,16 @@
   [% IF i_mode == 1 %]
     <a class="Menu[% IF curT == 1 %]Act[% END %]" href="[% cgi_f %]?mode=f_a&amp;[% no %][% pp %]">アップファイル一覧</a>
   [% END %]
-<a class="Menu" href="[% srch %]?[% no %][% pp %]">検索</a>
+  <a class="Menu" href="[% srch %]?[% no %][% pp %]">検索</a>
   [% IF klog_s == 1 %]
     <a class="Menu" href="[% srch %]?mode=log&amp;[% no %][% pp %]">過去ログ</a>
   [% END %]
-<a class="Menu" href="login.cgi">ログイン</a>
+  [% IF in_group('admin') == 1 %]
+    <a class="Menu" href="./?mode=del">管理用</a>
+  [% ELSE %]
+    <a class="Menu" href="login.cgi">ログイン</a>
+  [% END %]
 <a class="Menu[% IF curT == 1 %]Act[% END %]" href="[% cgi_f %]?mode=man&amp;[% no %][% pp %]">ヘルプ</a>
 </div>
 <hr>
-
 

@@ -56,7 +56,7 @@ sub new {
         CONSTANTS => _load_constants(),
         VARIABLES => {
             'Param'    => sub { return $obj_config->GetHash(); },
-            'User'     => sub { return Forum->User; },
+            'in_group' => sub { return Forum->user->group_check($_[0]); },
         },
     };
 
