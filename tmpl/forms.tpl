@@ -71,7 +71,6 @@
 </tr>
   [% IF multipart == 1 %][% PROCESS multipart_disp %][% END %]
   [% IF BBFACE %][% BBFACE %][% END %]
-  [% IF fonts %][% PROCESS font_sel %][% END %]
   [% IF hr %][% PROCESS hr_sel %][% END %]
   [% IF use_sel == 1 %][% PROCESS sel_sel %][% END %]
   [% IF use_txt == 1 %][% PROCESS txt_sel %][% END %]
@@ -115,19 +114,6 @@
 
 <hr width="95%">
 
-
-[% BLOCK font_sel %]
-  <tr>
-    <td>ï∂éöêF</td>
-    <td>
-      [% FOREACH font IN fonts %]
-        <input type="radio" name="font" value="[% font %]"
-          [% IF font == font_def %]checked="checked"[% END %]>
-          <span class="col_[% font %]">Å°</span>
-      [% END %]
-    </td>
-  </tr>
-[% END %]
 
 [% BLOCK hr_sel %]
   <tr>

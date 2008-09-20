@@ -6,10 +6,8 @@
 <div class="postinfo">
 <span class="name">[% name %] [% r %]</span>‚Ì“Še :[% date %] [% url %]</div>
 <div class="ArtComment">
-[% IF font && use_col %]<span class="col_[% font %]">[% END %]
 [% IF userenv %](ŠÂ‹«: [% userenv %])<br>[% END %]
 [% comment FILTER auto %]
-[% IF font && use_col %]</span>[% END %]
 </div>
 <div class="Caption01r">[% end %]<br>
 [% Pr %]

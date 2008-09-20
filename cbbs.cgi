@@ -15,16 +15,7 @@ my $ver = "Child Tree v8.92 (modified)";# (ƒcƒŠ[®Œf¦”Â)
 #---[İ’èƒtƒ@ƒCƒ‹]-------------------------
 
 my @set;
-# “¯‚¶‚æ‚¤‚É‚¢‚­‚Â‚Å‚à‘‚â‚¹‚Ü‚·B
-# [ ]“à‚Ì”š‚ğg‚¢CGI‚ÉƒAƒNƒZƒX‚·‚é‚Æ‚»‚Ìİ’èƒtƒ@ƒCƒ‹‚Å“®ì‚µ‚Ü‚·B
-# $set[12] ‚Ìİ’èƒtƒ@ƒCƒ‹‚ğg‚¤ê‡: http://www.---.com/cgi-bin/cbbs.cgi?no=12
 $set[0]="./set.cgi";
-#if (!($ENV{SCRIPT_FILENAME} =~ /forums/)) {
-#    $set[1]="./set_kanri.cgi";
-#    $set[2]="./set_color.cgi";
-#    $set[3]="./set_forums.cgi";
-#    $set[4]="./set_viewdel.cgi";
-#}
 my @NW;
 my @ips;
 
@@ -59,67 +50,34 @@ if (-e $IpFile) {
 # ---[İ’èƒtƒ@ƒCƒ‹“Ç‚İ‚İ]------------------------------------------------------------------------------------------
 $res_r=1;
 &d_code_;
-if (($set[$no]) && (-e $set[$no])) {
-    $SetUpFile="$set[$no]";
-} else {
-    $SetUpFile="$set[0]";
-    undef($no);
-} require $SetUpFile;
-#else{&er_('novalidsetcgi');}
-if ($no && ($mode ne "all_v") &&
-    (Forum->config->GetParam('admin_pass') eq '')) {
-#if ($no && ($mode ne "all_v") && !$pass) {
-    $no="no=$no";
-}
-$nf= "<input type=\"hidden\" name=\"no\" value=\"$no\">\n";
+
+$SetUpFile = $set[0];
+require $SetUpFile;
+
 # ---[ƒtƒH[ƒ€ƒXƒ^ƒCƒ‹ƒV[ƒgİ’è]------------------------------------------------------------------------------------
 $ag=$ENV{'HTTP_USER_AGENT'};
-if ($fss && $ag =~ /IE|Netscape6/) {
-    $fm=" onmouseover=\"this.style.$on\" onmouseout=\"this.style.$off\"";
-    $ff=" onFocus=\"this.style.$on\" onBlur=\"this.style.$off\"";
-    $fsi="$fst";
-}
-# ---[ŠÈˆÕƒpƒXƒ[ƒh§ŒÀŠÖ˜A]----------------------------------------------------------------------------------------
-if ($s_ret) {
-    if ($FORM{"P"} eq "") {
-        &get_("P");
-    }
-    $P=$FORM{"P"};
-    $pf="<input type=\"hidden\" name=\"P\" value=\"$P\">\n";
-    $pp="&P=$P";
-} else {
-    $pf="";
-    $pp="";
-}
+
+$pf="";
+$pp="";
+
 if ($FORM{'KLOG'}) {
     $KLOG=$FORM{'KLOG'};
-    $TrON=0;
-    $TpON=1;
-    $ThON=0;
+    $tmplVars{'TrON'}=0;
+    $tmplVars{'TpON'}=1;
+    $tmplVars{'ThON'}=0;
     $TOPH=2;
     unless($KLOG=~ /^[\d]+/) {
         &er_('invalidfile');
     }
     $log="$klog_d\/$KLOG$klogext";
-    $pp.="&KLOG=$KLOG";
-    $pf.="<input type=\"hidden\" name=\"KLOG\" value=\"$KLOG\">\n";
+    $pp = "&KLOG=$KLOG";
+    $pf = "<input type=\"hidden\" name=\"KLOG\" value=\"$KLOG\">\n";
 }
-if ($s_ret && $P eq "" && ($mode eq "alk"||$mode eq "")) {
-    &pas_;
-}
-if ($s_ret==2 && $P eq "R") {
-    &er_('invalidpass');
-}
-if ($s_ret && $P ne "R") {
-    if ($P ne "$s_pas") {
-        &er_('invalidpass');
-    } else {
-        &set_("P");
-    }
-}
+$tmplVars{'pp'} = $pp;
+$tmplVars{'pf'} = $pf;
+
 # ---[ƒTƒuƒ‹[ƒ`ƒ“‚Ì“Ç‚İ‚İ/•\¦Šm’è]-------------------------------------------------------------------------------
 if (($conf{'rss'} eq 1) && ($mode eq 'RSS')) {&RSS; }
-if ($mode eq "all_v") {&a_;}
 if ($mode eq "ffs") {&freeform_;}
 if ($mode eq "bma") {&bma_;}
 if ($mode eq "Den") {&Den_;}
@@ -188,7 +146,6 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
     if ((($mode eq "al2") || ($mode eq "res")) && ($type)) {
         $commode = '</div><div class="ArtMain">';
     }
-    if ($font eq "") {$font = $text; }
     if ($hr eq "") {$hr = $ttb; }
     if ($d_may eq "") {$d_may = "$notitle"; }
     if ($Icon && $comment =~ /<br>\(Œg‘Ñ\)$/) {$icon = "$Ico_k"; }
@@ -256,15 +213,15 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
         $Border = 1;
         $Twidth = 90;
         if ($Res_i) {
-            $IN = "<strong><a href=\"$cgi_f?mo=1&amp;mode=one&amp;namber=$namber&amp;type=$type&amp;space=$space&amp;$no$pp#F\">‹L–ˆø—p</a></strong>";
+            $IN = "<strong><a href=\"$cgi_f?mo=1&amp;mode=one&amp;namber=$namber&amp;type=$type&amp;space=$space&amp;$pp#F\">‹L–ˆø—p</a></strong>";
         }
     } elsif ($htype eq "T2") {
         $ResNo = "$ResNoŠK‘w";
         $Border = 1;
         $Twidth = 90;
-        $IN = "<strong><a href=\"$cgi_f?mode=one&amp;namber=$nam&amp;type=$ty&amp;space=$sp&amp;$no$pp\">•ÔM</a></strong>";
+        $IN = "<strong><a href=\"$cgi_f?mode=one&amp;namber=$nam&amp;type=$ty&amp;space=$sp&amp;$pp\">•ÔM</a></strong>";
         if ($Res_i) {
-            $IN .= "/<strong><a href=\"$cgi_f?mo=1&amp;mode=one&amp;namber=$nam&amp;type=$ty&amp;space=$sp&amp;$no$pp\">ˆø—p•ÔM</a></strong>\n";
+            $IN .= "/<strong><a href=\"$cgi_f?mo=1&amp;mode=one&amp;namber=$nam&amp;type=$ty&amp;space=$sp&amp;$pp\">ˆø—p•ÔM</a></strong>\n";
         }
         $VNo = $namber;
         $OTL = "";
@@ -288,8 +245,8 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
         $ResNo = "‚±‚ÌƒgƒsƒbƒN’† $ResNo ”Ô–Ú‚Ì“Še";
         $Border = 0;
         $Twidth = 90;
-        $IN = "<a href=\"$cgi_f?mode=al2&amp;mo=$nam&amp;namber=$FORM{'namber'}&amp;space=$sp&amp;rev=$rev&amp;page=$fp&amp;$no$pp#F\"><strong>ˆø—p•ÔM</strong></a>";
-        if ($Res_i) {$IN .= "/<a href=\"$cgi_f?mode=al2&amp;mo=$nam&amp;namber=$FORM{'namber'}&amp;space=$space&amp;rev=$rev&amp;page=$fp&amp;In=1&amp;$no$pp#F\"><strong>•ÔM</strong></a>";}
+        $IN = "<a href=\"$cgi_f?mode=al2&amp;mo=$nam&amp;namber=$FORM{'namber'}&amp;space=$sp&amp;rev=$rev&amp;page=$fp&amp;$pp#F\"><strong>ˆø—p•ÔM</strong></a>";
+        if ($Res_i) {$IN .= "/<a href=\"$cgi_f?mode=al2&amp;mo=$nam&amp;namber=$FORM{'namber'}&amp;space=$space&amp;rev=$rev&amp;page=$fp&amp;In=1&amp;$pp#F\"><strong>•ÔM</strong></a>";}
         if ($VNo == 1) {
             $sg = $VNo + 1;
             $agsg = "\&nbsp\;\&nbsp\;<a href=\"#$sg\">¥</a><a href=\"#1\">¡</a>";
@@ -317,9 +274,9 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
             else {$MD .= "$namber"; }
             $MD .= "&amp;space=$space";
         }
-        $IN = "<strong><a href=\"$cgi_f?$MD&amp;$no$pp#F\">•ÔM</a></strong>";
+        $IN = "<strong><a href=\"$cgi_f?$MD&amp;$pp#F\">•ÔM</a></strong>";
         if ($Res_i) {
-            $IN .= "/<strong><a href=\"$cgi_f?$MD&amp;mo=$namber&amp;$no$pp#F\">ˆø—p•ÔM</a></strong>\n";
+            $IN .= "/<strong><a href=\"$cgi_f?$MD&amp;mo=$namber&amp;$pp#F\">ˆø—p•ÔM</a></strong>\n";
         }
     } elsif ($htype eq "P") {
         $ResNo = "";
@@ -335,9 +292,9 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
             $Twidth = 90;
         }
         $Border = 0;
-        $IN = "<a href=\"$cgi_f?mode=res&amp;namber=$nam&amp;type=$type&amp;space=$space&amp;mo=$namber&amp;page=$PNO&amp;$no$pp#F\"><strong>ˆø—p•ÔM</strong></a>";
+        $IN = "<a href=\"$cgi_f?mode=res&amp;namber=$nam&amp;type=$type&amp;space=$space&amp;mo=$namber&amp;page=$PNO&amp;$pp#F\"><strong>ˆø—p•ÔM</strong></a>";
         if ($Res_i) {
-            $IN .= "/<a href=\"$cgi_f?mode=res&amp;namber=$nam&amp;type=$type&amp;space=$space&amp;mo=$namber&amp;page=$PNO&amp;In=1&amp;$no$pp#F\"><strong>•ÔM</strong></a>";
+            $IN .= "/<a href=\"$cgi_f?mode=res&amp;namber=$nam&amp;type=$type&amp;space=$space&amp;mo=$namber&amp;page=$PNO&amp;In=1&amp;$pp#F\"><strong>•ÔM</strong></a>";
         }
     } elsif ($htype eq "TRES") {
         $Border = 0;
@@ -359,9 +316,9 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
             $sg = $VNo + 1;
             $agsg = "<a href=\"#$ag\">£<a href=\"#$sg\">¥<a href=\"#1\">¡</a>";
         }
-        $IN = "<a href=\"$cgi_f?mode=res&amp;mo=$nam&amp;namber=$FORM{'namber'}&amp;space=$sp&amp;page=$page&amp;$no$pp#F\"><strong>ˆø—p•ÔM</strong></a>";
+        $IN = "<a href=\"$cgi_f?mode=res&amp;mo=$nam&amp;namber=$FORM{'namber'}&amp;space=$sp&amp;page=$page&amp;$pp#F\"><strong>ˆø—p•ÔM</strong></a>";
         if ($Res_i) {
-            $IN .= "/<a href=\"$cgi_f?mode=res&amp;mo=$nam&amp;namber=$FORM{'namber'}&amp;space=$sp&amp;page=$page&amp;In=1&amp;$no$pp#F\"><strong>•ÔM</strong></a>"
+            $IN .= "/<a href=\"$cgi_f?mode=res&amp;mo=$nam&amp;namber=$FORM{'namber'}&amp;space=$sp&amp;page=$page&amp;In=1&amp;$pp#F\"><strong>•ÔM</strong></a>"
         }
     }
 
@@ -382,12 +339,9 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
     $tmplVars{'nam'} = $nam;
     $tmplVars{'cgi_f'} = $cgi_f;
     $tmplVars{'met'} = $met;
-    $tmplVars{'nf'} = $nf;
-    $tmplVars{'pf'} = $pf;
     $tmplVars{'ff'} = $ff;
     $tmplVars{'fm'} = $fm;
     $tmplVars{'font'} = $font;
-    $tmplVars{'use_col'} = $use_col;
     $tmplVars{'userenv'} = $userenv;
     if ($KLOG) {$tmplVars{'klog_def'} = 1; } else {$tmplVars{'klog_def'} = 0; }
     if ($type) {$tmplVars{'type_def'} = 1; } else {$tmplVars{'type_def'} = 0; }
@@ -459,12 +413,12 @@ sub html2_ {
     $nl = $page_end + 1;
     $bl = $page - $view;
     if($bl >= 0){
-        $Bl="<a href=\"$cgi_f?H=F&amp;page=$bl&amp;$no$pp$Wf\">"; $Ble="</a>";
+        $Bl="<a href=\"$cgi_f?H=F&amp;page=$bl&amp;$pp$Wf\">"; $Ble="</a>";
     }else{
         $Bl=""; $Ble="";
     }
     if($page_end ne $end_data){
-        $Nl="<a href=\"$cgi_f?H=F&amp;page=$nl&amp;$no$pp$Wf\">"; $Nle="</a>";
+        $Nl="<a href=\"$cgi_f?H=F&amp;page=$nl&amp;$pp$Wf\">"; $Nle="</a>";
     }else{
         $Nl=""; $Nle="";
     }
@@ -477,22 +431,22 @@ sub html2_ {
         if($i eq $af){
             $Plink.="[<strong>$i</strong>]\n";
         }else{
-            $Plink.="[<a href=\"$cgi_f?page=$a&amp;H=F&amp;$no$pp$Wf\">$i</a>]\n";}
+            $Plink.="[<a href=\"$cgi_f?page=$a&amp;H=F&amp;$pp$Wf\">$i</a>]\n";}
             $a+=$tpmax*$tab_m;
         }
         $Plink.="$Nl$Nle\n";
         if($Res_T==1){
-            $OJ1="<a href=\"$cgi_f?H=F&amp;W=W&amp;$no$pp\">•ÔMÅV‡</a>";
+            $OJ1="<a href=\"$cgi_f?H=F&amp;W=W&amp;$pp\">•ÔMÅV‡</a>";
             $OJ2="“Še‡";
-            $OJ3="<a href=\"$cgi_f?H=F&amp;W=R&amp;$no$pp\">‹L–”‡</a>";
+            $OJ3="<a href=\"$cgi_f?H=F&amp;W=R&amp;$pp\">‹L–”‡</a>";
         } elsif($Res_T==2){
-            $OJ1="<a href=\"$cgi_f?H=F&amp;W=W&amp;$no$pp\">•ÔMÅV‡</a>";
-            $OJ2="<a href=\"$cgi_f?H=F&amp;W=T&amp;$no$pp\">“Še‡</a>";
+            $OJ1="<a href=\"$cgi_f?H=F&amp;W=W&amp;$pp\">•ÔMÅV‡</a>";
+            $OJ2="<a href=\"$cgi_f?H=F&amp;W=T&amp;$pp\">“Še‡</a>";
             $OJ3="‹L–”‡";
         }else{
             $OJ1="•ÔMÅV‡";
-            $OJ2="<a href=\"$cgi_f?H=F&amp;W=T&amp;$no$pp\">“Še‡</a>";
-            $OJ3="<a href=\"$cgi_f?H=F&amp;W=R&amp;$no$pp\">‹L–”‡</a>";
+            $OJ2="<a href=\"$cgi_f?H=F&amp;W=T&amp;$pp\">“Še‡</a>";
+            $OJ3="<a href=\"$cgi_f?H=F&amp;W=R&amp;$pp\">‹L–”‡</a>";
         }
         print"<div class=\"Caption01r\">e‹L–‚Ì‡”Ô [ $OJ1 / $OJ2 / $OJ3 ]</div>\n";
         $Plink="<div class=\"Caption01c\"><strong>‘Sƒy[ƒW</strong> / $Plink</div>\n";
@@ -562,7 +516,7 @@ sub html2_ {
             if($topic < $ksu){
                 $a=0; $PG_=int(($ksu-1)/$topic); $RP="";
                 for($j=0;$j<=$PG_;$j++){
-                    $RP.="<a href=\"$cgi_f?mode=al2&amp;namber=$namber&amp;page=$a&amp;rev=$tp_hi&amp;$no$pp$Wf\">$j</a>\n";
+                    $RP.="<a href=\"$cgi_f?mode=al2&amp;namber=$namber&amp;page=$a&amp;rev=$tp_hi&amp;$pp$Wf\">$j</a>\n";
                     $a+=$topic;
                 }
                 if($FL){$FL.="@[ $RP]";}else{$FL="<br>@<small>[ $RP]";}
@@ -577,7 +531,7 @@ sub html2_ {
         if($SEL_F){if($sel){$Sel="<td>$sel</td>";}else{$Sel="<td>/</td>";}}
         $ksu=$R{$namber}+1;
         print"<tr>$Sel$Txt<td align=\"left\">";
-        print"<a href=\"$cgi_f?mode=al2&amp;namber=$namber&amp;rev=$r&amp;$no$pp\">$news <strong>$d_may</strong></a>$FL</td>";
+        print"<a href=\"$cgi_f?mode=al2&amp;namber=$namber&amp;rev=$r&amp;$pp\">$news <strong>$d_may</strong></a>$FL</td>";
         print"<td align=\"center\">$ksuŒ</td>$TP2$SK2<td align=\"center\"><small>$rdd</small></td>";
         if($end_f){print"<td align=\"center\">$reok</td>";}
         print"</tr>\n";
@@ -653,13 +607,14 @@ if($KLOG){$fhy="";}
 $total=@TOP;
 if($FORM{'page'} eq ''){$page=0;}else{$page=$FORM{'page'};}
 $PAGE=$page/$topic;
-&hed_("One Topic All View / $TitleHed / Page: $PAGE","1");
+&get_uid();
+&hed_("One Topic All View / $TitleHed / Page: $PAGE");
 if($cou){&con_;}
 if($rev){
     print"$fhy\n";
     if($r_max && ($total-1) >= $r_max){
         print"<h3>•ÔM”‚ÌŒÀ“x‚ğ’´‚¦‚½‚Ì‚Å•ÔM‚Å‚«‚Ü‚¹‚ñB<br>(•ÔM”ŒÀ“x:$r_max Œ»İ‚Ì•ÔM‹L–”:$total)</h3>\n";
-        print" ¨ <strong><a href=\"$cgi_f?mode=new&amp;$no$pp\">[ƒgƒsƒbƒN‚ÌV‹Kì¬]</a></strong>";
+        print" ¨ <strong><a href=\"$cgi_f?mode=new&amp;$pp\">[ƒgƒsƒbƒN‚ÌV‹Kì¬]</a></strong>";
         }else{if($En && $end_e){print"$end_ok / •ÔM•s‰Â";
     }else{&forms_("F");}}
 }
@@ -670,21 +625,21 @@ if($page_end >= $end_data){$page_end=$end_data;}
 $Pg=$page+1; $Pg2=$page_end+1;
 $nl=$page_end+1; 
 $bl=$page-$topic;
-if($page_end ne $end_data){$Nl="<a href=\"$cgi_f?mode=al2&amp;namber=$FORM{'namber'}&amp;page=$nl&amp;rev=$rev&amp;$no$pp\">"; $Nle="</a>";}
-if($bl >= 0){$Bl="<a href=\"$cgi_f?mode=al2&amp;namber=$FORM{'namber'}&amp;page=$bl&amp;rev=$rev&amp;$no$pp\">"; $Ble="</a>";}
+if($page_end ne $end_data){$Nl="<a href=\"$cgi_f?mode=al2&amp;namber=$FORM{'namber'}&amp;page=$nl&amp;rev=$rev&amp;$pp\">"; $Nle="</a>";}
+if($bl >= 0){$Bl="<a href=\"$cgi_f?mode=al2&amp;namber=$FORM{'namber'}&amp;page=$bl&amp;rev=$rev&amp;$pp\">"; $Ble="</a>";}
 print "<form action=\"$cgi_f\" method=\"$met\">\n";
 print"<div class=\"Caption03l\">ƒgƒsƒbƒN“à‘S $total ‹L–’†‚Ì $Pg ` $Pg2 ”Ô–Ú‚ğ•\\¦</div>\n";
 if($rev == 0){
-    print"<div class=\"Caption01r\"><strong>[ <a href=\"$cgi_f?mode=al2&amp;namber=$FORM{'namber'}&amp;rev=1&amp;$no$pp\">";
+    print"<div class=\"Caption01r\"><strong>[ <a href=\"$cgi_f?mode=al2&amp;namber=$FORM{'namber'}&amp;rev=1&amp;$pp\">";
     print"ÅV‹L–‹y‚Ñ•ÔMƒtƒH[ƒ€‚ğƒgƒsƒbƒNƒgƒbƒv‚Ö</a> ]</strong><br></div>\n";
 }elsif($rev){
-    print"<div class=\"Caption01r\"><strong>[ <a href=\"$cgi_f?mode=al2&amp;namber=$FORM{'namber'}&amp;rev=0&amp;$no$pp\">e‹L–‚ğƒgƒsƒbƒNƒgƒbƒv‚Ö</a> ]</strong><br></div>\n";
+    print"<div class=\"Caption01r\"><strong>[ <a href=\"$cgi_f?mode=al2&amp;namber=$FORM{'namber'}&amp;rev=0&amp;$pp\">e‹L–‚ğƒgƒsƒbƒNƒgƒbƒv‚Ö</a> ]</strong><br></div>\n";
 }
 $Plink="<div class=\"Caption01c\"><strong>‚±‚ÌƒgƒsƒbƒN‚Ì‘Sƒy[ƒW</strong> / "; $a=0;
 for($i=0;$i<=$page_;$i++){
     $af=$page/$topic;
     if($i != 0){$Plink.=" ";}
-    if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}else{$Plink.="[<a href=\"$cgi_f?mode=al2&amp;namber=$FORM{'namber'}&amp;page=$a&amp;rev=$rev&amp;$no$pp\">$i</a>]\n";}
+    if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}else{$Plink.="[<a href=\"$cgi_f?mode=al2&amp;namber=$FORM{'namber'}&amp;page=$a&amp;rev=$rev&amp;$pp\">$i</a>]\n";}
     $a+=$topic;
 }
 $Plink.="</div>";
@@ -704,7 +659,7 @@ foreach ($page .. $page_end) {
         $Ent,$fimg,$ICON,$ICO,$font,$hr,$txt,$sel,$yobi,$Se,$ToNo,"F","");
     print"$HTML\n";
 }
-if($TrON){$TrLink="<div class=\"Caption01r\">[ <a href=\"$cgi_f?mode=all&namber=$FORM{'namber'}&space=0&type=0&$no$pp\">$all_i ‚±‚ÌƒgƒsƒbƒN‚ğƒcƒŠ[‚ÅˆêŠ‡•\\¦</a> ]</div>";}
+if($tmplVars{'TrON'}){$TrLink="<div class=\"Caption01r\">[ <a href=\"$cgi_f?mode=all&namber=$FORM{'namber'}&space=0&type=0&$pp\">$all_i ‚±‚ÌƒgƒsƒbƒN‚ğƒcƒŠ[‚ÅˆêŠ‡•\\¦</a> ]</div>";}
 print <<"_HTML_";
 <hr>
 <div class="Forms">
@@ -727,7 +682,7 @@ print"$Plink\n<hr>\n";
 $Ta=$total-1;
 if($r_max && $Ta > $r_max){
     print"<h3>•ÔM”‚ÌŒÀ“x‚ğ’´‚¦‚½‚Ì‚Å•ÔM‚Å‚«‚Ü‚¹‚ñB</h3>(•ÔM”ŒÀ“x:$r_max Œ»İ‚Ì•ÔM”:$Ta)";
-    print" ¨ <strong><a href=\"$cgi_f?mode=new&amp;$no$pp\">[ƒgƒsƒbƒN‚ÌV‹Kì¬]</a></strong><br>";
+    print" ¨ <strong><a href=\"$cgi_f?mode=new&amp;$pp\">[ƒgƒsƒbƒN‚ÌV‹Kì¬]</a></strong><br>";
 }else{
     if($En && $end_e){print"<h3>$end_ok / •ÔM•s‰Â</h3><br>";}
     else{
@@ -736,7 +691,7 @@ if($r_max && $Ta > $r_max){
             &forms_("F");
         }elsif($total >= ($page+$topic) && $rev==0){
             $page=$i-1; $a-=$topic;
-            print"<div class=\"Caption01r\">[ <a href=\"$cgi_f?mode=al2&amp;namber=$FORM{'namber'}&amp;page=$a&amp;$no$pp#F\">‚±‚ÌƒgƒsƒbƒN‚Ì•ÔMƒtƒH[ƒ€‚Ö</a> ]</div>";
+            print"<div class=\"Caption01r\">[ <a href=\"$cgi_f?mode=al2&amp;namber=$FORM{'namber'}&amp;page=$a&amp;$pp#F\">‚±‚ÌƒgƒsƒbƒN‚Ì•ÔMƒtƒH[ƒ€‚Ö</a> ]</div>";
         }
     }
 }
@@ -782,7 +737,8 @@ foreach $lines (@TREE) {
     if($namber eq "$nam" && $namber ne $ty) {
     $kiji_exist=1;
         if($d_may eq ""){$d_may="$notitle";}
-        &hed_("One Message View / $d_may","1");
+        &get_uid();
+        &hed_("One Message View / $d_may");
         $com="$comment";
         $com=~ s/<br>/\n&gt; /g; $com=~ s/&gt; &gt; /&gt;&gt;/g; $com="&gt; $com";
         if($sp==0){$re=1;}elsif($sp>0){$re=$sp/15+1;}
@@ -823,10 +779,10 @@ if((!$name)||($name eq ' ')||($name eq '@')){$name=$noname;}
     if(($namber eq "$ty" || $type eq "$nam" || $type eq "$ty") && $ON==0){
         if($rs && $sp <= $space && $type){$ON=1;}
         if($sp eq $nsp && $nam < $namber && $i != 1){
-            $b_="<a href=\"$cgi_f?mode=one&amp;namber=$nam&amp;type=$ty&amp;space=$sp&amp;$no$pp\">$d_may</a>\n/$name <small>$yobi</small>$Pr";
+            $b_="<a href=\"$cgi_f?mode=one&amp;namber=$nam&amp;type=$ty&amp;space=$sp&amp;$pp\">$d_may</a>\n/$name <small>$yobi</small>$Pr";
         }elsif($type == 0){$b_="e‹L–";}
         if($sp eq $psp && $nam > $namber && $i == 1){
-            $n_.="<a href=\"$cgi_f?mode=one&amp;namber=$nam&amp;type=$ty&amp;space=$sp&amp;$no$pp\">$d_may</a>\n/$name <small>$yobi</small>$Pr<br>";
+            $n_.="<a href=\"$cgi_f?mode=one&amp;namber=$nam&amp;type=$ty&amp;space=$sp&amp;$pp\">$d_may</a>\n/$name <small>$yobi</small>$Pr<br>";
             $N_NUM=$nam;
         }
         if($i==1){$rs=1;}
@@ -843,7 +799,7 @@ if((!$name)||($name eq ' ')||($name eq '@')){$name=$noname;}
         $Tree.="." x $spz;
 
     }
-    $Tree.="$im<a href=\"$cgi_f?mode=one&amp;namber=$nam&amp;type=$ty&amp;space=$sp&amp;$no$pp\">$news $d_may</a>\n";
+    $Tree.="$im<a href=\"$cgi_f?mode=one&amp;namber=$nam&amp;type=$ty&amp;space=$sp&amp;$pp\">$news $d_may</a>\n";
     $Tree.="/ $name :$date <span class=\"ArtId\">(#$nam)</span>$im2 $end$Pr$im3</td></tr><tr><td colspan=\"2\" nowrap>\n";
 }
 if(!$kiji_exist){$kiji_exist=2; if($TOPH==1){&html_;}elsif($TOPH==2){&html2_;}else{&alk_;}}else{
@@ -862,17 +818,17 @@ _HTML_
 print "$Tree\n";
 $total=@TREE-1;
 if($type>0){$a_="$type";}elsif($type==0){$a_="$namber";}
-if($TpON){$TpLink=" / <a href=\"$cgi_f?mode=al2&amp;namber=$a_&amp;rev=$r&amp;$no$pp\">ã‹LƒcƒŠ[‚ğƒgƒsƒbƒN•\\¦</a>\n";}
+if($tmplVars{'TpON'}){$TpLink=" / <a href=\"$cgi_f?mode=al2&amp;namber=$a_&amp;rev=$r&amp;$pp\">ã‹LƒcƒŠ[‚ğƒgƒsƒbƒN•\\¦</a>\n";}
 print <<"_TREE_";
 </td></tr></table><!--dum-->
 <div class="Caption01r">
-[ <a href="$cgi_f?mode=all&amp;namber=$a_&amp;type=0&amp;space=0&amp;$no$pp">$all_i ã‹LƒcƒŠ[‚ğˆêŠ‡•\\¦</a>
+[ <a href="$cgi_f?mode=all&amp;namber=$a_&amp;type=0&amp;space=0&amp;$pp">$all_i ã‹LƒcƒŠ[‚ğˆêŠ‡•\\¦</a>
 $TpLink ]</div>
 <br><hr><h2><a name="F">ã‹L‚Ì‹L–‚Ö•ÔM</a></h2>
 _TREE_
 if ($r_max && ($total >= $r_max)) {
     print"<h3>•ÔM”‚ÌŒÀ“x‚ğ’´‚¦‚½‚Ì‚Å•ÔM‚Å‚«‚Ü‚¹‚ñB</h3>\n(•ÔM”ŒÀ“x:$r_max Œ»İ‚Ì•ÔM”:$total)";
-    print" <strong><a href=\"$cgi_f?mode=new&amp;$no$pp\">[ƒcƒŠ[‚ÌV‹Kì¬]</a></strong>\n";
+    print" <strong><a href=\"$cgi_f?mode=new&amp;$pp\">[ƒcƒŠ[‚ÌV‹Kì¬]</a></strong>\n";
 } else {
     if ($En && $end_e) {print "$end_ok / •ÔM•s‰Â"; }
     if ($vRSS eq 'RSS') {}
@@ -975,8 +931,8 @@ if($page_end >= $end_data){$page_end=$end_data;}
 $Pg=$page+1; $Pg2=$page_end+1;
 $nl=$page_end + 1;
 $bl=$page - $a_max;
-if($bl >= 0){$Bl="<a href=\"$cgi_f?page=$bl&amp;H=T&amp;$no$pp$Wf\">"; $Ble="</a>";}else{$Bl=""; $Ble="";}
-if($page_end ne $end_data){$Nl="<a href=\"$cgi_f?page=$nl&amp;H=T&amp;$no$pp$Wf\">";$Nle="</a>";}else{$Nl=""; $Nle="";}
+if($bl >= 0){$Bl="<a href=\"$cgi_f?page=$bl&amp;H=T&amp;$pp$Wf\">"; $Ble="</a>";}else{$Bl=""; $Ble="";}
+if($page_end ne $end_data){$Nl="<a href=\"$cgi_f?page=$nl&amp;H=T&amp;$pp$Wf\">";$Nle="</a>";}else{$Nl=""; $Nle="";}
     $obj_template->process('comtop.inc.tpl');
 print <<"_HTML_";
 <li>$new_tŠÔˆÈ“à‚Ì‹L–‚Í $new_i ‚Å•\\¦‚³‚ê‚Ü‚·B</li>
@@ -990,13 +946,13 @@ $Plink="<div class=\"Caption01c\"><strong>‘Sƒy[ƒW</strong> /\n"; $a=0;
 for($i=0;$i<=$page_;$i++){
     $af=$page/$a_max;
     if($i != 0){$Plink.=" ";}
-    if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}else{$Plink.="[<a href=\"$cgi_f?page=$a&amp;H=T&amp;$no$pp$Wf\">$i</a>]\n";}
+    if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}else{$Plink.="[<a href=\"$cgi_f?page=$a&amp;H=T&amp;$pp$Wf\">$i</a>]\n";}
     $a+=$a_max;
 }
 $Plink.="</div>\n";
-if($Res_T==1){$OJ1="<a href=\"$cgi_f?H=T&amp;W=W&amp;$no$pp\">•ÔMÅV‡</a>"; $OJ2="“Še‡"; $OJ3="<a href=\"$cgi_f?H=T&amp;W=R&amp;$no$pp\">‹L–”‡</a>";}
-elsif($Res_T==2){$OJ1="<a href=\"$cgi_f?H=T&amp;W=W&amp;$no$pp\">•ÔMÅV‡</a>"; $OJ2="<a href=\"$cgi_f?H=T&amp;W=T&amp;$no$pp\">“Še‡</a>"; $OJ3="‹L–”‡";}
-else{$OJ1="•ÔMÅV‡"; $OJ2="<a href=\"$cgi_f?H=T&amp;W=T&amp;$no$pp\">“Še‡</a>"; $OJ3="<a href=\"$cgi_f?H=T&amp;W=R&amp;$no$pp\">‹L–”‡</a>";}
+if($Res_T==1){$OJ1="<a href=\"$cgi_f?H=T&amp;W=W&amp;$pp\">•ÔMÅV‡</a>"; $OJ2="“Še‡"; $OJ3="<a href=\"$cgi_f?H=T&amp;W=R&amp;$pp\">‹L–”‡</a>";}
+elsif($Res_T==2){$OJ1="<a href=\"$cgi_f?H=T&amp;W=W&amp;$pp\">•ÔMÅV‡</a>"; $OJ2="<a href=\"$cgi_f?H=T&amp;W=T&amp;$pp\">“Še‡</a>"; $OJ3="‹L–”‡";}
+else{$OJ1="•ÔMÅV‡"; $OJ2="<a href=\"$cgi_f?H=T&amp;W=T&amp;$pp\">“Še‡</a>"; $OJ3="<a href=\"$cgi_f?H=T&amp;W=R&amp;$pp\">‹L–”‡</a>";}
 print"<div class=\"Caption01r\">e‹L–‚Ì‡”Ô [ $OJ1 / $OJ2 / $OJ3 ]</div>\n";
 print"$Plink\n<hr class=\"Hidden\">\n";
 foreach ($page .. $page_end) {
@@ -1028,8 +984,8 @@ if((!$name)||($name eq ' ')||($name eq '@')){$name=$noname;}
 <br>
 <table class="Tree" summary="Tree" cellspacing="0" cellpadding="0" border="0">
 <tr><td class="Highlight" width="1\%">
-<a href="$cgi_f?mode=all&amp;namber=$namber&amp;type=$type&amp;space=$space&amp;$no$pp">$all_i</a></td>
-<td class="Highlight" width="99\%"><a href="$cgi_f?mode=one&amp;namber=$namber&amp;type=$type&amp;space=$space&amp;$no$pp">$news $d_may</a>
+<a href="$cgi_f?mode=all&amp;namber=$namber&amp;type=$type&amp;space=$space&amp;$pp">$all_i</a></td>
+<td class="Highlight" width="99\%"><a href="$cgi_f?mode=one&amp;namber=$namber&amp;type=$type&amp;space=$space&amp;$pp">$news $d_may</a>
 / $name :$date $yobi<span class="ArtId">(#$namber)</span> $Pr
 _HTML_
 
@@ -1066,7 +1022,7 @@ _HTML_
                 $rspz=$rsp/15*$zure;
                 print "." x $rspz;
             }
-            print"<a href=\"$cgi_f?mode=one&amp;namber=$rnam&amp;type=$rtype&amp;space=$rsp&amp;$no$pp\">$news $rdm</a>\n";
+            print"<a href=\"$cgi_f?mode=one&amp;namber=$rnam&amp;type=$rtype&amp;space=$rsp&amp;$pp\">$news $rdm</a>\n";
 if((!$rname)||($rname eq ' ')||($rname eq '@')){$rname=$noname;}
             print"/ $rname :$rd <span class=\"ArtId\">(#$rnam)</span> $re$Pr\n";
             $res++;
@@ -1200,8 +1156,8 @@ if($page_end >= $end_data) { $page_end = $end_data; }
 $Pg=$page+1; $Pg2=$page_end+1;
 $nl = $page_end + 1;
 $bl = $page - $new_s;
-if($bl >= 0){$Bl="<a href=\"$cgi_f?page=$bl&amp;mode=n_w&amp;$no$pp\">"; $Ble="</a>";}
-if($page_end ne $end_data){$Nl="<a href=\"$cgi_f?page=$nl&amp;mode=n_w&amp;$no$pp\">"; $Nle="</a>";}
+if($bl >= 0){$Bl="<a href=\"$cgi_f?page=$bl&amp;mode=n_w&amp;$pp\">"; $Ble="</a>";}
+if($page_end ne $end_data){$Nl="<a href=\"$cgi_f?page=$nl&amp;mode=n_w&amp;$pp\">"; $Nle="</a>";}
 print <<"_FTOP_";
 <h2>$new_tŠÔˆÈ“à‚É“Še‚³‚ê‚½V’…‹L–</h2>
 <div class="Caption03l">V’…‹L–‘S $total Œ’† $Pg ` $Pg2 ”Ô–Ú‚ğ•\\¦</div>
@@ -1212,14 +1168,14 @@ $Plink="$Bl$Ble\n";$a=0;
 for($i=0;$i<=$page_;$i++){
     $af=$page/$new_s;
     if($i != 0){$Plink.=" ";}
-    if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}else{$Plink.="[<a href=\"$cgi_f?mode=n_w&amp;page=$a&amp;$no$pp\">$i</a>]\n";}
+    if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}else{$Plink.="[<a href=\"$cgi_f?mode=n_w&amp;page=$a&amp;$pp\">$i</a>]\n";}
 
     $a+=$new_s;
 }
 $Plink.="$Nl$Nle";
 if($FORM{"s"} ne ""){$new_su=$FORM{"s"};}
-if($new_su){$SL1="V’…‡"; $SL2="<a href=\"$cgi_f?mode=n_w&amp;s=0&amp;$no$pp\">ŒÃ‚¢‡</a>";}
-else{$SL1="<a href=\"$cgi_f?mode=n_w&amp;s=1&amp;$no$pp\">V’…‡</a>"; $SL2="ŒÃ‚¢‡";}
+if($new_su){$SL1="V’…‡"; $SL2="<a href=\"$cgi_f?mode=n_w&amp;s=0&amp;$pp\">ŒÃ‚¢‡</a>";}
+else{$SL1="<a href=\"$cgi_f?mode=n_w&amp;s=1&amp;$pp\">V’…‡</a>"; $SL2="ŒÃ‚¢‡";}
 print"$Plink<br>[ $SL1 / $SL2 ]<br>\n</div><hr>\n";
 if(@NEW){
     @NEW=sort @NEW;
@@ -1245,11 +1201,11 @@ if(@NEW){
 # -> ƒƒO‚É‹L–‚ğ‘‚«‚Ş(wri_)
 #
 sub wri_ {
-    if ($s_ret && ($P ne "$s_pas")) {&er_('invpass');}
     if ($KLOG) {&er_('oldlogs');}
     &check_;
     if ($FORM{"PV"} && ($FLAG == 0)) {
-        &hed_("Preview","1");
+        &get_uid();
+        &hed_("Preview");
         $c_name=$name; $c_email=$email; $ti=$d_may; $c_txt=$txt; $c_sel=$sel;
         $c_ico=$CICO; $c_hr=$hr; $c_font=$font; $c_key=$delkey;
         $com=$comment; $com=~ s/<br>/\n/g;
@@ -1303,11 +1259,23 @@ if($FORM{'URL'}){
     $comment.="<br>(Œg‘Ñ)";
 }
 if($UID){
-    if($Ag){$pUID=$Ag;}else{&get_("I");}
-    if($pUID eq "n"){&er_('cookieoff');}
+    if ($Ag) { 
+        $pUID = $Ag;
+    } else {
+        $pUID = Forum->cgi->cookie('UID');
+        if ($pUID) {
+            $pUID = 'n';
+        }
+    }
+    if ($pUID eq "n") {
+        &er_('cookieoff');
+    }
 }
-&set_; &cry_;
-if($pUID){&set_("I","$pUID");}
+&set_;
+&cry_;
+if ($pUID) {
+    &set_("I", "$pUID");
+}
 if($tag){
     $comment=~ s/\&lt\;/</g;
     $comment=~ s/\&gt\;/>/g;
@@ -1397,8 +1365,16 @@ elsif($oya){unshift(@new,"$namber<><><><><><><><><>$namber<><><><><>\n");}
 open(LOG,">$log") || &er_("Can't write $log","1");
 print LOG @new;
 close(LOG);
-if($i_mode){&get_("M"); &set_("M");}
-if($klog_s && @KLOG){&log_;}
+if ($i_mode) {
+    $FORM{'min'} = Forum->cgi->cookie('Cmin');
+    if ($FORM{'min'}) {
+        $FORM{'min'} = 0;
+    }
+    &set_("M");
+}
+if ($klog_s && @KLOG) {
+    &log_;
+}
 if(-e $lockf){rmdir($lockf);}
 if($t_mail || $o_mail){&mail_;}
 if($H eq "F" && $tpend && $type){$FORM{"namber"}=$type; $space=0; &all2;}
@@ -1409,7 +1385,6 @@ if($H eq "F" && $tpend && $type){$FORM{"namber"}=$type; $space=0; &all2;}
 # -> ‹L–ƒtƒH[ƒ}ƒbƒg‚ğ‚¨‚±‚È‚¤(s_d_)
 #
 sub s_d_ {
-    if($s_ret && $P ne "$s_pas"){&er_('invpass');}
     if (Forum->user->validate_password_admin($FORM{'pass'}) == 0) {
         &er_('invpass');
     }
@@ -1443,44 +1418,7 @@ elsif($_[0] eq "M"){print"Set-Cookie: Cmin=$FORM{'min'}; expires=$date_gmt\n";}
 elsif($_[0] eq "I"){print"Set-Cookie: UID=$_[1]; expires=$date_gmt\n";}
 else{print "Set-Cookie: CBBS=$cook; expires=$date_gmt\n";}
 }
-#--------------------------------------------------------------------------------------------------------------------
-# [cookieæ“¾]
-# -> cookie‚ğæ“¾‚·‚é(get_)
-#
-sub get_ { 
-    $cookies = $ENV{'HTTP_COOKIE'};
-    @pairs = split(/;/, $cookies);
-    foreach $pair (@pairs) {
-        ($NAME, $value) = split(/=/, $pair);
-        $NAME =~ s/ //g;
-        $DUMMY{$NAME} = $value;
-    }
-    if ($_[0] eq "P") {
-        if ($DUMMY{"$s_pas"}) {$FORM{"P"} = $DUMMY{"$s_pas"}; }
-    } elsif ($_[0] eq "M") {
-        if ($DUMMY{'Cmin'}) {$FORM{"min"} = $DUMMY{'Cmin'}; }
-        else {$FORM{"min"} = 0; }
-    } elsif ($_[0] eq "I") {
-        if ($DUMMY{'UID'}) {$pUID = $DUMMY{'UID'}; }
-        else {$pUID="n"; }
-    } else {
-        @pairs = split(/,/, $DUMMY{'CBBS'});
-        foreach $pair (@pairs) {
-            ($name, $value) = split(/:/, $pair);
-            $COOKIE{$name} = $value;
-        }
-        $c_name  = $COOKIE{'name'};
-        $c_email = $COOKIE{'email'};
-        $c_url   = $COOKIE{'url'};
-        $c_key   = $COOKIE{'delkey'};
-        $c_pub   = $COOKIE{'pub'};
-        $c_ico   = $COOKIE{'ico'};
-        $c_font  = $COOKIE{'font'};
-        $c_hr    = $COOKIE{'hr'};
-        if ($SEL_C) {$c_sel = $COOKIE{'sel'}; }
-        if ($TXT_C) {$c_txt = $COOKIE{'txt'}; }
-    }
-}
+
 #--------------------------------------------------------------------------------------------------------------------
 # [ŠÔİ’è]
 # -> ŠÔ‚ğİ’è‚·‚é(time_)
@@ -1549,11 +1487,11 @@ elsif($FORM{"mode2"} =~/\d/){
 $total=@NEW; $NS=$RS+$total;
 $page_=int(($total-1)/$a_max);
 if(-s $log){$l_size=int((-s $log)/1024);}else{$l_size=0;}
-if($topok==0){$NewMsg="<li><a href=\"$cgi_f?mode=new&amp;$no&amp;pass=$FORM{'pass'}$pp\">ŠÇ——pV‹Kì¬</a>\n";}
+if($topok==0){$NewMsg="<li><a href=\"$cgi_f?mode=new&amp;&amp;pass=$FORM{'pass'}$pp\">ŠÇ——pV‹Kì¬</a>\n";}
 if($i_mode || $mas_c){
     if($FSize){$FSize=int($FSize/1024); $FileSize="<br>ƒAƒbƒvƒtƒ@ƒCƒ‹‡ŒvƒTƒCƒYF$FSize\KB";}else{$FSize=0;}
     $FP ="<form action=\"$cgi_f\" method=\"$met\"$TGT>\n";
-    $FP.="<strong>[‰æ‘œ/‹L–•\\¦‹–‰Â]</strong><br><input type=\"hidden\" name=\"mode\" value=\"ent\">$nf$pf\n";
+    $FP.="<strong>[‰æ‘œ/‹L–•\\¦‹–‰Â]</strong><br><input type=\"hidden\" name=\"mode\" value=\"ent\">$pf\n";
     $FP.="<input type=\"hidden\" name=\"pass\" value=\"$FORM{'pass'}\"><input type=\"submit\" value=\"•\\¦‹–‰ÂƒVƒXƒeƒ€\"></form>\n";
 }
 if($bup){$BUL="/ƒoƒbƒNƒAƒbƒv";}
@@ -1571,7 +1509,7 @@ print <<"_HTML_";
 <li><a href="#FMT">ƒƒbƒN‰ğœ/ƒƒO‰Šú‰»/ƒtƒŠ[ƒtƒH[ƒ€C•œ/ƒƒOƒRƒ“ƒo[ƒg$BUL</a>
 $NewMsg</li>
 </ul>
-<form action="$cgi_f" method="$met"$TGT>$nf$pf
+<form action="$cgi_f" method="$met"$TGT>$pf
 <input type="hidden" name="mode" value="Den"><input type="hidden" name="pass" value="$FORM{'pass'}">
 <strong>[”rœIP/‹Ö~•¶š’Ç‰Á]</strong><br>
 _HTML_
@@ -1582,7 +1520,7 @@ if($cou){
     $cnt = <NO>;
     close(NO);
     print <<"_BUP_";
-<form action="$cgi_f" method=$met>$nf$pf
+<form action="$cgi_f" method=$met>$pf
 <input type="hidden" name="mode" value="del"><input type="hidden" name="pass" value="$FORM{'pass'}">
 <strong>[ƒJƒEƒ“ƒ^’l•ÒW]</strong><br>
 _BUP_
@@ -1590,7 +1528,7 @@ print 'ƒJƒEƒ“ƒg”/<input type="text" name="mode2" value="' . $cnt . '" size="7">
 }
 print <<"_HTML_";
 $msg
-<form action=\"$cgi_f\" method="$met">$nf$pf
+<form action=\"$cgi_f\" method="$met">$pf
 <input type="hidden" name="mode" value="key"><input type="hidden" name="mo" value="1">
 <input type="hidden" name="pass" value="$FORM{'pass'}"><input type="hidden" name="page" value="$FORM{"page"}">
 <hr>
@@ -1601,14 +1539,14 @@ $page_end=$page + ($a_max - 1);
 if($page_end >= $end_data){$page_end=$end_data;}
 $nl=$page_end + 1;
 $bl=$page - $a_max;
-if($bl >= 0){$Bl="<a href=\"$cgi_f?mode=del&amp;page=$bl&amp;pass=$FORM{'pass'}&amp;$no$pp\">"; $Ble="</a>";}
-if($page_end ne $end_data){$Nl="<a href=\"$cgi_f?mode=del&amp;page=$nl&amp;pass=$FORM{'pass'}&amp;$no$pp\">"; $Nle="</a>";}
+if($bl >= 0){$Bl="<a href=\"$cgi_f?mode=del&amp;page=$bl&amp;pass=$FORM{'pass'}&amp;$pp\">"; $Ble="</a>";}
+if($page_end ne $end_data){$Nl="<a href=\"$cgi_f?mode=del&amp;page=$nl&amp;pass=$FORM{'pass'}&amp;$pp\">"; $Nle="</a>";}
 $Plink="<div class=\"Caption01c\"><strong>‘Sƒy[ƒW</strong> $Bl$Ble /\n\n";
 $a=0;
 for($i=0;$i<=$page_;$i++){
     $af=$page/$a_max;
     if($i != 0){$Plink.=" ";}
-    if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}else{$Plink.="[<a href=\"$cgi_f?page=$a&amp;mode=del&amp;pass=$FORM{'pass'}&amp;$no$pp\">$i</a>]\n";}
+    if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}else{$Plink.="[<a href=\"$cgi_f?page=$a&amp;mode=del&amp;pass=$FORM{'pass'}&amp;$pp\">$i</a>]\n";}
     $a+=$a_max;
 }
 $Plink.="$Nl$Nle\n</div>";
@@ -1632,7 +1570,7 @@ print '<tr><td><input type="radio" name="kiji" value="';
 print $namber;
 print '>ƒcƒŠ[íœ</td><td class="Highlight">' . "\n" . '<input type="checkbox" name="del" value="' . "$namber\">\n";
     print <<"_HTML_";
-<a href="$cgi_f?mode=nam&amp;pass=$FORM{'pass'}&amp;kiji=$namber&amp;mo=1&amp;$no$pp">$d_may</a>
+<a href="$cgi_f?mode=nam&amp;pass=$FORM{'pass'}&amp;kiji=$namber&amp;mo=1&amp;$pp">$d_may</a>
 / $name :$date <span class="ArtId">(#$namber)</span>
 [<a href="$cgi_f?mode=Den&amp;pass=$FORM{"pass"}&amp;mo=$ip"$TGT>$ip</a>]$ico
 </td></tr>
@@ -1667,8 +1605,8 @@ _HTML_
 #<br>
 #<table class="Tree" summary="Tree" cellspacing="0" cellpadding="0" border="0">
 #<tr><td class="Highlight" width="1\%">
-#<a href="$cgi_f?mode=all&amp;namber=$namber&amp;type=$type&amp;space=$space&amp;$no$pp">$all_i</a></td>
-#<td class="Highlight" width="99\%"><a href="$cgi_f?mode=one&amp;namber=$namber&amp;type=$type&amp;space=$space&amp;$no$pp">$news $d_may</a>
+#<a href="$cgi_f?mode=all&amp;namber=$namber&amp;type=$type&amp;space=$space&amp;$pp">$all_i</a></td>
+#<td class="Highlight" width="99\%"><a href="$cgi_f?mode=one&amp;namber=$namber&amp;type=$type&amp;space=$space&amp;$pp">$news $d_may</a>
 #/ $name :$date $yobi<span class="ArtId">(#$namber)</span> $Pr
 #_HTML_
 
@@ -1688,7 +1626,7 @@ _HTML_
 #print '<input type="radio" name="kiji" value="' . $namber . '" ';
 #print '>ƒcƒŠ[íœ<br><input type="checkbox" name="del" value="' . "$namber\">\n";
 #	print <<"_HTML_";
-#<a href="$cgi_f?mode=nam&amp;pass=$FORM{'pass'}&amp;kiji=$namber&amp;mo=1&amp;$no$pp">$d_may</a>
+#<a href="$cgi_f?mode=nam&amp;pass=$FORM{'pass'}&amp;kiji=$namber&amp;mo=1&amp;$pp">$d_may</a>
 #/ $name :$date <span class="ArtId">(#$namber)</span>
 #[<a href="$cgi_f?mode=Den&amp;pass=$FORM{"pass"}&amp;mo=$ip"$TGT>$ip</a>]$ico</small><br>
 #_HTML_
@@ -1714,7 +1652,7 @@ _HTML_
                 $rspz=$rsp/15*$zure;
                 print "." x $rspz;
             }
-#			print"<a href=\"$cgi_f?mode=one&amp;namber=$rnam&amp;type=$rtype&amp;space=$rsp&amp;$no$pp\">$news $rdm</a>\n";
+#			print"<a href=\"$cgi_f?mode=one&amp;namber=$rnam&amp;type=$rtype&amp;space=$rsp&amp;$pp\">$news $rdm</a>\n";
 if((!$rname)||($rname eq ' ')||($rname eq '@')){$rname=$noname;}
             $res++;
             if($R{$namber}==$res){last;}
@@ -1754,7 +1692,7 @@ if((!$rname)||($rname eq ' ')||($rname eq '@')){$rname=$noname;}
 #				$rspz=$rsp/15*$zure;
 #				print "." x $rspz;
 #			}
-#			print"<a href=\"$cgi_f?mode=one&amp;namber=$rnam&amp;type=$rtype&amp;space=$rsp&amp;$no$pp\">$news $rdm</a>\n";
+#			print"<a href=\"$cgi_f?mode=one&amp;namber=$rnam&amp;type=$rtype&amp;space=$rsp&amp;$pp\">$news $rdm</a>\n";
 #if((!$rname)||($rname eq ' ')||($rname eq '@')){$rname=$noname;}
 #			print"/ $rname :$rd <span class=\"ArtId\">(#$rnam)</span> $re$Pr\n";
 #			$res++;
@@ -1787,7 +1725,7 @@ if((!$rname)||($rname eq ' ')||($rname eq '@')){$rname=$noname;}
 #}
             print <<"_HTML_";
 <input type="checkbox" name="del" value="$rnam">
-<a href="$cgi_f?mode=nam&amp;pass=$FORM{'pass'}&amp;kiji=$rnam&amp;mo=1&amp;no=$no$pp">$rdm</a>
+<a href="$cgi_f?mode=nam&amp;pass=$FORM{'pass'}&amp;kiji=$rnam&amp;mo=1&amp;$pp">$rdm</a>
 / $rname :$rd $ryobi <span class="ArtId">(#$rnam)</span>
 [<a href="$cgi_f?mode=Den&amp;pass=$FORM{"pass"}&amp;mo=$rip"$TGT>$rip</a>]$ico $re</td></tr>
 _HTML_
@@ -1808,8 +1746,6 @@ _HTML_
     $tmplVars{'cgi_f'} = $cgi_f;
     $tmplVars{'met'} = $met;
     $tmplVars{'FORM'} = \%FORM;
-    $tmplVars{'no'} = $no;
-    $tmplVars{'pp'} = $pp;
     if ( -e $lockf ) {$tmplVars{'lockf'} = $lockf; }
     if ( -e $cloc ) {$tmplVars{'cloc'} = $cloc; }
     $tmplVars{'log'} = $log;
@@ -1825,8 +1761,6 @@ _HTML_
             $tmplVars{'Nh'} = sprintf("%.1f", $Nb * 24);
         }
         $tmplVars{'met'} = $met;
-        $tmplVars{'nf'} = $nf;
-        $tmplVars{'pf'} = $pf;
         $tmplVars{'bc'} = $bc;
         $tmplVars{'Nb'} = $Nb;
         $tmplVars{'Nh'} = $Nh;
@@ -1852,7 +1786,7 @@ function Link(url) {
 *JavaScript ‚ğ ON‚É‚µ‚Ä‚­‚¾‚³‚¢*
 <table summary="lock" border="1" bordercolor="$ttb" width="90\%">
 <tr><td colspan="2"><form action="$cgi_f" method="$met"><strong>[ƒƒbƒNƒtƒ@ƒCƒ‹‚Ì‰ğœ(íœ)]</strong><ul>
-<input type="button" value="ƒƒbƒN‰ğœ" onClick="Link('$cgi_f?mode=del&amp;pass=$FORM{"pass"}&amp;mode2=LockOff&amp;$no$pp')">
+<input type="button" value="ƒƒbƒN‰ğœ" onClick="Link('$cgi_f?mode=del&amp;pass=$FORM{"pass"}&amp;mode2=LockOff&amp;$pp')">
 <li>ƒƒbƒNƒtƒ@ƒCƒ‹‚ª‚Ç‚¤‚µ‚Ä‚àíœ‚³‚ê‚È‚¢ê‡‚É‚µ‚Ä‚­‚¾‚³‚¢B–â‘è‚ª–³‚¢ê‡‚Í‚ ‚Ü‚èg‚í‚È‚¢‚Å‰º‚³‚¢<ul>
 _HTML_
     if(-e $lockf){print"<li>ƒƒCƒ“ƒƒO($lockf):ƒƒbƒN’†\n";}
@@ -1863,21 +1797,21 @@ _HTML_
 <tr valign="top"><td>
 <form action="$cgi_f" method="$met">
 <strong>[ƒƒOƒtƒH[ƒ}ƒbƒg(‰Šú‰»)]</strong>
-<ul><input type="button" value="ƒtƒH[ƒ}ƒbƒg" onClick="Link('$cgi_f?mode=s_d&amp;pass=$FORM{"pass"}&amp;$no$pp')"><br>
+<ul><input type="button" value="ƒtƒH[ƒ}ƒbƒg" onClick="Link('$cgi_f?mode=s_d&amp;pass=$FORM{"pass"}&amp;$pp')"><br>
 <li>ƒtƒ@ƒCƒ‹ƒAƒbƒv‹@”\\‚ªON‚Ìê‡A•\\¦‹–‰Âƒ‚[ƒh‚Åƒtƒ@ƒCƒ‹‚ğ‚·‚×‚Äíœ‚µs‚È‚Á‚Ä‚­‚¾‚³‚¢!
 </ul></form>
 </td><td>
 <form action="$cgi_f" method="$met">
 <strong>[ƒtƒŠ[ƒtƒH[ƒ€C•œ]</strong>
-<ul><input type="button" value="C•œˆ—" onClick="Link('$cgi_f?mode=ffs&amp;mo=1&amp;pass=$FORM{"pass"}&amp;$no$pp')"><br>
+<ul><input type="button" value="C•œˆ—" onClick="Link('$cgi_f?mode=ffs&amp;mo=1&amp;pass=$FORM{"pass"}&amp;$pp')"><br>
 <li>•¶šƒR[ƒhã‚Ì•s‹ï‡C³‚µ‚Ü‚·B•¶š‰»‚¯‚ª‹N‚«‚½ê‡‚Í•ÒW‚ÅC³‚µ‚Ä‚­‚¾‚³‚¢B<br>
 <li>”O‚Ì‚½‚ßƒoƒbƒNƒAƒbƒv‚ğæ‚Á‚Ä‚¨‚­‚±‚Æ‚ğ‚¨Š©‚ß‚µ‚Ü‚·(v7.0–¢–‚©‚çƒtƒŠ[ƒtƒH[ƒ€‚ğg—p\‚µ‚Ä‚¢‚éê‡)
 </ul></form>
 </td></tr><tr valign="top"><td>
 <form action="$cgi_f" method="$met">
 <strong>[ƒƒOƒRƒ“ƒo[ƒg]</strong>
-<ul><input type="button" value="I-BOARD" onClick="Link('$cgi_f?mode=ffs&amp;mo=I-BOARD&amp;pass=$FORM{"pass"}&amp;$no$pp')"> /
-<input type="button" value="UPP-BOARD" onClick="Link('$cgi_f?mode=ffs&amp;mo=UPP-BOARD&amp;pass=$FORM{"pass"}&amp;$no$pp')"><br>
+<ul><input type="button" value="I-BOARD" onClick="Link('$cgi_f?mode=ffs&amp;mo=I-BOARD&amp;pass=$FORM{"pass"}&amp;$pp')"> /
+<input type="button" value="UPP-BOARD" onClick="Link('$cgi_f?mode=ffs&amp;mo=UPP-BOARD&amp;pass=$FORM{"pass"}&amp;$pp')"><br>
 <li>I-BOARDƒVƒŠ[ƒY ‚à‚µ‚­‚Í UPP-BOARD ‚ÌƒƒO‚ğ ChildTree —p‚ÉƒRƒ“ƒo[ƒg‚µ‚Ü‚·B<br>
 <li>ƒRƒ“ƒo[ƒg‚·‚é‚ÆŒ³‚É–ß‚·‚Ì‚Í‘å•Ï‚È‚Ì‚Å’ˆÓ! ƒ{ƒ^ƒ“‚ğŠÔˆá‚¦‚È‚¢‚Å!<br>
 <li>‹L–‚Í‚·‚×‚ÄV’…‹L–ˆµ‚¢‚Æ‚È‚è‚Ü‚·B<br>
@@ -1891,10 +1825,10 @@ _HTML_
             $bc="‚ ‚è($bs\KB / $bl“ú(–ñ$bhŠÔ)‘O)"; $Nb=$bup-$bl; $Nh=sprintf("%.1f",$Nb*24);
         } else {$bc="–³‚µ";}
         print <<"_BUP_";
-<form action="$cgi_f" method="$met">$nf$pf
+<form action="$cgi_f" method="$met">$pf
 <input type="hidden" name="mode" value="del"><input type="hidden" name="pass" value="$FORM{'pass'}">
 <strong>[ƒoƒbƒNƒAƒbƒv]</strong>
-<ul><input type="button" value="ƒƒO‚ğC•œ" onClick="Link('$cgi_f?mode=bma&amp;pass=$FORM{"pass"}&amp;$no$pp')">
+<ul><input type="button" value="ƒƒO‚ğC•œ" onClick="Link('$cgi_f?mode=bma&amp;pass=$FORM{"pass"}&amp;$pp')">
 / <input type="submit" value="Backup" name="mode2"><br>
 <li>[Backup]ƒ{ƒ^ƒ“‚ğƒNƒŠƒbƒN‚·‚é‚ÆŒ»İ‚ÌƒƒO‚ğƒoƒbƒNƒAƒbƒv‚µ‚Ü‚·B
 <li>ƒoƒbƒNƒAƒbƒv‹@\”\\‚ğg—p‚µ‚Ä‚¢‚él‚Ì‚İC•œ‰Â”\\‚Å‚·B<br>
@@ -1938,10 +1872,10 @@ sub hen_ {
                 }
 #                if($delkey eq "$pass"){$ok="m";}
                 if($ok eq "n"){ &er_('invpass'); }
-                $hen_l = "$cgi_f?$no$pp";
+                $hen_l = "$cgi_f?$pp";
                 $Lcom = "";
             } else {
-                $hen_l = "$cgi_f?mode=del&amp;pass=$FORM{'pass'}&amp;$no$pp";
+                $hen_l = "$cgi_f?mode=del&amp;pass=$FORM{'pass'}&amp;$pp";
                 $Lcom = "ŠÇ—ƒ‚[ƒh‚É";
             }
             if ($s && $end_f && (($end_c == 0) ||
@@ -1988,7 +1922,7 @@ _MAIL_
             print <<"_HTML_";
 <h2>‹L–No[$namber] ‚Ì•ÒW</h2>
 $msg
-<form action="$cgi_f" method="$met" name="post">$nf$pf
+<form action="$cgi_f" method="$met" name="post">$pf
 <input type="hidden" name="pass" value="$FORM{'pass'}">
 <input type="hidden" name="mode" value="h_w">
 <input type="hidden" name="namber" value="$namber"><input type="hidden" name="mo" value="$mo">
@@ -2055,7 +1989,7 @@ _HTML_
                     else{print"<option value=\"$_\">$ico2[$_]\n";}
                 }
                 print"</select> <small>(‰æ‘œ‚ğ‘I‘ğ/";
-                print"<a href=\"$cgi_f?mode=img&amp;$no$pp\"$TGT>ƒTƒ“ƒvƒ‹ˆê——</a>)</small></td></tr>\n";
+                print"<a href=\"$cgi_f?mode=img&amp;$pp\"$TGT>ƒTƒ“ƒvƒ‹ˆê——</a>)</small></td></tr>\n";
             }
             if($sel){
                 print"<tr><td>$SEL_T</td><td> <select name=\"sel\">\n";
@@ -2081,7 +2015,7 @@ _HTML_
                     print<<"_DEL_";
 E‚±‚±‚©‚çƒtƒ@ƒCƒ‹íœ‚Å‚«‚Ü‚·B<br>
 <table summary="delete" width="90\%">$Pr</table>
-<form action="$cgi_f">$nf$pf
+<form action="$cgi_f">$pf
 <input type="hidden" name="mode" value="h_w"><input type="hidden" name="pass" value="$FORM{"pass"}">
 <input type="hidden" name="IMD" value="$namber"><input type="submit" value="ƒtƒ@ƒCƒ‹‚ğíœ">
 </form><hr width="95\%">
@@ -2090,7 +2024,7 @@ _DEL_
                     print<<"_DEL_";
 <ul>
 E‚±‚±‚©‚çƒtƒ@ƒCƒ‹ƒAƒbƒv‚Å‚«‚Ü‚·B<br>
-<form action="$cgi_f" method="$met" enctype="multipart/form-data">$nf$pf
+<form action="$cgi_f" method="$met" enctype="multipart/form-data">$pf
 _DEL_
                     print 'File <input type="file" name="ups" size="60" ' . "\"$ff>@<input type=\"submit\" value=\"‘—M\">";
                     print '<ul>ƒAƒbƒv‰Â”\\Šg’£q=&gt;';
@@ -2399,14 +2333,14 @@ foreach(0..1){
 # deleted $pass from html form : non needed : $pass => --pass--
         print<<"_EDIT_";
 <hr><strong>¡ $Dcom[$_]‚Ì’Ç‰Á</strong>
-<form action="$cgi_f" method="$met"><input type="hidden" name="mode" value="Den">$nf$pf
+<form action="$cgi_f" method="$met"><input type="hidden" name="mode" value="Den">$pf
 <input type="hidden" name="pass" value="--pass--"><input type="hidden" name="m" value="Add:$Deny[$_]">
 $Dcom[$_] /<input type="text" name="u" size="25" value="$mo"> (—á/cj-c.com)
 _EDIT_
         print<<"_EDIT_";
 <input type="submit" value="’Ç ‰Á">
 </form><strong>¡ $Deny[$_] ‚É“o˜^Ï‚İ‚Ì$Dcom[$_]</strong>
-<form action="$cgi_f" method="$met"><input type="hidden" name="mode" value="Den">$nf$pf
+<form action="$cgi_f" method="$met"><input type="hidden" name="mode" value="Den">$pf
 <input type="hidden" name="pass" value="--pass--"><input type="hidden" name="m" value="Del:$Deny[$_]">
 _EDIT_
         foreach(0..$#deny){
@@ -2421,7 +2355,7 @@ _EDIT_
 <li>‚±‚ÌCGI‚Ì‚ ‚éƒfƒBƒŒƒNƒgƒŠ‚Éì¬‚µ‚Ü‚·(‚±‚ÌƒfƒBƒŒƒNƒgƒŠ‚Ìƒp[ƒ~ƒbƒVƒ‡ƒ“‚ª777or755 ‚Å‚ ‚é•K—v‚ª‚ ‚è‚Ü‚·)B</li>
 <li>‚±‚±‚Å‚¤‚Ü‚­ì¬‚Å‚«‚È‚¢ê‡‚Í“¯–¼ƒtƒ@ƒCƒ‹‚ğFTP‚©‚çì¬‚µ‚Ä‚­‚¾‚³‚¢(ƒp[ƒ~ƒbƒVƒ‡ƒ“:666)</li>
 </ul>
-<form action="$cgi_f" method="$met"><input type="hidden" name="mode" value="Den">$nf$pf
+<form action="$cgi_f" method="$met"><input type="hidden" name="mode" value="Den">$pf
 <input type="hidden" name="pass" value="--pass--"><input type="hidden" name="m" value="Make:$Deny[$_]">
 <input type="submit" value="$Deny[$_] ‚ğì¬‚·‚é">
 </form>
@@ -2593,7 +2527,7 @@ while (<LOG>) {
         if($Top_t && $Res_T==0 && $Rno < $LiMax){
             $Rno++; $PAH=$alk_su*$K; if(($PAH) < $Rno){$PAL="&amp;page=$PAH"; $K++;} $L_3=$Rno-1;
             if(($page+$alk_su)>=$Rno && ($page)<$Rno){$List.="<a href=\"#$TOya\">$n{$namber}$d{$namber}($N{$namber})</a> |\n"; $TOya++;}
-            else{$List.="<a href=\"$cgi_f?mode=res&amp;namber=$namber&amp;page=&amp;$no$pp\">$n{$namber}$d{$namber}($N{$namber})</a> |\n";}
+            else{$List.="<a href=\"$cgi_f?mode=res&amp;namber=$namber&amp;page=&amp;$pp\">$n{$namber}$d{$namber}($N{$namber})</a> |\n";}
         }
         $news=""; $On=1;
     }
@@ -2612,7 +2546,7 @@ if($Res_T){
                 $space,$end,$type,$del,$ip,$tim) = split(/<>/,$NEW[$_]);
             $Rno++; $PAH=$alk_su*$K; if(($PAH) < $Rno){$PAL="&amp;page=$PAH"; $K++;} $L_3=$Rno-1;
             if(($page+$alk_su)>=$Rno && ($page)<$Rno){$List.="<a href=\"#$L_3\">$n{$namber}$d{$namber}($N{$namber})</a> |\n";}
-            else{$List.="<a href=\"$cgi_f?mode=res&amp;namber=$namber&amp;page=&amp;$no$pp\">$n{$namber}$d{$namber}($N{$namber})</a> |\n";}
+            else{$List.="<a href=\"$cgi_f?mode=res&amp;namber=$namber&amp;page=&amp;$pp\">$n{$namber}$d{$namber}($N{$namber})</a> |\n";}
         }
     }
 }
@@ -2633,8 +2567,8 @@ if($page_end >= $end_data){$page_end = $end_data;}
 $Pg=$page+1; $Pg2=$page_end+1;
 $nl=$page_end+1;
 $bl=$page-$alk_su;
-if($bl >= 0){$Bl="<a href=\"$cgi_f?mode=alk&amp;page=$bl&amp;$no$pp$Wf\">"; $Ble="</a>";}
-if($page_end ne $end_data){$Nl="<a href=\"$cgi_f?mode=alk&amp;page=$nl&amp;$no$pp$Wf\">"; $Nle="</a>";}
+if($bl >= 0){$Bl="<a href=\"$cgi_f?mode=alk&amp;page=$bl&amp;$pp$Wf\">"; $Ble="</a>";}
+if($page_end ne $end_data){$Nl="<a href=\"$cgi_f?mode=alk&amp;page=$nl&amp;$pp$Wf\">"; $Nle="</a>";}
 print"<div class=\"Caption03l\">‘S $total ƒXƒŒƒbƒh’† $Pg ` $Pg2 ”Ô–Ú‚ğ•\\¦</div>\n";
 
 $Plink="<div class=\"Caption01c\"><strong>‘Sƒy[ƒW</strong> /\n"; $a=0;
@@ -2642,14 +2576,14 @@ $a=0;
 for($i=0;$i<=$page_;$i++){
     $af=$page/$alk_su;
     if($i != 0){$Plink.=" ";}
-    if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}else{$Plink.="[<a href=\"$cgi_f?mode=alk&amp;page=$a&amp;$no$pp$Wf\">$i</a>]\n";}
+    if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}else{$Plink.="[<a href=\"$cgi_f?mode=alk&amp;page=$a&amp;$pp$Wf\">$i</a>]\n";}
     $a+=$alk_su;
 }
 $Plink.="</div>\n";
 $Plink.='<hr class="Hidden">';
-if($Res_T==1){$OJ1="<a href=\"$cgi_f?mode=alk&amp;W=W&amp;$no$pp\">•ÔMÅV‡</a>\n"; $OJ2="“Še‡"; $OJ3="<a href=\"$cgi_f?mode=alk&amp;W=R&amp;$no$pp\">‹L–”‡</a>\n";}
-elsif($Res_T==2){$OJ1="<a href=\"$cgi_f?mode=alk&amp;W=W&amp;$no$pp\">•ÔMÅV‡</a>\n"; $OJ2="<a href=\"$cgi_f?mode=alk&amp;W=T&amp;$no$pp\">“Še‡</a>"; $OJ3="‹L–”‡\n";}
-else{$OJ1="•ÔMÅV‡"; $OJ2="<a href=\"$cgi_f?mode=alk&amp;W=T&amp;$no$pp\">“Še‡</a>\n"; $OJ3="<a href=\"$cgi_f?mode=alk&amp;W=R&amp;$no$pp\">‹L–”‡</a>\n";}
+if($Res_T==1){$OJ1="<a href=\"$cgi_f?mode=alk&amp;W=W&amp;$pp\">•ÔMÅV‡</a>\n"; $OJ2="“Še‡"; $OJ3="<a href=\"$cgi_f?mode=alk&amp;W=R&amp;$pp\">‹L–”‡</a>\n";}
+elsif($Res_T==2){$OJ1="<a href=\"$cgi_f?mode=alk&amp;W=W&amp;$pp\">•ÔMÅV‡</a>\n"; $OJ2="<a href=\"$cgi_f?mode=alk&amp;W=T&amp;$pp\">“Še‡</a>"; $OJ3="‹L–”‡\n";}
+else{$OJ1="•ÔMÅV‡"; $OJ2="<a href=\"$cgi_f?mode=alk&amp;W=T&amp;$pp\">“Še‡</a>\n"; $OJ3="<a href=\"$cgi_f?mode=alk&amp;W=R&amp;$pp\">‹L–”‡</a>\n";}
 print"<div class=\"Caption01r\">e‹L–‚Ì‡”Ô [ $OJ1 / $OJ2 / $OJ3 ]</div>\n";
 print"$Plink<br>\n";
 if($Top_t){
@@ -2698,7 +2632,7 @@ if($type){print"</div>\n";}
             for($i=0;$i<=$RC_;$i++){
                 if($i){$St=$i*$ResHy; $En=$St+$ResHy-1; if($RC+1<=$En){$En=$RC;}}
                 else{$En=$ResHy-1; if($RC<$En){$En=$RC;} $St="e";}
-                print"[<a href=\"$cgi_f?mode=res&amp;namber=$nam&amp;rev=$r&amp;page=$a&amp;$no$pp\">$St ` $En</a>]\n";
+                print"[<a href=\"$cgi_f?mode=res&amp;namber=$nam&amp;rev=$r&amp;page=$a&amp;$pp\">$St ` $En</a>]\n";
                 $a+=$ResHy;
             }
             if($Dk){print"<br>($DkŒ‚Ííœ‹L–)\n";}
@@ -2719,10 +2653,24 @@ print"<hr>\n";
 # -> ‚Æ‚Ù‚Ù‚Ìƒ‰ƒEƒ“ƒW‚ğQl‚É‚³‚¹‚Ä‚¢‚½‚¾‚«‚Ü‚µ‚½ => http://tohoho.wakusei.ne.jp/
 #
 sub size {
-if($Ent==0 && $fimg){$fimg=$no_ent; $A=0;}
-if($_[0]){$FORM{"min"}=2;}else{if($CookOn eq ""){&get_("M"); $CookOn=1;}}
-$A=0; $I=0;
-if($fimg eq "img" && $FORM{'min'}==0){
+    if (($Ent == 0) && $fimg) {
+        $fimg = $no_ent;
+        $A = 0;
+    }
+    if ($_[0]) {
+        $FORM{"min"} = 2;
+    } else {
+        if ($CookOn eq "") {
+            $FORM{'min'} = Forum->cgi->cookie('Cmin');
+            if ($FORM{'min'}) {
+                $FORM{'min'} = 0;
+            }
+            $CookOn=1;
+        }
+    }
+    $A=0;
+    $I=0;
+    if($fimg eq "img" && $FORM{'min'}==0){
     $Cg=1; $Wn=$W2; $Hn=$H2; $IW=0; $IH=0;
     if($ico=~/.gif$/i){ #GIF
         open(GIF,"$i_dir/$ico");
@@ -2802,12 +2750,12 @@ sub ent_ {
 &hed_("Permit");
 print <<"_ENT_";
 <table summary="allow"><tr><th>ƒtƒ@ƒCƒ‹/‹L–•\\¦‹–‰Â</th></tr></table><br>
-<a href="$cgi_f?$no$pp"> Œf¦”Â‚É–ß‚é</a> / <a href="$cgi_f?mode=del&amp;pass=$FORM{"pass"}&amp;$no$pp">’ÊíŠÇ—ƒ‚[ƒh</a>
+<a href="$cgi_f?$pp"> Œf¦”Â‚É–ß‚é</a> / <a href="$cgi_f?mode=del&amp;pass=$FORM{"pass"}&amp;$pp">’ÊíŠÇ—ƒ‚[ƒh</a>
 ‹–‰Â‚·‚é/–¢‹–‰Â‚É‚·‚éƒtƒ@ƒCƒ‹‚ğƒ`ƒFƒbƒN‚µAƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚Ä‰º‚³‚¢B
 ƒtƒ@ƒCƒ‹íœ‚ğƒ`ƒFƒbƒN‚µ‚Äƒ{ƒ^ƒ“‚ğ‰Ÿ‚·‚Æƒtƒ@ƒCƒ‹‚Ì‚İ‚ğíœ‚Å‚«‚Ü‚·B
 ‹L–‚Ì‚İ‚Ì•\\¦‹–‰Â‚Íˆê“x‹–‰ÂÏ‚İ‚É‚·‚é‚ÆA–¢‹–‰Â‚É–ß‚¹‚Ü‚¹‚ñ!
 
-<form action="$cgi_f" method="$met">$nf$pf
+<form action="$cgi_f" method="$met">$pf
 <input type="hidden" name="mode" value="ent"><input type="hidden" name="pass" value="$FORM{"pass"}">
 <select name="check">
 <option value="1">‘S–¢‹–‰Â‹L–ƒ`ƒFƒbƒN
@@ -2816,7 +2764,7 @@ print <<"_ENT_";
 _ENT_
 print <<"_ENT_";
 <input type="submit" value="Às"></form><br>
-<form action="$cgi_f" method="$met">$nf$pf
+<form action="$cgi_f" method="$met">$pf
 <input type="hidden" name="mode" value="h_w"><input type="hidden" name="mo" value="1">
 <input type="hidden" name="pass" value="2"$FORM{"pass"}">
 _ENT_
@@ -2844,14 +2792,14 @@ if((!$name)||($name eq ' ')||($name eq '@')){$name=$noname;}
         if($tag){ $comment =~ s/</&lt;/g; $comment =~ s/>/&gt;/g; }
         if(length($comment) > 100){
             $comment=substr($comment,0,98); $comment=$comment . '..';
-            $comment.="<a href=\"$cgi_f?mode=one&amp;namber=$nam&amp;pass=$FORM{'pass'}&amp;$no$pp\"$TGT>‘S•¶</a>";
+            $comment.="<a href=\"$cgi_f?mode=one&amp;namber=$nam&amp;pass=$FORM{'pass'}&amp;$pp\"$TGT>‘S•¶</a>";
         }
         if($k){$BG=""; $k=0;}else{$BG=""; $k=1;}
         print <<"_ENT_";
 <tr$BG><th><input type="checkbox" name="ENT" value="$nam$check">-$eok</th>
 <td nowrap>#$nam $Re<br>„¥$name [$Ip]<br>
 „¤<small>($date$url)</small></td>
-<td>$comment<a href="$cgi_f?mode=one&amp;namber=$nam&amp;$no$pp"$TGT></a></td>
+<td>$comment<a href="$cgi_f?mode=one&amp;namber=$nam&amp;$pp"$TGT></a></td>
 <td><a href="$i_Url/$ico"$TGT>$ico</a><br>($Size\Bytes)</td>
 _ENT_
 print "<th><input type=\"checkbox\" name=\"IMD\" value=\"$nam\"></th></tr>";
@@ -2869,11 +2817,16 @@ print "<br><input type=\"submit\" value=\"‹–‰Â/–¢‹–‰Â ƒtƒ@ƒCƒ‹íœ\"></form>\n";
 # -> ƒAƒbƒvƒtƒ@ƒCƒ‹•\¦Œ`®‚Ì•ÏX‚È‚Ç(minf_)
 #
 sub minf_ {
-if($FORM{"min"} eq ""){&get_("M");}
+    if ($FORM{"min"} eq "") {
+        $FORM{'min'} = Forum->cgi->cookie('Cmin');
+        if ($FORM{'min'}) {
+            $FORM{'min'} = 0;
+        }
+    }
 if($FORM{"min"}==1){$S="";$S2=" selected";$S3="";}
 elsif($FORM{"min"}==2){$S="";$S2="";$S3=" selected";}
 else{$S2="";$S=" selected";$S3="";}
-print"<form action=\"$cgi_f\" method=\"$met\">$nf$pf";
+print"<form action=\"$cgi_f\" method=\"$met\">$pf";
 if($mas_c){print"E•\\¦‹–‰Â‚ªo‚é‚Ü‚Åƒtƒ@ƒCƒ‹‚Í<img src=\"$i_Url/$no_ent\">‚Å•\\¦‚³‚ê‚Ü‚·B<br>\n";}
 if($_[0]){print"<input type=\"hidden\" name=\"H\" value=\"$_[0]\">";}
 print <<"_KEY_";
@@ -2896,7 +2849,7 @@ sub f_a_ {
 &hed_("All Up File");
 print <<"_ENT_";
 <h2>ƒtƒ@ƒCƒ‹ˆê——</h2>
-<a href="$cgi_f?$no$pp"> Œf¦”Â‚É–ß‚é</a>
+<a href="$cgi_f?$pp"> Œf¦”Â‚É–ß‚é</a>
  ƒAƒbƒv‚³‚ê‚½ƒtƒ@ƒCƒ‹‚Ì‚İ‚Ìˆê——‚Å‚·B
 _ENT_
 @ICO=();
@@ -2919,7 +2872,7 @@ if($page_){
     for($i=0;$i<=$page_;$i++){
         $af=$page/$Ico_kp;
         if($i != 0){$KL.="| ";}
-        if($i eq $af){$KL.="<strong>$i</strong>\n";}else{$KL.="<a href=\"$cgi_f?mode=f_a&amp;page=$a&amp;$no$pp\">$i</a>\n";}
+        if($i eq $af){$KL.="<strong>$i</strong>\n";}else{$KL.="<a href=\"$cgi_f?mode=f_a&amp;page=$a&amp;$pp\">$i</a>\n";}
         $a+=$Ico_kp;
     }
     $KL.='<hr size="1" width="80%">';
@@ -2938,7 +2891,7 @@ foreach ($page..$page_end) {
     elsif($TOPH==1){$MD="mode=one&amp;namber=$nam&amp;type=$ty&amp;space=$sp";}
     elsif($TOPH==2){$MD="mode=al2&amp;namber="; if($ty){$MD.="$ty";}else{$MD.="$nam";}}
     print"<tr><td align=\"center\"><br><table summary=\"follow\"><tr><td align=\"center\">$Pr</td></tr></table><br>\n";
-    print"<strong>[<a href=\"$cgi_f?$MD&amp;$no$pp\">•ÔMƒy[ƒW</a>]</strong><br></td></tr>\n";
+    print"<strong>[<a href=\"$cgi_f?$MD&amp;$pp\">•ÔMƒy[ƒW</a>]</strong><br></td></tr>\n";
     $i++;
     if($i==30){print"</table>"; $i=0; $TB=0;}
 }
@@ -3129,8 +3082,6 @@ sub allfooter ($) {
     $tmplVars{'srch'} = $srch;
     $tmplVars{'met'} = $met;
     $tmplVars{'log'} = $log;
-    $tmplVars{'nf'} = $nf;
-    $tmplVars{'pf'} = $pf;
     $tmplVars{'word'} = $word;
     $tmplVars{'NS'} = $NS;
     $tmplVars{'total'} = $total;
@@ -3148,9 +3099,6 @@ sub allfooter ($) {
 #  rets : none
 sub man_ {
     &hed_("Help");
-    $tmplVars{'TrON'} = $TrON;
-    $tmplVars{'TpON'} = $TpON;
-    $tmplVars{'ThON'} = $ThON;
     $tmplVars{'all_i'} = $all_i;
     $tmplVars{'alk_su'} = $alk_su;
     $tmplVars{'alk_rm'} = $alk_rm;
@@ -3158,7 +3106,6 @@ sub man_ {
     $tmplVars{'new_i'} = $new_i;
     $tmplVars{'M_Rank'} = $M_Rank;
     $tmplVars{'i_mode'} = $i_mode;
-    $tmplVars{'klog_s'} = $klog_s;
     $tmplVars{'max'} = $max;
     $tmplVars{'r_max'} = $r_max;
     $tmplVars{'end_f'} = $end_f;
@@ -3180,28 +3127,24 @@ sub man_ {
 sub new_ {
     if (($topok == 0) &&
         (Forum->user->validate_password_admin($FORM{'pass'}) == 0)) {
-#    if ($topok == 0 && ($FORM{'pass'} ne "$pass")) {
         &er_('newpasserr');
     }
-    &hed_("Write New Message", "1");
-    $tmplVars{'TrON'} = $TrON;
-    $tmplVars{'TpON'} = $TpON;
-    $tmplVars{'ThON'} = $ThON;
+    &get_uid();
+    &hed_("Write New Message");
     $obj_template->process('new.h2.tpl', \%tmplVars);
     &forms_;
     &foot_;
 }
+
 ##------------------------------------------------------------------------------
-# hed_ - generate html header
+# get_uid - generate UID parameter
 #  vars : 
-#  tmpl : htmlhead.tpl
-#  rets : none
-sub hed_ {
-#    print "Content-type: text/html; charset=Shift_JIS\n\n";
-    print Forum->cgi->header();
-    if ($UID && ($_[1] == 1)) {
-        &get_("I");
-        if ($pUID eq "n") {
+#  tmpl : none
+#  rets : uid ($pUID)
+sub get_uid {
+    if ($UID) {
+        $pUID = Forum->cgi->cookie('UID');
+        if ($pUID) {
             $pUID = "";
             @UID = ('a'..'z','A'..'Z','0'..'9');
             srand;
@@ -3213,13 +3156,17 @@ sub hed_ {
         }
         if ($pUID eq "n") {$pUID="–¢”­s"; }
     }
-    $tmplVars{'fsi'} = $fsi;
+    return $pUID;
+}
+
+##------------------------------------------------------------------------------
+# hed_ - generate html header
+#  vars : (title)
+#  tmpl : htmlhead.tpl
+#  rets : none
+sub hed_ {
+    print Forum->cgi->header();
     $tmplVars{'htmltitle'} = $_[0];
-    $tmplVars{'text'} = $text;
-    $tmplVars{'link'} = $link;
-    $tmplVars{'vlink'} = $vlink;
-    $tmplVars{'bg'} = $bg;
-    $tmplVars{'back'} = $back;
 
     $curT = 0;
     if ($mode eq "man")      {$curT = 1; }
@@ -3244,18 +3191,9 @@ sub hed_ {
         }
     }
     $tmplVars{'curT'} = $curT;
-    $tmplVars{'klog_s'} = $klog_s;
     $tmplVars{'M_Rank'} = $M_Rank;
-    $tmplVars{'topok'} = $topok;
-    $tmplVars{'TrON'} = $TrON;
-    $tmplVars{'TpON'} = $TpON;
-    $tmplVars{'ThON'} = $ThON;
     $tmplVars{'i_mode'} = $i_mode;
-    $tmplVars{'srch'} = $srch;
-    $tmplVars{'no'} = $no;
-    $tmplVars{'pp'} = $pp;
     $tmplVars{'Wf'} = $Wf;
-    $tmplVars{'cgi_f'} = $cgi_f;
     $tmplVars{'kiji_exist'} = $kiji_exist;
     if ($KLOG) {
         $tmplVars{'KLOG'} = $KLOG;
@@ -3269,11 +3207,8 @@ sub hed_ {
 #  tmpl : htmlfoot.tpl
 sub foot_ {
     $tmplVars{'kanrimode'} = $kanrimode;
-    $tmplVars{'cgi_f'} = $cgi_f;
     $tmplVars{'met'} = $met;
-    $tmplVars{'nf'} = $nf;
     $tmplVars{'ff'} = $ff;
-    $tmplVars{'pf'} = $pf;
     $tmplVars{'i_mode'} = $i_mode;
     $tmplVars{'mas_c'} = $mas_c;
     $tmplVars{'TGT'} = $TGT;
@@ -3372,7 +3307,6 @@ sub d_code_ {
     $delkey=$FORM{"delkey"};
     $mo    =$FORM{"mo"};
     $send = $FORM{"send"};
-    $no    =$FORM{"no"};
     $W     =$FORM{"W"};
     $H     =$FORM{"H"};
     $txt   =$FORM{"txt"};
@@ -3396,10 +3330,7 @@ sub pas_ {
     $tmplVars{'cgi_f'} = $cgi_f;
     $tmplVars{'met'} = $met;
     $tmplVars{'ff'} = $ff;
-    $tmplVars{'nf'} = $nf;
     $tmplVars{'fm'} = $fm;
-    $tmplVars{'no'} = $no;
-    $tmplVars{'s_ret'} = $s_ret;
     $obj_template->process('password.tpl', \%tmplVars);
     &foot_;
 }
@@ -3409,8 +3340,7 @@ sub pas_ {
 #  vars : 
 #  tmpl : 
 sub forms_ {
-    if ($s_ret && ($P ne "$s_pas")) {&er_('cannot_write'); }
-    elsif ($KLOG) {&er_('cannot_write_oldlogs'); }
+    if ($KLOG) {&er_('cannot_write_oldlogs'); }
 
     my $obj_captcha = new Forum::Captcha;
     $tmplVars{'md5sum'} = $obj_captcha->generate($obj_config->GetParam('captcha_length'));
@@ -3424,7 +3354,17 @@ sub forms_ {
         if ($FORM{'end'}) {$PVC = " checked"; }
 #        if ($FORM{'send'}) {$PVE = " selected"; }
     } else {
-        &get_;
+        $c_name  = Forum->cgi->cookie('name');
+        $c_email = Forum->cgi->cookie('email');
+        $c_url   = Forum->cgi->cookie('url');
+        $c_key   = Forum->cgi->cookie('delkey');
+        $c_pub   = Forum->cgi->cookie('pub');
+        $c_ico   = Forum->cgi->cookie('ico');
+        $c_font  = Forum->cgi->cookie('font');
+        $c_hr    = Forum->cgi->cookie('hr');
+        if ($SEL_C) {$c_sel = Forum->cgi->cookie('sel'); }
+        if ($TXT_C) {$c_txt = Forum->cgi->cookie('txt'); }
+
         if ($FORM{'type'} eq "") {$sp = 0; }
         elsif ($FORM{'type'} == 0) {$sp = 15; }
         elsif ($FORM{'type'} > 0) {$sp = $space + 15; }
@@ -3474,8 +3414,6 @@ sub forms_ {
     $tmplVars{'nams'} = $nams;
     $tmplVars{'namber'} = $namber;
     $tmplVars{'sp'} = $sp;
-    $tmplVars{'nf'} = $nf;
-    $tmplVars{'pf'} = $pf;
     $tmplVars{'Hi'} = $Hi;
     $tmplVars{'he_tp'} = $he_tp;
     $tmplVars{'c_name'} = $c_name;
@@ -3503,11 +3441,6 @@ sub forms_ {
     $tmplVars{'BBFACE'} = $BBFACE;
     $tmplVars{'FI'} = $FI;
 
-    if (@fonts) {
-        if ($c_font eq '') {$c_font = $font[0]; }
-        $tmplVars{'fonts'} = \@fonts;
-        $tmplVars{'font_def'} = $c_font;
-    }
     if (@hr) {
         if ($c_hr eq '') {$c_hr = $hr[0]; }
         $tmplVars{'hr'} = \@hr;
@@ -3573,95 +3506,11 @@ sub img_ {
   $tmplVars{'icon_master'} = \@mas_i;
   $tmplVars{'icon_dir'} = $IconDir;
   $tmplVars{'cgi_f'} = $cgi_f;
-  $tmplVars{'no'} = $no;
-  $tmplVars{'pp'} = $pp;
   $tmplVars{'icon_1'} = \@ico1;
   $obj_template->process('img_.tpl', \%tmplVars);
   &foot_;
 }
 
-##------------------------------------------------------------------------------
-# a_ - display all boards in database
-#  vars : 
-#  tmpl : a_.tpl
-sub a_ {
-#    print "Content-type: text/html\n\n";
-    print Forum->cgi->header();
-
-    $tmplVars{'fsi'} = $fsi;
-    $tmplVars{'text'} = $text;
-    $tmplVars{'link'} = $link;
-    $tmplVars{'vlink'} = $vlink;
-    $tmplVars{'bg'} = $bg;
-    $tmplVars{'ver'} = $ver;
-    if ($back ne '') {$tmplVars{'back'} = $back; }
-
-    my @resItems;
-    foreach (0..$#set) {
-        if (! $set[$_]) {next; }
-        unless(-e $set[$_]) {next; }
-        require "$set[$_]";
-        $no = $_;
-        @RES = ();
-        $N = 0;
-        open (LOG, "$log") || &er_("Can't open $log");
-        while (<LOG>) {
-            ($namber, $date, $name, $email, $d_may, $comment, $url, $space,
-             $end, $type, $del, $ip, $tim) = split(/<>/, $_);
-            if ($tim eq "") {next; }
-            if ($type) {
-                $ti = sprintf("%011d", $tim);
-                if ($date) {
-                    unshift(@RES, "$ti<>$name<>$tim<>");
-                }
-                $N++;
-            } else {
-                $ti = sprintf("%011d", $tim);
-                if ($date) {
-                    unshift(@RES, "$ti<>$name<>$tim<>");
-                }
-                $N++;
-                last;
-            }
-        }
-        close(LOG);
-        @lines = ();
-        @RES = sort(@RES);
-        @RES = reverse(@RES);
-        if (@RES) {
-            ($Ti, $Name, $Tim) = split(/<>/, $RES[0]);
-            if ($TOPH == 0) {$MD = "mode=res&amp;namber=$namber&amp;page=0"; }
-            elsif ($TOPH == 1) {$MD = "mode=all&amp;namber=$namber&amp;type=0&amp;space=0"; }
-            elsif ($TOPH == 2) {$MD = "mode=al2&amp;namber=$namber"; }
-            &time_($Tim);
-        } else {
-            $namber = "#";
-            $d_may = "µ­»ö¤¬¤¢¤ê¤Ş¤»¤ó!";
-            $date = "/";
-            $MD = "";
-            $Name = "/";
-        }
-        if ((! $Name) || ($Name eq ' ') || ($Name eq '¡¡')) {
-            $Name = $noname;
-        }
-        my %resOne;
-        $resOne{'title'}  = $title;
-        $resOne{'cgi_f'}  = $cgi_f;
-        $resOne{'no'}     = $no;
-        $resOne{'namber'} = $namber;
-        $resOne{'MD'}     = $MD;
-        $resOne{'d_may'}  = $d_may;
-        $resOne{'N'}      = $N;
-        $resOne{'Name'}   = $Name;
-        $resOne{'date'}   = $date;
-        push(@resItems, \%resOne);
-    }
-
-    $tmplVars{'resources'} = \@resItems;
-    $obj_template->process('a_.tpl', \%tmplVars);
-
-    &foot_;
-}
 
 ##------------------------------------------------------------------------------
 # cookdel - delete cookie
@@ -3681,8 +3530,6 @@ sub cookdel{
     $tmplVars{'cookie_mode'} = $mo;
     $tmplVars{'UID'} = $UID;
     $tmplVars{'cgi_f'} = $cgi_f;
-    $tmplVars{'no'} = $no;
-    $tmplVars{'pp'} = $pp;
     $obj_template->process('cookdel.tpl', \%tmplVars);
     &foot_;
 }
@@ -3766,7 +3613,6 @@ sub read {
     $tmplVars{'out_sort'} = \@outSort;
     @N = reverse(@N);
     $tmplVars{'N'} = \@N;
-    $tmplVars{'klog_s'} = $klog_s;
     $tmplVars{'klog_h'} = $klog_h;
 
     $tmplVars{'srch'} = $srch;
@@ -3839,7 +3685,8 @@ sub res_ {
         $page = $FORM{'page'};
     }
     $PAGE = $page / $ResHy;
-    &hed_("One Thread Res View / $TitleHed / Page: $PAGE", "1");
+    &get_uid();
+    &hed_("One Thread Res View / $TitleHed / Page: $PAGE");
     $page_ = int($total / $ResHy);
     $end_data = @TOP-1;
     $page_end = $page + ($ResHy - 1);
@@ -3852,8 +3699,6 @@ sub res_ {
     $tmplVars{'ResHy'} = $ResHy;
     $tmplVars{'page_'} = $page_;
     $tmplVars{'form_namber'} = $FORM{'namber'};
-    $tmplVars{'no'} = $no;
-    $tmplVars{'pp'} = $pp;
     $tmplVars{'Dk'} = $Dk;
     $i = 0;
     $ToNo = $page;
@@ -3872,7 +3717,6 @@ sub res_ {
         $ToNo++;
     }
     $tmplVars{'article_html'} = \@article_html;
-    $tmplVars{'TrON'} = $TrON;
     $tmplVars{'all_i'} = $all_i;
 
     $bl = $page - $ResHy;

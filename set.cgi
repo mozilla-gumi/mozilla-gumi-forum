@@ -7,49 +7,6 @@
 ## 全ての変数は$conf{}に移行予定です。
 ## 全ての変数が$conf{}に移行後、設定ファイルはテキストベースになる予定です。
 
-#######################################################################
-## MODIFICATION LOG
-##
-## Date       Author       Description
-## ----       ------       -----------
-## xx/01/2002 Ryuzi Kambe  Initial Release
-##                         Customized Child Tree 5.1 for mozilla.gr.jp.
-##                          1. Set color scheme
-##                          2. Set/disabled some variables
-##
-## 03/02/2002 Gashu        Additional customization
-##                          1. Set outliner images
-##                          2. Changed styles to refer external CSS
-##                              VARIABLE: ($STYLE)
-##                          3. Changed description for fixed box
-##                          4. Changed max length of title
-##                              VARIABLE: ($t_max)
-##                          5. Added related links(optional)
-##                              VARIABLE: ($linkrel)
-##                          6. Added additional help comments(optional)
-##                              VARIABLE: ($helpadd)
-##                          7. Added caption to main logo
-##                              VARIABLE: ($talt)
-##
-## 22/02/2002 Gashu        Additional customization
-##                          1. Enabled alternate style sheets
-##                          2. Enabled some meta names
-##                          3. Added a description about fixed font to Note.
-##
-## 08/03/2002 Gashu        Set titles for link item.
-##
-## 21/04/2005 Tooyama      Set titles for link item 2nd and more.
-##
-## 25/03/2006 Makoto       Additional customization
-##                          1. Added custom header mode
-##                              VARIABLE: ($custom_header_mode)
-##                                        ($custom_header)
-##
-## 29/06/2006 Makoto       Delete "kanrimode = 2" description.
-##                         (Bug-jp 5233)
-##
-#######################################################################
-
 # オプションは基本的に以下のようにする
 #  0 : しない、不可能
 #  1 : する、可能
@@ -59,40 +16,12 @@ our %conf;
 
 #--- [基本設定] ----------------#
 $met   = "POST";		# 送信形式(POST or GET/ファイルアップを使う場合はPOST限定)
-    $tmplVars{'backurl'} = 'http://www.mozilla.gr.jp/';
-#$backurl="http://www.mozilla.gr.jp";	# 戻るURL(http://～でOK)
 $TOPH = 1;			# 初期表示(0=スレッド型 1=ツリー型 2=トピック型)
 $max  = 100;			# 親記事最大保持件数
 
-#--- [タイトル設定] ------------#
-##$title = "";		# タイトル => tmpl/head.tmpl
-##$tface = "Times New Roman";	# タイトルのフォント
-##$tsize = 6;			# タイトルのサイズ
-##$tcolor= "#ffffff";		# タイトルの色(16進数)
-    $tmplVars{'t_img'} = 'file/logo.gif';
-    $tmplVars{'twid'} = '186';
-    $tmplVars{'thei'} = '67';
-    $tmplVars{'talt'} = 'もじら組纏';
-#$t_img= "file/logo.gif";			# タイトル画像をURLで指定
-#$twid = "186";			#  〃 の横幅(ピクセル指定)
-#$thei = "67";			#  〃 の縦幅(　〃　)
-#$talt = "もじら組纏";			#  〃 キャプション(　〃　)
-
-#--- [色デザイン設定] ----------#
-$text = "#003366";		# 標準文字色指定(16進数)
-$bg   = "#C7D0D9";		# 背景色の指定  (〃)
-$link = "blue";		# 未リンク色の指定(〃)
-$vlink= "purple";		# 既リンク色の指定(〃)
-##$ttb  = "#C7D0D9";		# 汎用的な表上部色(〃)
-##$k_back="#FFFFFF";		# 記事の中の背景色(〃)
-##$t_back="#E0ECF6";		# 記事題名の背景色(〃)
-##$t_font="#008080";		# 記事題名の文字色(〃)
-##$res_f ="#666666";		# 引用記事の色    (〃)
-##$kijino="#008080";		# 記事NOの色      (〃)
-##$back = "";			# 背景画像をURLで指定(無いの場合は記入しない)
-
 #--- [記事投稿に関する設定] ----#
 $topok= 1;			# 親記事投稿はだれでも可能?(1=YES 0=管理者のみ)
+    $tmplVars{'topok'} = $topok;
 $he_tp= 0;			# 返信を親記事投稿者のみの権利にする?(1=YES 0=NO)
 $r_max= 100;		# 返信の限度数(0 にすると無制限)
 $Res_i= 0;			# 記事引用を任意にする?(1=任意 0=自動)
@@ -146,7 +75,7 @@ _END_
 
 
 #--- [ツリー表示設定] ----------*
-$TrON  = 1;			# ツリー表示を使う?(1=YES 0=NO)
+    $tmplVars{'TrON'}  = 1;			# ツリー表示を使う?(1=YES 0=NO)
 $a_max = 10;			# 1ページ表示ツリー数
 $obg   = "#E0ECF6";		# 親記事のツリー背景色(〃)
 $Keisen= 1;			# 罫線を表示する?(1=YES 0=NO)
@@ -157,7 +86,7 @@ $K_SP  = '<img src="file/1pix.gif" height="1" width="15" alt="">';			# 罫線(スペ
 $zure  = 6;			# ツリーのずれ調整(罫線OFFの場合有効)
 
 #--- [トピック表示設定] --------*
-$TpON  = 1;			# トピック表示を使う?(1=YES 0=NO)
+    $tmplVars{'TpON'}  = 1;			# トピック表示を使う?(1=YES 0=NO)
 $tab_m = 2;			# 1ページ表示テーブル数
 $tpmax = 10;			# テーブル1つ当りの表示トピック数
 $topic = 10;			# 1トピックの1ページ当りの表示数
@@ -165,7 +94,7 @@ $tp_hi = 0;			# トピック内容の初期配列(1=新着記事トップ 0=親トピックトップ)
 $tpend = 0;			# レス後の表示内容(0=トップ 1=レスしたトピック)
 
 #--- [スレッド表示設定] --------*
-$ThON  = 1;			# スレッド表示を使う?(1=YES 0=NO)
+    $tmplVars{'ThON'}  = 1;			# スレッド表示を使う?(1=YES 0=NO)
 $alk_su= 5;			# スレッド表示の際の親記事表示件数
 $alk_rm= 5;			# 1スレッド内に表示するレス記事数
 $Top_t = 1;			# 記事リストを表示する?(1=YES 0=NO)
@@ -180,9 +109,7 @@ $o_mail= 1;			# 投稿者にレス記事通知機能を使う?(1=YES 0=NO)
 $s_mail= '/var/qmail/bin/sendmail';	# sendmailパス
 $q_mail= 1;			# qmailの場合1にする
 
-#--- [パスワード制限設定] ------#
-$s_ret= 0;			# 記事を見る際の制限(0=しない 1=書くとき 2=書く&読むとき)
-$s_pas= "7777";			# 上記が1or2の場合のパスワード(半角英数2文字以上)
+
 
 #--- [カウンタ設定] ------------#
 $cou  = 1;			# カウンタの設置 (1=YES 0=NO)
@@ -196,8 +123,9 @@ $cloc = "../data/dat/c.loc";		# カウンタロックファイル
 
 #--- [ファイル名設定] ----------#
 $cgi_f= "./cbbs.cgi";		# このファイル
-if($ENV{HTTP_HOST} =~ /mozilla.gr.jp/){$cgi_f="./";}
+    $tmplVars{'cgi_f'} = './cbbs.cgi';
 $srch = "./srch.cgi";		# 検索/過去ログ閲覧用CGI
+    $tmplVars{'srch'} = './srch.cgi';
 $log  = "../data/dat/cbbs_log.cgi";		# 記録ファイル
 $lockf= "../data/dat/cbbs.loc";		# ロックファイル
 $bup  =  0;			# バックアップをとる? (NO=0 YES=x(x は更新頻度日数を入れる))
@@ -232,6 +160,7 @@ $klog_a= 1;			# 全過去ログ検索を許可する?(1=YES 0=NO)
 
 #--- [過去ログ関係] ------------#
 $klog_s= 1;			# 過去ログ機能を使う?(1=YES 0=NO)
+    $tmplVars{'klog_s'} = $klog_s;
 $klog_c= "../data/dat/klog.log";		# 過去ログ数のカウントファイル
 $klog_d= "../data/dat/";			# 過去ログ生成ディレクトリ
 $klog_l= 100;			# 過去ログ記録 KB 数
@@ -279,25 +208,6 @@ $i_ico = "i.gif";		# アイコンモードの画像代替画像(〃)
 $LogDel= 1;			# 過去ログ移行時ファイルを削除する?(1=YES 0=NO)
 
 
-#--- [フォームスタイル設定]-----#
-$fss  = 0;			# フォームのスタイルシート利用(1=YES 0=NO)
-
-# 上の項目が 1 の場合設定
-# わからない場合は初期設定のまま
-# $fst=StyleSheet $on/$off=JavaScrip
-#--------------------------------------------------------------------------------------------------
-$fst=<<"SS_";
-<STYLE TYPE="text/css">
-<!--
--->
-</STYLE>
-SS_
-# ↑は削除不可-------------------------------------------------------------------------------------
-# ● マウスが乗ったときや、フォーカスをえた時の動作
-#$on= "backgroundColor='#FDE8B5'\;";
-
-# ● マウスがどいたときや、フォーカスを失った時の動作
-#$off="backgroundColor='#FFFFFF'\;";
 
 #--- [アイコン設定] -------------------------------------------------------------------------------
 # @ico1 => ファイル名 (xxx.gif/yyy.jpg 等)
@@ -339,10 +249,6 @@ $Ico_km = "ktai_m.gif";		# 携帯端末からのミニアイコン(〃)
 @mas_m= ('masmin.gif','rob6_m.gif');
 @mas_p= ('7777','8888');
 
-#--- [選択文字色を設定] --------#
-# -> 文字色選択を使用する場合設定
-# -> 設定方法は @fonts = ('#xxxxxx','#yyyyyy','#zzzzzz') という風に
-@fonts= ('black','blue','green','aqua','red','pink','yellow');
 
 #--- [選択枠線色を設定] --------#
 # -> 枠線色選択を使用する場合設定
@@ -445,8 +351,6 @@ sub smile_decode{
 	}
 }
 
-$use_col=0;		#記事の文字色指定とその表示への適用 0:
-if(!$use_col){@fonts=();}
 $ua_select=1;
 
 $target_blank =0;		#新しい窓を開かせるかどうか。0:off しない場合は次の3行で抹殺します。

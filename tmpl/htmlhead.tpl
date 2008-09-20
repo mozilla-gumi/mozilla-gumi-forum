@@ -38,20 +38,17 @@
   <link rel="alternate stylesheet" type="text/css" href="jlp.css" title="未来版（JLP標準）">
   <link rel="alternate stylesheet" type="text/css" href="cjc.css" title="紅鮭版（CJ-C風）">
 
-  [% fsi %]
   <title>Mozilla-gumi Forum [[% htmltitle %]]</title>
 </head>
-<body text="[% text %]" link="[% link %]" vlink="[% vlink %]" bgcolor="[% bg %]"
-  [% IF back != '' %] background="[% back %]"[% END %]>
+<body text="#003366" link="blue" vlink="purple" bgcolor="#C7D0D9">
 
 <div class="banner">
   <h1>
-    <a href="[% backurl %]"><img src="[% t_img %]" width="[% twid %]"
-      height="[% thei %]" border="0" alt="[% talt %]"></a>
+    <a href="http://www.mozilla.gr.jp/"><img src="file/logo.gif" width="186"
+      height="67" border="0" alt="もじら組纏"></a>
     <a href="./">Mozilla-gumi Forum</a>
   </h1>
 </div>
-
 
 [% INCLUDE toolbar.inc.tpl %]
 
@@ -59,6 +56,6 @@
   <h2>指定された記事は削除されたか過去ログへ流れたため、<br>現行ログ内には存在しませんでした。</h2>
 [% END %]
 [% IF is_set(KLOG) %]
-  <h2>過去ログ表\示</h2><br><div class="Caption03l">過去ログ1 を表\示</div>
+  <h2>過去ログ表示</h2><br><div class="Caption03l">過去ログ1 を表示</div>
 [% END %]
 
