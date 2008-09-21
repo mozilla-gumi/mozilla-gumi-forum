@@ -23,7 +23,7 @@
 ‚æ‚ès‚¤‚±‚Æ‚ª‚Å‚«‚Ü‚·B</p>
 </form></div>
 
-[% IF use_password == 0 %]
+[% IF use_password != 0 %]
   <hr>
   <div class="Forms">
   <form action="[% cgi_f %]" method="[% met %]">[% nf %][% pf %]
