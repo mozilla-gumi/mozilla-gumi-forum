@@ -36,7 +36,7 @@
 <tr>
   <td rowspan="2"><strong>E ÉÅÅ[Éã</strong></td>
   <td>
-    <input type="text" name="email" value="[% c_email %]" size="40" maxlength="100" [% ff %]>
+    <input type="text" name="email" value="[% c_email %]" size="40" maxlength="100" [% ff %] disabled="disabled">
   </td>
 </tr>
   [% IF o_mail %][% PROCESS mbox %][% END %]
