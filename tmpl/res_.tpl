@@ -40,8 +40,8 @@
     <option value="nam">編集
     <option value="key">削除
   </select>
-  パスワード <input type="password" name="delkey" size="8"$ff>
-  <input type="submit" value="送信" $fm>
+  パスワード <input type="password" name="delkey" size="8">
+  <input type="submit" value="送信">
   </div>
   <hr />
 [% END %]

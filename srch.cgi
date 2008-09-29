@@ -15,6 +15,7 @@ $set[0] = "./set.cgi";
 
 # ---[設定ここまで]--------------------------------------------------------------------------------------------------
 &d_code_;
+Forum->template->set_vars('mode_id', 'search');
 
 $SetUpFile = $set[0];
 require $SetUpFile;
@@ -29,9 +30,9 @@ $pp = "";
 
 # ---[サブルーチンの読み込み/表示確定]-------------------------------------------------------------------------------
 if($mode eq "log"){&log_;}
-if($mode eq "del"){&del_;}
-if($mode eq "dl"){&dl_;}
-&srch_;
+elsif($mode eq "del"){&del_;}
+elsif($mode eq "dl"){&dl_;}
+else {&srch_;}
 exit;
 
 #--------------------------------------------------------------------------------------------------------------------
@@ -75,30 +76,9 @@ sub d_code_ {
 # -> HTMLヘッダを出力する(hed_)
 #
 sub hed_ {
-#    print "Content-type: text/html; charset=Shift_JIS\n\n";
     print Forum->cgi->header();
-    $obj_template->process('htmlhead.tpl', \%tmplVars);
-$BG="Act";
-if($mode eq "log"){$T1="$BG";}else{$T2="$BG";}
-if($klog_s){$klog_link="<a class=\"Menu$T1\" href=\"$srch?mode=log&amp;$pp\">過去ログ</a>\n";}
-if($M_Rank){$rank_link="<a class=\"Menu\" href=\"$cgi_f?mode=ran&amp;$pp\">発言ランク</a>\n";}
-if($topok){$New_link="<a class=\"Menu\" href=\"$cgi_f?mode=new&amp;$pp\">新規投稿</a>\n";}
-if($tmplVars{'TrON'}){$TrL="<a class=\"Menu\" href=\"$cgi_f?H=T&amp;$pp$Wf\">ツリー表\示</a>\n";}
-if($tmplVars{'TpON'}){$TpL="<a class=\"Menu\" href=\"$cgi_f?H=F&amp;$pp$Wf\">トピック表\示</a>\n";}
-if($tmplVars{'ThON'}){$ThL="<a class=\"Menu\" href=\"$cgi_f?mode=alk&amp;$pp$Wf\">スレッド表\示</a>\n";}
-if($i_mode){$FiL="<a class=\"Menu\" href=\"$cgi_f?mode=f_a&amp;$pp\">アップファイル一覧</a>\n";}
-$HEDF= <<"_HTML_";
-<hr class="Hidden">
-<div class="Menu">
-$New_link<a class="Menu" href="$cgi_f?mode=n_w&amp;$pp">新着記事</a>
-$TrL$ThL$TpL$rank_link$FiL<a class="Menu$T2" href="$srch?$pp">検索</a>
-$klog_link<a class="Menu" href="$cgi_f?mode=man&amp;$pp">ヘルプ</a>
-</div>
-<hr>
-
-_HTML_
-print"$HEDF";
-if($KLOG){print"<br>(現在 過去ログ$KLOG を表\示中)";}
+    Forum->template->process('htmlhead.tpl', \%tmplVars);
+    if ($KLOG) {print "<br>(現在 過去ログ$KLOG を表\示中)"; }
 }
 
 #--------------------------------------------------------------------------------------------------------------------
@@ -106,15 +86,7 @@ if($KLOG){print"<br>(現在 過去ログ$KLOG を表\示中)";}
 # -> HTMLフッタを出力する(foot_)
 #
 sub foot_ {
-print <<"_HTML_";
-$HEDF
-<div id="Credit">
-<!--著作権表\示 削除不可-->
-- <a href="http://www.cj-c.com/"$TGT>Child Tree</a> -<br>
-</div>
-</body></html>
-_HTML_
-exit;
+    Forum->template->process('htmlfoot.tpl', \%tmplVars);
 }
 #--------------------------------------------------------------------------------------------------------------------
 # [検索機能&表示]
@@ -143,7 +115,7 @@ $klog_msg</li>
 <hr class="Hidden">
 <form action="$srch" method="$Met">$pf<input type="hidden" name="no" value="0">
 <table class="Submittion"><tr>
-<td class="justify"><strong>キーワード</strong></td><td><input type="text" name="word" size="32" value="$word"$ff></td>
+<td class="justify"><strong>キーワード</strong></td><td><input type="text" name="word" size="32" value="$word"></td>
 <td class="justify"><strong>検索条件</strong></td>
 <td><select name="andor"><option value="and">(AND)<option value="or"$OC>(OR)</select></td></tr>
 <tr><td class="justify"><strong>検索範囲</strong></td><td><select name="logs"><option value="$log">(現在のログ)
@@ -168,18 +140,18 @@ if($FORM{"KYO"}){$CB=" checked";}
 if($FORM{"bigmin"}){$CB2=" checked"; $BM=0;}else{$BM=1;}
 print <<"_SS_";
 </select></td>
-<td class="justify"><strong>強調表\示</strong></td><td><input type="checkbox" name="KYO" value="1"$CB$fm>ON
+<td class="justify"><strong>強調表\示</strong></td><td><input type="checkbox" name="KYO" value="1"$CB>ON
 (自動リンクOFF)</td></tr>
 <tr><td class="justify"><strong>結果表\示件数</strong></td><td><select name="PAGE">
 _SS_
 foreach $KH (@klog_h){$S=""; if($klog_h==$KH){$S=" selected";} print"<option value=$KH$S>$KH件\n";}
 print <<"_SS_";
 </select></td>
-<td class="justify"><strong>記事No検索</strong></td><td><input type="checkbox" name="ALL" value="1"$KNS$fm>ON</td></tr>
-<tr><td colspan="2"><input type="checkbox" name="bigmin" value="1"$CB2$fm>大文字と小文字を区別する</td>
+<td class="justify"><strong>記事No検索</strong></td><td><input type="checkbox" name="ALL" value="1"$KNS>ON</td></tr>
+<tr><td colspan="2"><input type="checkbox" name="bigmin" value="1"$CB2>大文字と小文字を区別する</td>
 <td colspan="2" align="right">
-<input type="submit" value=" 検 索 "$fm>
-<input type="reset" value="リセット"$fm>
+<input type="submit" value=" 検 索 ">
+<input type="reset" value="リセット">
 </td></tr></table></form>$nowlog
 _SS_
 if($word ne "") {
@@ -369,7 +341,7 @@ $Pr
 $Smsg
 $t_com /$e$L$PLL
 <a href="$cgi_f?mode=al2&amp;namber=$KK&amp;$pp$IT"$TGT>関連記事表\示</a>
-チェック/<input type="checkbox" name="del" value="$nam"$fm></div></div><br>
+チェック/<input type="checkbox" name="del" value="$nam"></div></div><br>
 _HITCOM_
 
 
@@ -381,8 +353,8 @@ _HITCOM_
 print "</div><hr>$Plink\n$NLog";
 	if($kanrimode){
 	print <<"_KF_";
-<div align=right>パスワード/<input type=password name=pas size=4$ff>
-<input type=submit value="管理者削除用"$fm></form></div>
+<div align=right>パスワード/<input type=password name=pas size=4>
+<input type=submit value="管理者削除用"></form></div>
 _KF_
 	}
 }elsif($count == 0 && $word){print qq!<div class="Caption03l">該当する記事はありませんでした。</div>!;}
@@ -394,7 +366,8 @@ _KF_
 #
 
 sub log_ {
-&hed_("Past Log");
+    Forum->template->set_vars('mode_id', 'oldlog');
+    &hed_("Past Log");
 if($logs){
 	$logn=$logs;
 	$logn=~ s/$klogext//g; $logn=~ s/\.//; $logn=~ s/txt//; $logn=~ s/\///;

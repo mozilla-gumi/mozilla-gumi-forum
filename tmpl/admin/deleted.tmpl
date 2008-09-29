@@ -1,0 +1,15 @@
+[% PROCESS 'htmlhead.tpl'
+   htmltitle = 'DELETED'
+%]
+
+[% IF deleted > 0 %]
+<h3>[% deleted %] íœŠ®—¹</h3>
+[% END %]
+<ol>
+  [% FOREACH id IN deleted_id %]
+    <li>id: [% id %]</li>
+  [% END %]
+</ol>
+
+[% PROCESS 'htmlfoot.tpl' %]
+

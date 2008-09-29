@@ -57,6 +57,7 @@ sub new {
         VARIABLES => {
             'Param'    => sub { return $obj_config->GetHash(); },
             'in_group' => sub { return Forum->user->group_check($_[0]); },
+            'user'     => sub { return Forum->user->user_data; },
         },
     };
 

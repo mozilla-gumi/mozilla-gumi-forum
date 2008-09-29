@@ -19,12 +19,12 @@
     [% IF use_post_edit != 0 %]
       <form action="[% cgi_f %]" method="[% met %]">
         <input type="hidden" name="del" value="[% namber %]">[% nf %][% pf %]
-        パスワード <input type="password" name="delkey" size="8" [% ff %]>
+        パスワード <input type="password" name="delkey" size="8">
         <select name="mode">
           <option value="nam">編集
           <option value="key">削除
         </select>
-        <input type="submit" value="送信" [% fm %]>
+        <input type="submit" value="送信">
       </form>
     [% END %]
   [% END %]

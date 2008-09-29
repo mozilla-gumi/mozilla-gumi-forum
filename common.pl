@@ -199,13 +199,39 @@ sub RSStime ($) {
     return $time;
 }
 
-sub delcollect{
-    $del_file = '../data/dat/deleted.txt';
-    open(OUT, ">>$del_file");
-    print OUT "$mens\n";
-    close (OUT);
+sub lock_ {
+    $lflag = 0;
+    foreach (1 .. 5) {
+        if (($tmp = mkdir($_[0], 0755))) {
+            $lflag = 1;
+            last;
+        } else {
+            sleep(1);
+        }
+    }
+    if ($lflag == 0) {
+        if (-e $_[0]) {
+            rmdir($_[0]);
+        }
+        &er_('locked' ,"1");
+    }
 }
 
+sub time_ {
+    $ENV{'TZ'} = "JST-9";
+    if ($_[0]) {$time_k = $_[0]; }
+    else {$time_k = time; }
+    ($sec, $min, $hour, $mday, $mon, $year, $wday) = localtime($time_k);
+    $year += 1900;
+    $mon++;
+    if ($mon  < 10) {$mon  = "0$mon"; }
+    if ($mday < 10) {$mday = "0$mday";}
+    if ($hour < 10) {$hour = "0$hour";}
+    if ($min  < 10) {$min  = "0$min"; }
+    if ($sec  < 10) {$sec  = "0$sec"; }
+    $week = ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat') [$wday];
+    $date = "$year\/$mon\/$mday\($week\) $hour\:$min\:$sec";
+}   
 
 1;
 

@@ -108,6 +108,18 @@
 [% ELSIF error == 'disabled' %]
   この機能は設定で無効にされています。
   必要と思われる場合は、管理者まで問い合わせてください。
+
+
+[% ELSIF error == 'not_logged_in' %]
+  ログインしていないのにもかかわらず、ログアウト操作を行おうとしました。
+  このエラーは、ログインセッションの有効期限が切れたあとにログアウト操作を行おう
+  としても発生します。
+  念のため、ログインセッションの有効期限 [% Param.admin_authexpr %]
+  を確認することをお勧めします。
+
+[% ELSIF error == 'invalid_param' %]
+  Option parameter '[% error_param %]' is invalid.
+  Check and re-do.
 [% ELSE %]
   ERROR - [% error %]
 [% END %]

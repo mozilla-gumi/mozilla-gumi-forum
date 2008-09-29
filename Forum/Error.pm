@@ -21,9 +21,6 @@ use Forum::Constants;
     throw_error_code
 );
 
-our %params_def;
-our $params;
-
 sub new {
     my ($this) = @_;
     return $this;

@@ -21,3 +21,4 @@ function Link(url) {
 <a href="#" onClick="Link('[% cgi_f %]?mode=cookdel&amp;mo=ALL&amp;[% no %][% pp %]')">‚±‚ÌŒfŽ¦”Â‘S”Ê‚Ìcookieíœ</a><br>
 mozilla‚Ìê‡‚ÍíœŒãmozilla‚ðÄ‹N“®‚·‚é‚Ü‚Å”½‰f‚³‚ê‚È‚¢‚©‚à’m‚ê‚Ü‚¹‚ñ</div>
 
+[% PROCESS htmlfoot.tpl %]

@@ -23,7 +23,7 @@
 <tr>
   <td><strong>お名前</strong></td>
   <td>
-    <input type="text" name="name" value="[% c_name %]" size="25" [% ff %]
+    <input type="text" name="name" value="[% c_name %]" size="25"
       [% IF NMAX %]maxlength="[% NMAX %]"[% END %]>
     [% IF UID %]
       [ID:[% pUID %]]
@@ -36,7 +36,7 @@
 <tr>
   <td rowspan="2"><strong>E メール</strong></td>
   <td>
-    <input type="text" name="email" value="[% c_email %]" size="40" maxlength="100" [% ff %] disabled="disabled">
+    <input type="text" name="email" value="[% c_email %]" size="40" maxlength="100" disabled="disabled">
   </td>
 </tr>
   [% IF o_mail %][% PROCESS mbox %][% END %]
@@ -44,14 +44,14 @@
 <tr>
   <td><strong>タイトル</strong></td>
   <td>
-    <input type="text" name="d_may[% actime %]" size="40" value="[% ti %]" maxlength="100" [% ff %]
+    <input type="text" name="d_may[% actime %]" size="40" value="[% ti %]" maxlength="100"
       [% IF TMAX %]maxlength="[% TMAX %]"[% END %]>
   </td>
 </tr>
 <tr>
   <td><strong>URL</strong></td>
   <td>
-    <input type="text" name="url" value="http://[% c_url %]" size="70" maxlength="100" [% ff %]>
+    <input type="text" name="url" value="http://[% c_url %]" size="70" maxlength="100">
   </td>
 </tr>
 <tr>
@@ -60,7 +60,7 @@
     <input type="radio" name="pre" value="0" checked="checked">自動改行
     <input type="radio" name="pre" value="1">手動改行（等幅フォント）
     <br>
-    <textarea name="comment" rows="12" cols="75" [% ff %]
+    <textarea name="comment" rows="12" cols="75"
       [% IF BBFACE %]
         onselect="storeCaret(this);"
         onclick="storeCaret(this);"
@@ -82,7 +82,7 @@
     <tr>
       <td><strong>パスワード</strong></td>
       <td>
-        <input type="password" name="delkey" value="[% c_key %]" size="8" [% ff %]>
+        <input type="password" name="delkey" value="[% c_key %]" size="8">
           (半角8文字以内[% KEY %])</td>
       </td>
     </tr>
@@ -105,8 +105,8 @@
   [% PROCESS show_captcha %]
 <tr>
   <td colspan="2" align="right">
-    <input type="submit" value=" 送 信 " [% fm %]>
-    <input type="reset" value="リセット" [% fm %]>
+    <input type="submit" value=" 送 信 ">
+    <input type="reset" value="リセット">
   </td>
 </tr>
 </table>
@@ -199,7 +199,7 @@
 <tr>
   <td>File</td>
   <td>
-    <input type="file" name="ups" size="60" [% ff %]>
+    <input type="file" name="ups" size="60">
     <br>
     アップ可能拡張子 &gt;
     <!--

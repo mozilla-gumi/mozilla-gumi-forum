@@ -72,21 +72,41 @@ if ($FORM{'KLOG'}) {
     $log="$klog_d\/$KLOG$klogext";
     $pp = "&KLOG=$KLOG";
     $pf = "<input type=\"hidden\" name=\"KLOG\" value=\"$KLOG\">\n";
+    $tmplVars{'KLOG'} = $KLOG;
 }
 $tmplVars{'pp'} = $pp;
 $tmplVars{'pf'} = $pf;
 
+$mode_id = '';
+if ($mode eq "man")      {$mode_id = 'manual'; }
+elsif ($mode eq "n_w")   {$mode_id = 'incoming'; }
+elsif ($mode eq "one")   {$mode_id = 'disp_tree'; }
+elsif ($mode eq "new")   {$mode_id = 'newpost'; }
+elsif ($mode eq "alk")   {$mode_id = 'disp_thread'; }
+elsif ($mode eq "all")   {$mode_id = 'disp_tree'; }
+elsif ($mode eq "al2")   {$mode_id = 'disp_topic'; }
+elsif ($mode eq "ran")   {$mode_id = 'postrank'; }
+elsif ($mode eq "res")   {$mode_id = 'disp_thread'; }
+elsif ($mode eq "f_a")   {$mode_id = 8; }
+elsif ($mode eq "" || $mode eq "wri") {
+    if ($H) {
+        if ($H eq "T") {$mode_id = 'disp_tree'; }
+        elsif ($H eq "F") {$mode_id = 'disp_topic'; }
+        elsif ($H eq "N") {$mode_id = 'disp_thread'; }
+    } else {
+        if ($TOPH == 1) {$mode_id = 'disp_tree'; }
+        elsif ($TOPH == 2) {$mode_id = 'disp_topic'; }
+        else {$mode_id = 'disp_thread'; }
+    }
+}
+Forum->template->set_vars('mode_id', $mode_id);
+
 # ---[サブルーチンの読み込み/表示確定]-------------------------------------------------------------------------------
 if (($conf{'rss'} eq 1) && ($mode eq 'RSS')) {&RSS; }
-if ($mode eq "ffs") {&freeform_;}
-if ($mode eq "bma") {&bma_;}
-if ($mode eq "Den") {&Den_;}
 if ($mode eq "ent") {&ent_;}
 if ($mode eq "man") {&man_;}
 if ($mode eq "n_w") {&n_w_;}
 if ($mode eq "wri") {&wri_;}
-if ($mode eq "del") {&del_;}
-if ($mode eq "s_d") {&s_d_;}
 if ($mode eq "nam") {&hen_;} # edit post
 if ($mode eq "h_w") {&h_w_;}
 if ($mode eq "new") {&new_;}
@@ -112,7 +132,7 @@ unless(-e $RLOG) {
     if ($M_Rank) {&l_m($RLOG);}
 }
 if ($W) {$Wf = "&W=$W"; }
-if ($H) {$Hf = "&H=$H"; }
+$tmplVars{'Wf'} = $Wf;
 if ($W eq "W") {$Res_T = 0; }
 elsif ($W eq "T") {$Res_T = 1; }
 elsif ($W eq "R") {$Res_T = 2; }
@@ -179,8 +199,8 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
         elsif ($TS_Pr == 1) {$comment = "$Txt<br>$Sel<br>" . "$comment"; }
         elsif ($TS_Pr == 2) {$comment .= "<br>$Txt<br>$Sel"; }
     }
-    if (Forum->user->validate_password_admin($FORM{'pass'}) != 0) {
-#    if ($FORM{"pass"} && ($FORM{"pass"} eq $pass)) {
+    if (Forum->user->group_check('admin') != 0) {
+#    if (Forum->user->validate_password_admin($FORM{'pass'}) != 0) {
         $Ent = 1;
         $url = "";
     }
@@ -337,10 +357,6 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
     $tmplVars{'smsg'} = $Smsg;
     $tmplVars{'in'} = $IN;
     $tmplVars{'nam'} = $nam;
-    $tmplVars{'cgi_f'} = $cgi_f;
-    $tmplVars{'met'} = $met;
-    $tmplVars{'ff'} = $ff;
-    $tmplVars{'fm'} = $fm;
     $tmplVars{'font'} = $font;
     $tmplVars{'userenv'} = $userenv;
     if ($KLOG) {$tmplVars{'klog_def'} = 1; } else {$tmplVars{'klog_def'} = 0; }
@@ -398,8 +414,6 @@ sub html2_ {
     $obj_template->process('comtop.inc.tpl');
 
     $tmplVars{'new_t'} = $new_t;
-    $tmplVars{'new_i'} = $new_i;
-    $tmplVars{'up_i_'} = $up_i_;
     $tmplVars{'henko'} = $Henko;
     $obj_template->process('topiclist.tpl', \%tmplVars);
 
@@ -660,22 +674,7 @@ foreach ($page .. $page_end) {
     print"$HTML\n";
 }
 if($tmplVars{'TrON'}){$TrLink="<div class=\"Caption01r\">[ <a href=\"$cgi_f?mode=all&namber=$FORM{'namber'}&space=0&type=0&$pp\">$all_i このトピックをツリーで一括表\示</a> ]</div>";}
-print <<"_HTML_";
-<hr>
-<div class="Forms">
-<input type="hidden" name="no" value="0">
-<strong>削除 / 編集フォーム</strong><br>
-チェックした記事を
-<select name="mode">
-<option value="nam">編集
-<option value="key">削除
-</select>
-パスワード <input type="password" name="delkey"size="8"$ff>
-<input type="submit" value="送信" $fm>
-</div>
-</form>
-_HTML_
-print"<hr>\n$TrLink\n";
+print"</div><hr>\n$TrLink\n";
 if($Bl){print"<div class=\"Caption01r\">[ $Bl前のトピック内容$topic件$Ble ]";}
 if($Nl){if($Bl){print" | ";}else{print "<div class=\"Caption01r\">";} print"[ $Nl次のトピック内容$topic件$Nle ]</div>";}else{print "</div>";}
 print"$Plink\n<hr>\n";
@@ -685,6 +684,7 @@ if($r_max && $Ta > $r_max){
     print" → <strong><a href=\"$cgi_f?mode=new&amp;$pp\">[トピックの新規作成]</a></strong><br>";
 }else{
     if($En && $end_e){print"<h3>$end_ok / 返信不可</h3><br>";}
+    elsif($KLOG){print"<h3>返信不可</h3><br>";}
     else{
         if($total <= ($page+$topic) && $rev==0){
             print"$fhy";
@@ -1233,7 +1233,7 @@ sub wri_ {
 <h2>プレビュー</h2>
 $HTML
 <form action="$cgi_f" method="$met"$FORM_E>
-<input type="submit" value="送信 O K" $fm> / <strong>[<a href="#F">書き直す</a>]</strong>
+<input type="submit" value="送信 O K"> / <strong>[<a href="#F">書き直す</a>]</strong>
 <br><a name="F"></a>
 <h2>▽ 書き直す ▽</h2>
 _PV_
@@ -1288,7 +1288,6 @@ open(LOG,"$log") || &er_("Can't open $log");
 @lines = <LOG>;
 close(LOG);
 $NOWTIME=time; &time_($NOWTIME);
-if($bup){&backup_;}
 ($knum,$kd,$kname,$kem,$ksub,$kcom)=split(/<>/,$lines[0]);
 $namber=$knum+1;
 if($kd eq "" && $kcom eq ""){shift(@lines);}
@@ -1381,21 +1380,6 @@ if($H eq "F" && $tpend && $type){$FORM{"namber"}=$type; $space=0; &all2;}
     if ($conf{'rss'} eq 1) {&RSS; }
 }
 #--------------------------------------------------------------------------------------------------------------------
-# [記事一括削除]
-# -> 記事フォーマットをおこなう(s_d_)
-#
-sub s_d_ {
-    if (Forum->user->validate_password_admin($FORM{'pass'}) == 0) {
-        &er_('invpass');
-    }
-#    if($FORM{'pass'} ne "$pass"){&er_('invpass');}
-
-    open(DB,">$log");
-    print DB "";
-    close(DB);
-    $msg="<h3>フォーマット完了</h3>"; &del_;
-}
-#--------------------------------------------------------------------------------------------------------------------
 # [cookie発行]
 # -> cookieを発行する(set_)
 #
@@ -1420,427 +1404,6 @@ else{print "Set-Cookie: CBBS=$cook; expires=$date_gmt\n";}
 }
 
 #--------------------------------------------------------------------------------------------------------------------
-# [時間設定]
-# -> 時間を設定する(time_)
-#
-sub time_ {
-    $ENV{'TZ'} = "JST-9";
-    if ($_[0]) {$time_k = $_[0]; }
-    else {$time_k = time; }
-    ($sec, $min, $hour, $mday, $mon, $year, $wday) = localtime($time_k);
-    $year += 1900;
-    $mon++;
-    if ($mon  < 10) {$mon  = "0$mon"; }
-    if ($mday < 10) {$mday = "0$mday";}
-    if ($hour < 10) {$hour = "0$hour";}
-    if ($min  < 10) {$min  = "0$min"; }
-    if ($sec  < 10) {$sec  = "0$sec"; }
-    $week = ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat') [$wday];
-    $date = "$year\/$mon\/$mday\($week\) $hour\:$min\:$sec";
-}
-#--------------------------------------------------------------------------------------------------------------------
-# [管理用ページ]
-# -> 管理モードを表示する(del_)
-#
-sub del_ {
-    if (Forum->user->validate_password_admin($FORM{'pass'}) == 0) {
-        &er_('invpass');
-    }
-#if($FORM{'pass'} ne "$pass"){ &er_('invpass'); }
-&hed_("Editor");
-@NEW=(); $RES=(); $FSize=0; $RS=0; @lines=(); %R=();
-open(DB,"$log");
-while ($Line=<DB>) {
-    if($FORM{"mode2"} eq "Backup"){push(@lines,$Line);}
-    ($namber,$date,$name,$email,$d_may,$comment,$url,
-        $space,$end,$type,$delk,$ip,$tim) = split(/<>/,$Line);
-    ($Ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$ip);
-    if($i_mode && $ico){$FSize+= -s "$i_dir/$ico";}
-    if($type){
-        if($Keisen){
-            $SPS=$space/15; $Lg=0; $Tg=0; $S="";
-            if($SP){
-                if($SP > $SPS){if($L[$SPS]){$Tg=1; $L[$SP]="";}else{$Lg=1; $L[$SP]="";}}
-                elsif($SP==$SPS && $L[$SPS]){$Tg=1;}elsif($SP < $SPS){$Lg=1;}
-            }else{$Lg=1;}
-            if($SPS > 1){foreach(2..$SPS){$_--; if($L[$_]){$S.="$K_I";}else{$S.="$K_SP";}}}
-            $SP=$space/15;
-            if($SP==1){@L=(); $L[$SP]=1;}else{$L[$SP]=1;}
-            if($Lg){$Line="<tt>$S$K_L</tt><>".$Line;}
-            elsif($Tg){$Line="<tt>$S$K_T</tt><>".$Line;}
-        }else{$Line="0<>$Line";}
-        if($date){$R{$type}="$Line".$R{$type}; $RS++;}
-    }else{push(@NEW,$Line); $SP=0; @L=();}
-}
-close(DB);
-if($FORM{"mode2"} eq "Backup"){&backup_; $msg="<h3>バックアップ完了</h3>"; @lines=();}
-elsif($FORM{"mode2"} =~/\d/){
-    open(NO,">$c_f") || &er_("Can't write $c_f","1");
-    print NO $FORM{"mode2"};
-    close(NO);
-    $msg="<h3>カウンタ値編集完了</h3>";
-}elsif($FORM{"mode2"} eq "LockOff"){
-    $msg="<h3>ロック解除完了</h3>";
-    if(-e $lockf){rmdir($lockf); $msg.="($lockf解除)";}else{$msg.="($lockf無し)";}
-    if(-e $cloc){rmdir($cloc);   $msg.="($cloc解除)"; }else{$msg.="($cloc無し)";}
-}
-$total=@NEW; $NS=$RS+$total;
-$page_=int(($total-1)/$a_max);
-if(-s $log){$l_size=int((-s $log)/1024);}else{$l_size=0;}
-if($topok==0){$NewMsg="<li><a href=\"$cgi_f?mode=new&amp;&amp;pass=$FORM{'pass'}$pp\">管理用新規作成</a>\n";}
-if($i_mode || $mas_c){
-    if($FSize){$FSize=int($FSize/1024); $FileSize="<br>アップファイル合計サイズ：$FSize\KB";}else{$FSize=0;}
-    $FP ="<form action=\"$cgi_f\" method=\"$met\"$TGT>\n";
-    $FP.="<strong>[画像/記事表\示許可]</strong><br><input type=\"hidden\" name=\"mode\" value=\"ent\">$pf\n";
-    $FP.="<input type=\"hidden\" name=\"pass\" value=\"$FORM{'pass'}\"><input type=\"submit\" value=\"表\示許可システム\"></form>\n";
-}
-if($bup){$BUL="/バックアップ";}
-print <<"_HTML_";
-<h2>管理モード</h2>
-<ul>
-<li>現在のログのサイズ：$l_size\KB　記事数：$NS(親/$total 返信/$RS)$FileSize</li>
-<li>記事を編集したい場合、その記事のタイトルをクリック。</li>
-<li>削除したい記事にチェックを入れ「削除」ボタンを押して下さい。</li>
-<li>記事Noの横のIPアドレスをクリックすると排除IPモードへ情報を送ります。</li>
-<li>ツリー削除をするとツリーが跡形も無く消えます。</li>
-<li>記事削除は、その記事に対する返信がない場合は完全削除になります。<br>
-その記事に対する返信がある場合は完全に削除されず削除記事になります。</li>
-<li>削除記事は「記事完全削除」をチェックすると完全に消せます。</li>
-<li><a href="#FMT">ロック解除/ログ初期化/フリーフォーム修復/ログコンバート$BUL</a>
-$NewMsg</li>
-</ul>
-<form action="$cgi_f" method="$met"$TGT>$pf
-<input type="hidden" name="mode" value="Den"><input type="hidden" name="pass" value="$FORM{'pass'}">
-<strong>[排除IP/禁止文字追加]</strong><br>
-_HTML_
-print '<input type="submit" value="排除設定追加"></form>';
-print "$FP";
-if($cou){
-    open(NO,"$c_f") || &er_("Can't open $c_f");
-    $cnt = <NO>;
-    close(NO);
-    print <<"_BUP_";
-<form action="$cgi_f" method=$met>$pf
-<input type="hidden" name="mode" value="del"><input type="hidden" name="pass" value="$FORM{'pass'}">
-<strong>[カウンタ値編集]</strong><br>
-_BUP_
-print 'カウント数/<input type="text" name="mode2" value="' . $cnt . '" size="7"><input type="submit" value="編集" ' . "\"></form>\n";
-}
-print <<"_HTML_";
-$msg
-<form action=\"$cgi_f\" method="$met">$pf
-<input type="hidden" name="mode" value="key"><input type="hidden" name="mo" value="1">
-<input type="hidden" name="pass" value="$FORM{'pass'}"><input type="hidden" name="page" value="$FORM{"page"}">
-<hr>
-_HTML_
-if($FORM{'page'} eq ''){$page=0;}else{$page=$FORM{'page'};}
-$end_data=@NEW - 1;
-$page_end=$page + ($a_max - 1);
-if($page_end >= $end_data){$page_end=$end_data;}
-$nl=$page_end + 1;
-$bl=$page - $a_max;
-if($bl >= 0){$Bl="<a href=\"$cgi_f?mode=del&amp;page=$bl&amp;pass=$FORM{'pass'}&amp;$pp\">"; $Ble="</a>";}
-if($page_end ne $end_data){$Nl="<a href=\"$cgi_f?mode=del&amp;page=$nl&amp;pass=$FORM{'pass'}&amp;$pp\">"; $Nle="</a>";}
-$Plink="<div class=\"Caption01c\"><strong>全ページ</strong> $Bl$Ble /\n\n";
-$a=0;
-for($i=0;$i<=$page_;$i++){
-    $af=$page/$a_max;
-    if($i != 0){$Plink.=" ";}
-    if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}else{$Plink.="[<a href=\"$cgi_f?page=$a&amp;mode=del&amp;pass=$FORM{'pass'}&amp;$pp\">$i</a>]\n";}
-    $a+=$a_max;
-}
-$Plink.="$Nl$Nle\n</div>";
-print"$Plink\n";
-
-#test
-foreach ($page .. $page_end) {
-    ($namber,$date,$name,$email,$d_may,$comment,$url,
-        $space,$end,$type,$delkey,$Ip) = split(/<>/,$NEW[$_]);
-    ($ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$Ip);
-    ($txt,$sel,$yobi)=split(/\|\|/,$SEL);
-    if($ico){$ico=" [File:<a href=\"$i_Url\/$ico\"$TGT>$ico</a>]";}
-if((!$name)||($name eq ' ')||($name eq '　')){$name=$noname;}
-    if($email ne ""){$name = "<a href=\"mailto:$email\">$name</a>";}
-    if($d_may eq ""){$d_may= "$notitle";}
-    if($yobi){$yobi=" [ID:$yobi]";}
-    if(length($d_may)>$t_max){$d_may=substr($d_may,0,($t_max-2));$d_may="$d_may..";}
-    $date=substr($date,2,19);
-print '<table class="Tree" summary="Tree" cellspacing="0" cellpadding="0" border="0">';
-print '<tr><td><input type="radio" name="kiji" value="';
-print $namber;
-print '>ツリー削除</td><td class="Highlight">' . "\n" . '<input type="checkbox" name="del" value="' . "$namber\">\n";
-    print <<"_HTML_";
-<a href="$cgi_f?mode=nam&amp;pass=$FORM{'pass'}&amp;kiji=$namber&amp;mo=1&amp;$pp">$d_may</a>
-/ $name :$date <span class="ArtId">(#$namber)</span>
-[<a href="$cgi_f?mode=Den&amp;pass=$FORM{"pass"}&amp;mo=$ip"$TGT>$ip</a>]$ico
-</td></tr>
-_HTML_
-
-##H=T
-#foreach ($page .. $page_end) {
-#	($T,$namber,$date,$name,$email,$d_may,$comment,$url,
-#		$space,$end,$type,$del,$ip,$tim,$Se)=split(/<>/,$NEW[$_]);
-#	if(($time_k - $tim) > $new_t*3600){$news="$hed_i";}else{$news="$new_i";}
-#if((!$name)||($name eq ' ')||($name eq '　')){$name=$noname;}
-#	if($email && $Se < 2){$name="$name <a href=\"mailto:$SPAM$email\">$AMark</a>";}
-#	($Ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$ip);
-#	($ICON,$ICO,$font,$hr)=split(/\|/,$TXT);
-#	($txt,$sel,$yobi)=split(/\|\|/,$SEL);
-#	if(@ico3 && $Icon && ($ICON ne "" || $comment=~/<br>\(携帯\)$/)){
-#		if($I_Hei_m){$WHm=" width=\"$I_Wid_m\" height=\"$I_Hei_m\"";}
-#		if($ICON ne ""){if($ICON=~ /m/){$ICON=~ s/m//; $mICO=$mas_m[$ICON];}else{$mICO=$ico3[$ICON];}}
-#		elsif($Icon && $comment=~/<br>\(携帯\)$/){$mICO="$Ico_km";}
-#		$news.="<img src=\"$IconDir\/$mICO\" border=\"0\"$WHm>";
-#	}
-#	if($ico && $i_mode){$Pr=""; &size(1); $Pr=" "."$Pr";}else{$Pr="";}
-#	if($d_may eq ""){$d_may="$notitle";}
-#	if($yobi){$yobi="[ID:$yobi]";}
-#	if($txt){$Txt="$TXT_T:[$txt]　";}else{$Txt="";}
-#	if($sel){$Sel="$SEL_T:[$sel]　";}else{$Sel="";}
-#	if($Txt || $Sel ||($Txt && $Sel)){if($TS_Pr==0){$d_may="$Txt$Sel/"."$d_may";}}
-#	if(length($d_may)>$t_max){$d_may=substr($d_may,0,($t_max-2));$d_may="$d_may.."; }
-#	$date=substr($date,2,19);
-#if((!$name)||($name eq ' ')||($name eq '　')){$name=$noname;}
-#	print <<"_HTML_";
-#<br>
-#<table class="Tree" summary="Tree" cellspacing="0" cellpadding="0" border="0">
-#<tr><td class="Highlight" width="1\%">
-#<a href="$cgi_f?mode=all&amp;namber=$namber&amp;type=$type&amp;space=$space&amp;$pp">$all_i</a></td>
-#<td class="Highlight" width="99\%"><a href="$cgi_f?mode=one&amp;namber=$namber&amp;type=$type&amp;space=$space&amp;$pp">$news $d_may</a>
-#/ $name :$date $yobi<span class="ArtId">(#$namber)</span> $Pr
-#_HTML_
-
-#---kanri
-#foreach ($page .. $page_end) {
-#	($namber,$date,$name,$email,$d_may,$comment,$url,
-#		$space,$end,$type,$delkey,$Ip) = split(/<>/,$NEW[$_]);
-#	($ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$Ip);
-#	($txt,$sel,$yobi)=split(/\|\|/,$SEL);
-#	if($ico){$ico=" [File:<a href=\"$i_Url\/$ico\"$TGT>$ico</a>]";}
-#if((!$name)||($name eq ' ')||($name eq '　')){$name=$noname;}
-#	if($email ne ""){$name = "<a href=\"mailto:$email\">$name</a>";}
-#	if($d_may eq ""){$d_may= "$notitle";}
-#	if($yobi){$yobi=" [ID:$yobi]";}
-#	if(length($d_may)>$t_max){$d_may=substr($d_may,0,($t_max-2));$d_may="$d_may..";}
-#	$date=substr($date,2,19);
-#print '<input type="radio" name="kiji" value="' . $namber . '" ';
-#print '>ツリー削除<br><input type="checkbox" name="del" value="' . "$namber\">\n";
-#	print <<"_HTML_";
-#<a href="$cgi_f?mode=nam&amp;pass=$FORM{'pass'}&amp;kiji=$namber&amp;mo=1&amp;$pp">$d_may</a>
-#/ $name :$date <span class="ArtId">(#$namber)</span>
-#[<a href="$cgi_f?mode=Den&amp;pass=$FORM{"pass"}&amp;mo=$ip"$TGT>$ip</a>]$ico</small><br>
-#_HTML_
-
-##test
-    $res=0;
-    @RES=split(/\n/,$R{$namber});
-    foreach $lines(@RES) {
-        ($Sen,$rnam,$rd,$rname,$rmail,$rdm,$rcom,$rurl,
-            $rsp,$re,$rtype,$rde,$rIp,$tim,$Se) = split(/<>/,$lines);
-        ($rip,$ico,$Ent,$fimg,$TXT,$rSEL,$R)=split(/:/,$rIp);
-        ($txt,$sel,$ryobi)=split(/\|\|/,$rSEL);
-        if ($namber eq "$rtype"){
-            if($rmail){$rname="<a href=\"mailto:$rmail\">$rname</a>";}
-            if($rd_may eq ""){$rd_may="$notitle";}
-            if(length($rdm)>$t_max){$rdm=substr($rdm,0,($t_max-2));$rdm="$rdm..";}
-            $rd=substr($rd,2,19); if($re){$re="$end_ok";}
-            if($ico){$ico=" [File:<a href='$i_Url\/$ico'$TGT>$ico</a>]";}
-            if($ryobi){$ryobi=" [ID:$ryobi]";}
-            print "<tr><td></td><td>\n";
-            if($Keisen){print"$Sen";}
-            else{
-                $rspz=$rsp/15*$zure;
-                print "." x $rspz;
-            }
-#			print"<a href=\"$cgi_f?mode=one&amp;namber=$rnam&amp;type=$rtype&amp;space=$rsp&amp;$pp\">$news $rdm</a>\n";
-if((!$rname)||($rname eq ' ')||($rname eq '　')){$rname=$noname;}
-            $res++;
-            if($R{$namber}==$res){last;}
-#	print "</td></tr></table>\n";
-
-#---H=T
-
-#	$res=0;
-#	@RES= split(/\n/,$RES{$namber});
-#	foreach $lines(@RES) {
-#		($Sen,$rnam,$rd,$rname,$rmail,$rdm,$rcom,$rurl,
-#			$rsp,$re,$rtype,$del,$ip,$rtim,$M) = split(/<>/,$lines);
-#		if($re ne ""){$re="$end_ok";}
-#		if($namber eq "$rtype"){
-#			if(($time_k-$rtim)>$new_t*3600){$news="$hed_i";}else{$news="$new_i";}
-#			if($rmail && $M < 2){$rname="$rname <a href=\"mailto:$SPAM$rmail\">$AMark</a>";}
-#			$rd=substr($rd,2,19);
-#			($Ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$ip);
-#			($rICON,$ICO,$font,$hr)=split(/\|/,$TXT);
-#			($txt,$sel,$yobi)=split(/\|\|/,$SEL);
-#			if(@ico3 && $Icon &&($rICON ne "" || $rcom=~/<br>\(携帯\)$/)){
-#				if($I_Hei_m){$WHm=" width=\"$I_Wid_m\" height=\"$I_Hei_m\"";}
-#				if($rICON ne ""){if($rICON=~ /m/){$rICON=~ s/m//; $mrICO=$mas_m[$rICON];}else{$mrICO=$ico3[$rICON];}}
-#				elsif($Icon && $rcom=~/<br>\(携帯\)$/){$mrICO="$Ico_km";}
-#				$news.="<img src=\"$IconDir\/$mrICO\" border=\"0\"$WHm>";
-#			}
-#			if($ico && $i_mode){$Pr=""; &size(1); $Pr=" "."$Pr";}else{$Pr="";}
-#			if($rdm eq ""){$rdm="$notitle"; }
-#			if($yobi){$yobi="[ID:$yobi]";}
-#			if($txt){$Txt="$TXT_T:[$txt]　";}else{$Txt="";}
-#			if($sel){$Sel="$SEL_T:[$sel]　";}else{$Sel="";}
-#			if($Txt || $Sel ||($Txt && $Sel)){if($TS_Pr==0){$rdm="$Txt$Sel/"."$rdm";}}
-#			if(length($rdm)>$t_max){$rdm=substr($rdm,0,($t_max-2)); $rdm="$rdm..";}
-#			print "</td></tr><tr><td></td><td nowrap>\n";
-#			if($Keisen){print"$Sen";}
-#			else{
-#				$rspz=$rsp/15*$zure;
-#				print "." x $rspz;
-#			}
-#			print"<a href=\"$cgi_f?mode=one&amp;namber=$rnam&amp;type=$rtype&amp;space=$rsp&amp;$pp\">$news $rdm</a>\n";
-#if((!$rname)||($rname eq ' ')||($rname eq '　')){$rname=$noname;}
-#			print"/ $rname :$rd <span class=\"ArtId\">(#$rnam)</span> $re$Pr\n";
-#			$res++;
-#			if($R{$namber}==$res){last;}
-#		}
-#	}
-#	print "</td></tr></table>\n";
-#}
-
-#---kanri
-#	@RES=split(/\n/,$R{$namber});
-#	foreach $lines(@RES) {
-#		($Sen,$rnam,$rd,$rname,$rmail,$rdm,$rcom,$rurl,
-#			$rsp,$re,$rtype,$rde,$rIp,$tim,$Se) = split(/<>/,$lines);
-#		($rip,$ico,$Ent,$fimg,$TXT,$rSEL,$R)=split(/:/,$rIp);
-#		($txt,$sel,$ryobi)=split(/\|\|/,$rSEL);
-#		if ($namber eq "$rtype"){
-#			if($rmail){$rname="<a href=\"mailto:$rmail\">$rname</a>";}
-#			if($rd_may eq ""){$rd_may="$notitle";}
-#			if(length($rdm)>$t_max){$rdm=substr($rdm,0,($t_max-2));$rdm="$rdm..";}
-#			$rd=substr($rd,2,19); if($re){$re="$end_ok";}
-#			if($ico){$ico=" [File:<a href='$i_Url\/$ico'$TGT>$ico</a>]";}
-#			if($ryobi){$ryobi=" [ID:$ryobi]";}
-#			if($Keisen){print"$Sen";}
-#			else{
-#				$rspz=$rsp/15*$zure;
-#				print "." x $rspz;
-#			}
-#if((!$rname)||($rname eq ' ')||($rname eq '　')){$rname=$noname;}
-#}
-            print <<"_HTML_";
-<input type="checkbox" name="del" value="$rnam">
-<a href="$cgi_f?mode=nam&amp;pass=$FORM{'pass'}&amp;kiji=$rnam&amp;mo=1&amp;$pp">$rdm</a>
-/ $rname :$rd $ryobi <span class="ArtId">(#$rnam)</span>
-[<a href="$cgi_f?mode=Den&amp;pass=$FORM{"pass"}&amp;mo=$rip"$TGT>$rip</a>]$ico $re</td></tr>
-_HTML_
-            }
-
-        }
-        print "</table><br>\n";
-#	print"<hr width=\"90\%\">";
-    }
-
-    $tmplVars{'Bl'} = $Bl;
-    $tmplVars{'a_max'} = $a_max;
-    $tmplVars{'Ble'} = $Ble;
-    $tmplVars{'Nl'} = $Nl;
-    $tmplVars{'Nle'} = $Nle;
-    $tmplVars{'Plink'} = $Plink;
-    $tmplVars{'ttb'} = $ttb;
-    $tmplVars{'cgi_f'} = $cgi_f;
-    $tmplVars{'met'} = $met;
-    $tmplVars{'FORM'} = \%FORM;
-    if ( -e $lockf ) {$tmplVars{'lockf'} = $lockf; }
-    if ( -e $cloc ) {$tmplVars{'cloc'} = $cloc; }
-    $tmplVars{'log'} = $log;
-    $tmplVars{'bup'} = $bup;
-    if ($bup) {
-        if ( -e $bup_f ) {
-            $tmplVars{'bup_f'} = $bup_f;
-            $bl = ( -M $bup_f );
-            $tmplVars{'bh'} = sprintf("%.1f", 24 * $bl);
-            $tmplVars{'bl'} = sprintf("%.2f", $bl);
-            $tmplVars{'bs'} = int(( -s $bup_f ) / 1024);
-            $Nb = $bup - $bl;
-            $tmplVars{'Nh'} = sprintf("%.1f", $Nb * 24);
-        }
-        $tmplVars{'met'} = $met;
-        $tmplVars{'bc'} = $bc;
-        $tmplVars{'Nb'} = $Nb;
-        $tmplVars{'Nh'} = $Nh;
-    }
-
-    print '</ul><input type="checkbox" name="kiji" value="A" ' . "\">記事完全削除<br>\n";
-    print '<input type="submit" value=" 削 除 " ' . "\">\n";
-    print '<input type="reset" value="リセット" ' . "\"></form>\n";
-    print "<strong>";
-    if($Bl){print"<div class=\"Caption01r\">[ $Bl前の返信$a_max件$Ble ]\n";}
-    if($Nl){if($Bl){print"| ";}else{print "<div class=\"Caption01r\">";} print"[ $Nl次の返信$a_max件$Nle ]\n</div>\n";}else{print "</div>";}
-    print <<"_HTML_";
-</strong><br>$Plink
-<SCRIPT language="JavaScript">
-<!--
-function Link(url) {
-    if(confirm("本当に実行してもOKですか?\\n(実行すると内容は元に戻せません!)")){location.href=url;}
-    else{location.href="#FMT";}
-}
-//-->
-</SCRIPT>
-<a name="FMT"><hr width="95\%"></a>
-*JavaScript を ONにしてください*
-<table summary="lock" border="1" bordercolor="$ttb" width="90\%">
-<tr><td colspan="2"><form action="$cgi_f" method="$met"><strong>[ロックファイルの解除(削除)]</strong><ul>
-<input type="button" value="ロック解除" onClick="Link('$cgi_f?mode=del&amp;pass=$FORM{"pass"}&amp;mode2=LockOff&amp;$pp')">
-<li>ロックファイルがどうしても削除されない場合に試してください。問題が無い場合はあまり使わないで下さい<ul>
-_HTML_
-    if(-e $lockf){print"<li>メインログ($lockf):ロック中\n";}
-    if(-e $cloc){print"<li>カウンタログ($cloc):ロック中\n";}
-    print<<"_HTML_";
-</ul><li>ロック中のログがあっても、ユーザが操作中の場合があります。しばらく様子を見て実行してください。
-</ul></form></td></tr>
-<tr valign="top"><td>
-<form action="$cgi_f" method="$met">
-<strong>[ログフォーマット(初期化)]</strong>
-<ul><input type="button" value="フォーマット" onClick="Link('$cgi_f?mode=s_d&amp;pass=$FORM{"pass"}&amp;$pp')"><br>
-<li>ファイルアップ機能\がONの場合、表\示許可モードでファイルをすべて削除し行なってください!
-</ul></form>
-</td><td>
-<form action="$cgi_f" method="$met">
-<strong>[フリーフォーム修復]</strong>
-<ul><input type="button" value="修復処理" onClick="Link('$cgi_f?mode=ffs&amp;mo=1&amp;pass=$FORM{"pass"}&amp;$pp')"><br>
-<li>文字コード上の不具合修正します。文字化けが起きた場合は編集で修正してください。<br>
-<li>念のためバックアップを取っておくことをお勧めします(v7.0未満からフリーフォームを使用\している場合)
-</ul></form>
-</td></tr><tr valign="top"><td>
-<form action="$cgi_f" method="$met">
-<strong>[ログコンバート]</strong>
-<ul><input type="button" value="I-BOARD" onClick="Link('$cgi_f?mode=ffs&amp;mo=I-BOARD&amp;pass=$FORM{"pass"}&amp;$pp')"> /
-<input type="button" value="UPP-BOARD" onClick="Link('$cgi_f?mode=ffs&amp;mo=UPP-BOARD&amp;pass=$FORM{"pass"}&amp;$pp')"><br>
-<li>I-BOARDシリーズ もしくは UPP-BOARD のログを ChildTree 用にコンバートします。<br>
-<li>コンバートすると元に戻すのは大変なので注意! ボタンを間違えないで!<br>
-<li>記事はすべて新着記事扱いとなります。<br>
-<li>コンバート対象ログ:[$log]<br>
-</ul></form>
-</td><td>
-_HTML_
-    if($bup) {
-        if(-e $bup_f){
-            $bl=(-M $bup_f); $bh=sprintf("%.1f",24*$bl); $bl=sprintf("%.2f",$bl); $bs=int((-s $bup_f)/1024);
-            $bc="あり($bs\KB / $bl日(約$bh時間)前)"; $Nb=$bup-$bl; $Nh=sprintf("%.1f",$Nb*24);
-        } else {$bc="無し";}
-        print <<"_BUP_";
-<form action="$cgi_f" method="$met">$pf
-<input type="hidden" name="mode" value="del"><input type="hidden" name="pass" value="$FORM{'pass'}">
-<strong>[バックアップ]</strong>
-<ul><input type="button" value="ログを修復" onClick="Link('$cgi_f?mode=bma&amp;pass=$FORM{"pass"}&amp;$pp')">
-/ <input type="submit" value="Backup" name="mode2"><br>
-<li>[Backup]ボタンをクリックすると現在のログをバックアップします。
-<li>バックアップ機\能\を使用している人のみ修復可能\です。<br>
-<li>バックアップ$bc
-<li>次のバックアップは $Nb日(約$Nh時間)後
-</ul></form>
-_BUP_
-    }
-    print"</td></tr></table>\n";
-    &foot_;
-}
-#--------------------------------------------------------------------------------------------------------------------
 # [記事編集]
 # -> 記事編集のフォームを出力(hen_)
 #
@@ -1852,7 +1415,8 @@ sub hen_ {
 #        $kiji = $FORM{'del'};
         &er_('edit_not_allowed');
     } elsif ($mo == 1) {
-        if (Forum->user->validate_password_admin($FORM{'pass'}) == 0) {
+        if (Forum->user->group_check('admin') == 0) {
+#        if (Forum->user->validate_password_admin($FORM{'pass'}) == 0) {
             &er_('invpass');
         }
 #        if ($FORM{'pass'} ne "$pass") {&er_('invpass'); }
@@ -1867,7 +1431,8 @@ sub hen_ {
             if($mo eq ""){
                 if($de eq "") { &er_('nopass'); }
                 &cryma_($de);
-                if (Forum->user->validate_password_admin($delkey) != 0) {
+                if (Forum->user->group_check('admin') != 0) {
+#                if (Forum->user->validate_password_admin($delkey) != 0) {
                     $ok = 'm';
                 }
 #                if($delkey eq "$pass"){$ok="m";}
@@ -1879,7 +1444,8 @@ sub hen_ {
                 $Lcom = "管理モードに";
             }
             if ($s && $end_f && (($end_c == 0) ||
-                 (Forum->user->validate_password_admin($FORM{'pass'}) != 0)) &&
+                (Forum->user->group_check('admin') != 0)) &&
+#                (Forum->user->validate_password_admin($FORM{'pass'}) != 0)) &&
                 $t) {
 #            if ($s && $end_f && (($end_c == 0) || ($FORM{'pass'} eq $pass)) && $t) {
                 if ($end) {$C = " checked"; }
@@ -1934,7 +1500,8 @@ $msg
 $Mbox
 _HTML_
             if ($ua_select) {
-                if (Forum->user->validate_password_admin($FORM{'pass'}) != 0) {
+                if (Forum->user->group_check('admin') != 0) {
+#                if (Forum->user->validate_password_admin($FORM{'pass'}) != 0) {
 #                if ($FORM{'pass'} eq "$pass") {
                     if ($userenv) {
                         print "<input type=\"hidden\" value=\"$userenv\">";
@@ -2026,7 +1593,7 @@ _DEL_
 ・ここからファイルアップできます。<br>
 <form action="$cgi_f" method="$met" enctype="multipart/form-data">$pf
 _DEL_
-                    print 'File <input type="file" name="ups" size="60" ' . "\"$ff>　<input type=\"submit\" value=\"送信\">";
+                    print 'File <input type="file" name="ups" size="60" ' . "\">　<input type=\"submit\" value=\"送信\">";
                     print '<ul>アップ可能\拡張子=&gt;';
                     foreach (0..$#exn) {
                     if($exi[$I] eq "img"){$EX="<strong>$exn[$_]</strong>";}else{$EX="$exn[$_]";}
@@ -2073,94 +1640,13 @@ sub cryma_ {
     if(crypt($FORM{'delkey'}, substr($de,$crptkey,2)) eq $de){$ok = "y";}
 }
 #--------------------------------------------------------------------------------------------------------------------
-# [削除処理]
-# -> 記事の削除処理(key_)
-#
-sub key_ {
-    if ($mo eq "") {
-#        if ($FORM{'del'} eq "") {&er_('invid'); }
-#        if ($delkey eq "") {&er_('invpass'); }
-        &er_('edit_not_allowed');
-    } elsif ($mo == 1) {
-        if (Forum->user->validate_password_admin($FORM{'pass'}) == 0) {
-            &er_('invpass');
-        }
-#        if ($FORM{'pass'} ne $pass) {&er_('invpass'); }
-    }
-    if ($locks) {&lock_("$lockf"); }
-    open(DB, "$log") || &er_("Can't open $log");
-    @CAS = ();
-    $dok = 0;
-    $OYA = 0;
-    $SP = "";
-    while ($mens = <DB>) {
-        $mens =~ s/\n//g;
-        $Pdel = 0;
-        ($nam, $d, $na, $mail, $d_, $com, $url, $sp, $e, $ty, $de, $ip, $ti)
-            = split(/<>/, $mens);
-        if ($d eq "") {
-            push(@CAS, "$mens\n");
-            $OYA = 1;
-            next;
-        }
-        foreach $namber (@d_) {
-            if ($namber eq "$nam") {
-                if ($mo eq "") {
-                    if (($de eq "") && ($dok == 0)) {&er_('nopass', "1"); }
-                    &cryma_($de);
-                    if (Forum->user->validate_password_admin($delkey) != 0) {
-                        $ok = 'm';
-                    }
-#                    if ($delkey eq "$pass") {$ok = "m"; }
-                    if (($ok eq "n") && ($dok == 0)) {&er_('invpass',"1"); }
-                }
-                &delcollect;
-                if (($SP < $sp) || ($SP == $sp) || ($SP eq "")) {$Pdel = 1; }
-                $mens = "";
-                $dok = 1;
-                ($I, $ico, $E, $fi, $TX, $S, $R) = split(/:/, $ip);
-                if ($ico && (-e "$i_dir/$ico")) {unlink("$i_dir/$ico"); }
-            }
-        }
-        if (($kiji ne "") && (($kiji eq "$nam") || ($kiji eq "$ty"))) {$mens = ""; }
-        $n = "\n";
-        if (($mens eq "") && ($kiji eq "") && ($Pdel == 0)) {
-            if ($mo || ($ok eq "m")) {$Dm = "(管理者)"; }
-            else {$Dm = "(投稿者)"; }
-            $mens = "$nam<>$d<><><>（削除）<>この記事は$Dm削除されました<><>$sp<><>$ty<><><>$ti<><>";
-        } elsif (($mens eq "") && (($kiji ne "") || $Pdel)) {
-            $mens = "";
-            $n = "";
-            if ($OYA == 0) {
-                $mens = "$nam<><><><><><><><><>$nam<><><><><>";
-                $n = "\n";
-            }
-        }
-        $OYA = 1;
-        $SP = $sp;
-        push(@CAS, "$mens$n");
-    }
-    close(DB);
-
-    open (DB,">$log");
-    print DB @CAS;
-    close(DB);
-    if (-e $lockf) {rmdir($lockf); }
-    if ($mo) {
-        $msg = "<h3>削除完了</h3>";
-        &del_;
-    } else {
-        $mode = "";
-    }
-    if ($conf{'rss'} eq 1) {&RSS; }
-}
-#--------------------------------------------------------------------------------------------------------------------
 # [編集記事置換]
 # -> 編集内容を置き換える(h_w_)
 #
 sub h_w_ {
     if($KLOG){&er_('oldlogs');}
-    if ((Forum->user->validate_password_admin($FORM{'pass'}) == 0) && $mo) {
+    if ((Forum->user->group_check('admin') == 0) && $mo) {
+#    if ((Forum->user->validate_password_admin($FORM{'pass'}) == 0) && $mo) {
         &er_('invpass');
     }
 #if($FORM{'pass'} ne "$pass" && $mo){&er_('invpass');}
@@ -2188,7 +1674,8 @@ while ($line=<DB>) {
         if($mo eq ""){
             $de=$kd; $FORM{'delkey'}=$FORM{'pass'};
             &cryma_($epasswd);
-            if (Forum->user->validate_password_admin($FORM{'pass'}) != 0) {
+            if (Forum->user->group_check('admin') != 0) {
+#            if (Forum->user->validate_password_admin($FORM{'pass'}) != 0) {
                 $ok = 'm';
             }
 #            if($FORM{"pass"} eq $pass){$ok="m";}
@@ -2270,121 +1757,17 @@ if(@E_ || @I_ || $FORM{'UP'}){
         elsif($FORM{'UP'}){$msg="<h3>ファイルアップ完了</h3>$Henko"; if($mo){$kiji=$FORM{'UP'};}else{$FORM{"del"}=$FORM{'UP'};}}
         $delkey=$FORM{"pass"}; &hen_;
     }
-}elsif($mo){$msg="<h3>編集完了</h3>"; &del_;}
+}elsif($mo) {
+    print Forum->cgi->header();
+    Forum->template->set_vars('mode_id', 'admin');
+    Forum->template->set_vars('mode_adm', 'editpost');
+    Forum->template->process('htmlhead.tpl', \%tmplVars);
+    print "<h3>編集完了</h3>";
+    Forum->template->process('htmlfoot.tpl', \%tmplVars);
+    exit;
+}
 else{$msg="<h3>以下のように編集完了</h3>"; $delkey=$FORM{"pass"}; $FORM{"del"}=$namber; &hen_;}
     if ($conf{'rss'} eq 1) {&RSS; }
-}
-#--------------------------------------------------------------------------------------------------------------------
-# [排除IP/禁止文字追加]
-# -> 排除IP/禁止文字追加システム(Den_)
-#
-sub Den_ {
-    if (Forum->user->validate_password_admin($FORM{'pass'}) == 0) {
-        &er_('invpass');
-    }
-#if($FORM{'pass'} ne "$pass"){&er_('invpass');}
-($m,$Log)=split(/:/,$FORM{"m"});
-if($m eq "Make"){
-    open(DB,">$Log") || &er_("Can't make $Log");
-    print DB "";
-    close(DB);
-    chmod(0666,"$Log");
-}elsif($m eq "Add"){
-    $FORM{'u'}=~ s/\&lt\;/</g; $FORM{'u'}=~ s/\&gt\;/>/g;
-    open(OUT,">>$Log");
-    print OUT "$FORM{'u'}\n";
-    close(OUT);
-    $msd="<h3>$Logへ登録完了</h3>";
-}elsif($m eq "Del"){
-    open(DB,"$Log");
-    @deny = <DB>;
-    close(DB);
-    @NEW = ();$F=0;
-    foreach $b (@deny) {
-        $b =~ s/\n//g;
-        foreach $u (@d_) {if($u eq "$b"){$F=1; last;}}
-        if($F){$F=0; next;}
-        push(@NEW,"$b\n");
-    }
-    open (DB,">$Log");
-    print DB @NEW;
-    close(DB);
-    $msd="<h3>$Log内削除完了</h3>";
-}
-&hed_("Deny IP/Word Editor");
-print<<"_HTML_";
-<table summary="deny" width="95\%"><tr><th>排除IP/禁止文字列設定モード</th></tr></table>$msd
-<ul>
-<li>指定した物が含まれているとそれぞれ排除されます。</li>
-<li><strong>[排除IP?]</strong> IPアドレスは4桁で構\成されており、通常4桁目がアクセス毎に変わります。よって、3桁目までを指定します。<br>
-例) 127.0.0.1 を排除したい場合は 127.0.0. と指定する。192.168.0.1 → 192.168.0. (*)自分のIPは絶対に設定しない!</li>
-<li><strong>[禁止文字列?]</strong> 使用されたくない文字列を指定します。大文字小文字は区別されます。<br>
-例) 宣伝記事→URLを指定。タグ→開始タグの一部 &lt;img &lt;font 等。</li>
-</ul>
-_HTML_
-@Deny=("$IpFile","$NWFile");
-@Dcom=("排除IP","禁止文字列");
-foreach(0..1){
-    if($mo){if($_==0){$mo=~ s/(\d+\.\d+\.\d+\.)(\d+)/$1/;}else{$mo="";}}
-    if(-e "$Deny[$_]"){
-        open(DB,"$Deny[$_]") || &er_("Can't open $Deny[$_]");
-        @deny = <DB>;
-        close(DB);
-# deleted $pass from html form : non needed : $pass => --pass--
-        print<<"_EDIT_";
-<hr><strong>■ $Dcom[$_]の追加</strong>
-<form action="$cgi_f" method="$met"><input type="hidden" name="mode" value="Den">$pf
-<input type="hidden" name="pass" value="--pass--"><input type="hidden" name="m" value="Add:$Deny[$_]">
-$Dcom[$_] /<input type="text" name="u" size="25" value="$mo"> (例/cj-c.com)
-_EDIT_
-        print<<"_EDIT_";
-<input type="submit" value="追 加">
-</form><strong>■ $Deny[$_] に登録済みの$Dcom[$_]</strong>
-<form action="$cgi_f" method="$met"><input type="hidden" name="mode" value="Den">$pf
-<input type="hidden" name="pass" value="--pass--"><input type="hidden" name="m" value="Del:$Deny[$_]">
-_EDIT_
-        foreach(0..$#deny){
-            $deny[$_]=~ s/\n//g; $deny[$_]=~ s/</\&lt\;/g; $deny[$_]=~ s/>/\&gt\;/g;
-            print"<input type=\"checkbox\" name=\"del\" value=\"$deny[$_]\">- $deny[$_]<br>\n";
-        }
-        print '<br><input type="submit" value="削 除" ' . "\"><input type=\"reset\" value=\"リセット\"></form></ul>\n";
-    }else{
-        print<<"_EDIT_";
-<hr><br><strong>■ $Dcom[$_]設定をするファイルの作成</strong><ul>
-<li>$Dcom[$_]を設定するファイル($Deny[$_])がないのでオンラインで設定する場合、このファイルを作成する必要があります。</li>
-<li>このCGIのあるディレクトリに作成します(このディレクトリのパーミッションが777or755 である必要があります)。</li>
-<li>ここでうまく作成できない場合は同名ファイルをFTPから作成してください(パーミッション:666)</li>
-</ul>
-<form action="$cgi_f" method="$met"><input type="hidden" name="mode" value="Den">$pf
-<input type="hidden" name="pass" value="--pass--"><input type="hidden" name="m" value="Make:$Deny[$_]">
-<input type="submit" value="$Deny[$_] を作成する">
-</form>
-_EDIT_
-    }
-}
-print"<hr width=\"95\%\">\n";
-&foot_;
-}
-#--------------------------------------------------------------------------------------------------------------------
-# [ロック処理]
-# -> ファイルロック処理(lock_)
-#
-sub lock_ {
-    $lflag = 0;
-    foreach (1 .. 5) {
-        if (($tmp = mkdir($_[0], 0755))) {
-            $lflag = 1;
-            last;
-        } else {
-            sleep(1);
-        }
-    }
-    if ($lflag == 0) {
-        if (-e $_[0]) {
-            rmdir($_[0]);
-        }
-        &er_('locked' ,"1");
-    }
 }
 #--------------------------------------------------------------------------------------------------------------------
 # [カウンタ処理]
@@ -2424,7 +1807,7 @@ sub er_ {
     if ($BG eq "") {&hed_("Error"); }
     $tmplVars{'errmsg'} = $_[0];
     $obj_template->process('error.tpl', \%tmplVars);
-    &foot_;
+    exit;
 }
 #--------------------------------------------------------------------------------------------------------------------
 # [過去ログ]
@@ -2469,32 +1852,6 @@ sub l_m {
     close(DB);
 
     chmod(0666,"$_[0]");
-}
-#--------------------------------------------------------------------------------------------------------------------
-# [バックアップ処理]
-# -> 簡易バックアップ処理(backup_)
-#
-sub backup_{
-    unless(-e $bup_f){&l_m($bup_f);}
-    if(-M "$bup_f" > $bup || $FORM{"mode2"} eq "Backup"){
-        open(LOG,">$bup_f") || &er_("Can't write $bup_f");
-        print LOG @lines;
-        close(LOG);
-    }
-}
-#--------------------------------------------------------------------------------------------------------------------
-# [修復処理]
-# -> バックアップファイルリネーム処理(bma_)
-#
-sub bma_ {
-    if (Forum->user->validate_password_admin($FORM{'pass'}) == 0) {
-        &er_('invpass');
-    }
-#    if($FORM{'pass'} ne "$pass"){&er_('invpass');}
-    if(-e $lockf){rmdir($lockf);}
-    if(-e $bup_f){rename ($bup_f,$log) || &er_('renerr');}
-    else{&er_('nobackup', "1");}
-    $msg="<h3>修復完了</h3>"; &del_;
 }
 #--------------------------------------------------------------------------------------------------------------------
 # [スレッド表示]
@@ -2743,7 +2100,8 @@ if($Size){
 # -> アップファイル/記事の表示許可を与えます(ent_)
 #
 sub ent_ {
-    if (Forum->user->validate_password_admin($FORM{'pass'}) == 0) {
+    if (Forum->user->group_check('admin') == 0) {
+#    if (Forum->user->validate_password_admin($FORM{'pass'}) == 0) {
         &er_('invpass');
     }
 #if($FORM{'pass'} ne "$pass"){&er_('invpass');}
@@ -2837,7 +2195,7 @@ print <<"_KEY_";
 <option value="2"$S3>アイコン
 _KEY_
 print <<"_KEY_";
-</select><input type="submit" value="変 更" $fm>
+</select><input type="submit" value="変 更">
 </form>
 _KEY_
 }
@@ -2901,61 +2259,6 @@ print "<br>合計ファイルサイズ/$FS\KB$KL\n";
 &foot_;
 }
 #--------------------------------------------------------------------------------------------------------------------
-# [フリーフォーム修復]
-# -> 以前の文字コード上の不具合修正とログコンバート(freeform_)
-#
-sub freeform_{
-    if (Forum->user->validate_password_admin($FORM{'pass'}) == 0) {
-        &er_('invpass');
-    }
-#    if ($FORM{'pass'} ne "$pass") {&er_('invpass'); }
-    if ($locks) {&lock_($lockf); }
-    @NEW = ();
-    $T = time;
-    $DmyNo = 0;
-    open(DB, "$log");
-    while ($lines = <DB>) {
-        ($namber,$date,$name,$email,$d_may,$comment,$url,
-            $space,$end,$type,$del,$ip,$tim,$S) = split(/<>/,$lines);
-        if ($date eq "") {push(@NEW, $lines); next; }
-        else {$lines =~ s/\n//g; }
-        if ($mo == 1) {
-            ($Ip, $ico, $Ent, $fimg, $TXT, $SEL, $R) = split(/:/, $ip);
-            if($SEL !~/\|\|\|\|/){
-                ($txt,$sel,$yobi)=split(/\|/,$SEL);
-                $new_ = "$namber<>$date<>$name<>$email<>$d_may<>$comment<>$url<>$space<>$end<>$type<>$del<>";
-                $new_ .= "$Ip:$ico:$Ent:$fimg:$TXT:$txt\|\|$sel\|\|$yobi\|\|:$R:<>$tim<>$S<>\n";
-            } else {push(@NEW, $lines); next; }
-        } elsif ($mo eq "I-BOARD") {
-            if ($space =~ /[A-Za-z\#]+/) {
-                ($font,$hr)=split(/\;/,$space);
-                if($ip=~ /:/){($ip,$ID,$Sex,$Old,$Rank,$T)=split(/:/,$ip);}
-                if($type){$sp=15;}else{$sp=0;}
-                if($DmyNo <= $namber){$DmyNo=$namber;}
-                $new_="$namber<>$date<>$name<>$email<>$d_may<>$comment<>$url<>$sp<><>$type<>$del<>";
-                $new_.="$ip\::1::\|$end\|$font\|$hr\|:$Old\|\|$Sex\|\|$ID\|\|:$Rank:<>$T<>$tim<>\n"; $T--;
-            }else{&er_('alreadyct',"1");}
-        }elsif($mo eq "UPP-BOARD"){
-            if($space =~/[A-Za-z\#]+/){
-                ($font,$hr)=split(/\;/,$space);
-                if($type){$sp=15;}else{$sp=0;}
-                if($DmyNo <= $namber){$DmyNo=$namber;}
-                if($end){foreach(0..$#exn){if($end=~ /$exn[$_]$/ || $end=~ /\U$exn[$_]\E$/){$TL=$exi[$_]; last;}}}
-                $new_="$namber<>$date<>$name<>$email<>$d_may<>$comment<>$url<>$sp<><>$type<>$del<>";
-                $new_.="$ip:$end:$tim:$TL:\|\|$font\|$hr\|:\|\|\|\|\|\|::<>$T<>$tim<>\n"; $T--;
-            }else{&er_('alreadyct', "1");}
-        }
-        push(@NEW,$new_);
-    }
-    close(DB);
-    if($DmyNo){unshift(@NEW,"$DmyNo<><><><><><><><><>$DmyNo<><><><><>\n");}
-    open (DB,">$log");
-    print DB @NEW;
-    close(DB);
-    if(-e $lockf){rmdir($lockf);}
-    $msg="<h3>修復完了</h3>"; &del_;
-}
-#--------------------------------------------------------------------------------------------------------------------
 # [内容チェック]
 # -> フォーム内容をチェック(check_)
 #
@@ -2992,7 +2295,6 @@ sub check_ {
         }
         chmod(0666, "$i_dir/$file");
     }
-    #if($kanrimode>1){$tag=1;}
 
     $tmplVars{'NMAX'} = $NMAX;
     $tmplVars{'TMAX'} = $TMAX;
@@ -3079,16 +2381,11 @@ sub allfooter ($) {
     $tmplVars{'Nl'} = $Nl;
     $tmplVars{'Nle'} = $Nle;
     $tmplVars{'Plink'} = $Plink;
-    $tmplVars{'srch'} = $srch;
-    $tmplVars{'met'} = $met;
     $tmplVars{'log'} = $log;
     $tmplVars{'word'} = $word;
     $tmplVars{'NS'} = $NS;
     $tmplVars{'total'} = $total;
     $tmplVars{'RS'} = $RS;
-    $tmplVars{'cgi_f'} = $cgi_f;
-    $tmplVars{'ff'} = $ff;
-    $tmplVars{'fm'} = $fm;
     $obj_template->process('allfooter.tpl', \%tmplVars);
 }
 
@@ -3099,25 +2396,15 @@ sub allfooter ($) {
 #  rets : none
 sub man_ {
     &hed_("Help");
-    $tmplVars{'all_i'} = $all_i;
     $tmplVars{'alk_su'} = $alk_su;
     $tmplVars{'alk_rm'} = $alk_rm;
     $tmplVars{'new_t'} = $new_t;
-    $tmplVars{'new_i'} = $new_i;
-    $tmplVars{'M_Rank'} = $M_Rank;
-    $tmplVars{'i_mode'} = $i_mode;
-    $tmplVars{'max'} = $max;
-    $tmplVars{'r_max'} = $r_max;
     $tmplVars{'end_f'} = $end_f;
     $tmplVars{'end_c'} = $end_c;
-    $tmplVars{'end_ok'} = $end_ok;
     $tmplVars{'UID'} = $UID;
     $tmplVars{'SPAM'} = $SPAM;
-    $tmplVars{'max_fs'} = $max_fs;
-    $tmplVars{'up_i_'} = $up_i_;
-    $tmplVars{'hed_i'} = $hed_i;
     $obj_template->process('man.tpl', \%tmplVars);
-    &foot_;
+    exit;
 }
 ##------------------------------------------------------------------------------
 # new_ - show form for posting new
@@ -3126,7 +2413,8 @@ sub man_ {
 #  rets : none
 sub new_ {
     if (($topok == 0) &&
-        (Forum->user->validate_password_admin($FORM{'pass'}) == 0)) {
+        (Forum->user->group_check('admin') == 0)) {
+#        (Forum->user->validate_password_admin($FORM{'pass'}) == 0)) {
         &er_('newpasserr');
     }
     &get_uid();
@@ -3166,38 +2454,8 @@ sub get_uid {
 #  rets : none
 sub hed_ {
     print Forum->cgi->header();
-    $tmplVars{'htmltitle'} = $_[0];
-
-    $curT = 0;
-    if ($mode eq "man")      {$curT = 1; }
-    elsif ($mode eq "n_w")   {$curT = 2; }
-    elsif ($mode eq "one")   {$curT = 5; }
-    elsif ($mode eq "new")   {$curT = 3; }
-    elsif ($mode eq "alk")   {$curT = 4; }
-    elsif ($mode eq "all")   {$curT = 5; }
-    elsif ($mode eq "al2")   {$curT = 7; }
-    elsif ($mode eq "ran")   {$curT = 6; }
-    elsif ($mode eq "res")   {$curT = 4; }
-    elsif ($mode eq "f_a")   {$curT = 8; }
-    elsif ($mode eq "" || $mode eq "wri") {
-        if ($H) {
-            if ($H eq "T") {$curT = 5; }
-            elsif ($H eq "F") {$curT = 7; }
-            elsif ($H eq "N") {$curT = 4; }
-        } else {
-            if ($TOPH == 1) {$curT = 5; }
-            elsif ($TOPH == 2) {$curT = 7; }
-            else {$curT = 4; }
-        }
-    }
-    $tmplVars{'curT'} = $curT;
-    $tmplVars{'M_Rank'} = $M_Rank;
-    $tmplVars{'i_mode'} = $i_mode;
-    $tmplVars{'Wf'} = $Wf;
-    $tmplVars{'kiji_exist'} = $kiji_exist;
-    if ($KLOG) {
-        $tmplVars{'KLOG'} = $KLOG;
-    }
+    Forum->template->set_vars('htmltitle', $_[0]);
+    Forum->template->set_vars('kiji_exist', $kiji_exist);
     $obj_template->process('htmlhead.tpl', \%tmplVars);
 }
 
@@ -3206,12 +2464,6 @@ sub hed_ {
 #  vars : 
 #  tmpl : htmlfoot.tpl
 sub foot_ {
-    $tmplVars{'kanrimode'} = $kanrimode;
-    $tmplVars{'met'} = $met;
-    $tmplVars{'ff'} = $ff;
-    $tmplVars{'i_mode'} = $i_mode;
-    $tmplVars{'mas_c'} = $mas_c;
-    $tmplVars{'TGT'} = $TGT;
     $obj_template->process('htmlfoot.tpl', \%tmplVars);
     exit;
 }
@@ -3248,7 +2500,7 @@ sub d_code_ {
                     if (index($value, $curNW) >= 0) {
                         $curNW =~ s/</\&lt\;/g;
                         $curNW =~ s/>/\&gt\;/g;
-                        &er_("「$curNW」は使用できません!");
+                        Forum->error->throw_error_user("「$curNW」は使用できません!");
                     }
                 }
             }
@@ -3288,12 +2540,12 @@ sub d_code_ {
     $comment =~ s/(<br>)*$//g;
     $email = $FORM{'email'};
     if (length($email) > 100) {
-        &er_('longmail');
+        Forum->error->throw_error_user('longmail');
     }
     $email =~ s/\x0D\x0A|\x0D|\x0A//g;
     $url  = $FORM{'url'};
     if (length($url) > 1000) {
-        &er_('longurl');
+        Forum->error->throw_error_user('longurl');
     }
     $url =~ s/\x0D\x0A|\x0D|\x0A//g;
     $url =~ s/^http\:\/\///;
@@ -3327,12 +2579,8 @@ sub d_code_ {
 #  tmpl : 
 sub pas_ {
     &hed_("Pass Input");
-    $tmplVars{'cgi_f'} = $cgi_f;
-    $tmplVars{'met'} = $met;
-    $tmplVars{'ff'} = $ff;
-    $tmplVars{'fm'} = $fm;
     $obj_template->process('password.tpl', \%tmplVars);
-    &foot_;
+    exit;
 }
 
 ##------------------------------------------------------------------------------
@@ -3396,35 +2644,28 @@ sub forms_ {
         if($ResUp && $sp){
             $SIZE = int($SIZE/1024);
             $tmplVars{'SIZE'} = $SIZE;
-            $tmplVars{'max_or'} = $max_or;
             $tmplVars{'Rest'} = $max_or - $SIZE;
         }
         $tmplVars{'multipart'} = 1;
         $tmplVars{'H2'} = $H2;
         $tmplVars{'W2'} = $W2;
-        $tmplVars{'max_fs'} = $max_fs;
     } else {
         $tmplVars{'multipart'} = 0;
     }
     $tmplVars{'FORM_PV'} = $FORM{'PV'};
-    $tmplVars{'cgi_f'} = $cgi_f;
-    $tmplVars{'met'} = $met;
     $tmplVars{'tag'} = $tag;
     $tmplVars{'N_NUM'} = $N_NUM;
     $tmplVars{'nams'} = $nams;
     $tmplVars{'namber'} = $namber;
     $tmplVars{'sp'} = $sp;
     $tmplVars{'Hi'} = $Hi;
-    $tmplVars{'he_tp'} = $he_tp;
     $tmplVars{'c_name'} = $c_name;
     $tmplVars{'c_email'} = $c_email;
     $tmplVars{'c_url'} = $c_url;
-    $tmplVars{'ff'} = $ff;
     $tmplVars{'NMAX'} = $NMAX;
     $tmplVars{'TMAX'} = $TMAX;
     $tmplVars{'UID'} = $UID;
     $tmplVars{'pUID'} = $pUID;
-    $tmplVars{'TGT'} = $TGT;
     if ($ua_select) {
         $tmplVars{'uasel'} = &UAsel;
     } else {
@@ -3469,9 +2710,7 @@ sub forms_ {
     $tmplVars{'key'} = $key;
     $tmplVars{'optH'} = $_[0];
     if (($space ne "") && ($end_f == 1)) {
-        $tmplVars{'end_ok'} = $end_ok;
         $tmplVars{'end_c'} = $end_c;
-        $tmplVars{'end_m'} = $end_m;
         $tmplVars{'PVC'} = $PVC;
     }
     $obj_template->process('forms.tpl', \%tmplVars);
@@ -3505,10 +2744,9 @@ sub img_ {
   $tmplVars{'icon_2'} = \@ico2;
   $tmplVars{'icon_master'} = \@mas_i;
   $tmplVars{'icon_dir'} = $IconDir;
-  $tmplVars{'cgi_f'} = $cgi_f;
   $tmplVars{'icon_1'} = \@ico1;
   $obj_template->process('img_.tpl', \%tmplVars);
-  &foot_;
+  exit;
 }
 
 
@@ -3529,9 +2767,8 @@ sub cookdel{
     $tmplVars{'msg'} = $msg;
     $tmplVars{'cookie_mode'} = $mo;
     $tmplVars{'UID'} = $UID;
-    $tmplVars{'cgi_f'} = $cgi_f;
     $obj_template->process('cookdel.tpl', \%tmplVars);
-    &foot_;
+    exit;
 }
 
 ##------------------------------------------------------------------------------
@@ -3615,9 +2852,8 @@ sub read {
     $tmplVars{'N'} = \@N;
     $tmplVars{'klog_h'} = $klog_h;
 
-    $tmplVars{'srch'} = $srch;
     $obj_template->process('read.tpl', \%tmplVars);
-    &foot_;
+    exit;
 }
 
 ##------------------------------------------------------------------------------
@@ -3691,7 +2927,6 @@ sub res_ {
     $end_data = @TOP-1;
     $page_end = $page + ($ResHy - 1);
     if ($page_end >= $end_data) {$page_end = $end_data; }
-    $tmplVars{'cgi_f'} = $cgi_f;
     $tmplVars{'total'} = $total;
     $tmplVars{'page'} = $page;
     $tmplVars{'page_end'} = $page_end;
@@ -3717,7 +2952,6 @@ sub res_ {
         $ToNo++;
     }
     $tmplVars{'article_html'} = \@article_html;
-    $tmplVars{'all_i'} = $all_i;
 
     $bl = $page - $ResHy;
     $tmplVars{'bl'} = $bl;
@@ -3725,11 +2959,9 @@ sub res_ {
 
     if ($mo eq "") {$com = ""; }
 
-    $tmplVars{'r_max'} = $r_max;
     $tmplVars{'total'} = $total;
     $tmplVars{'En'} = $En;
     $tmplVars{'end_e'} = $end_e;
-    $tmplVars{'end_ok'} = $end_ok;
     $obj_template->process('res_.tpl', \%tmplVars);
     if (! ($r_max && ($total > $r_max))) {
         if (! ($En && $end_e)) {

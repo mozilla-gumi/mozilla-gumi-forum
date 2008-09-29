@@ -10,6 +10,7 @@
 [% Plink %]
 <hr>
 <div class="Forms">
+[% IF ! KLOG %]
 <form action="[% srch %]" method="[% met %]">
 <strong>過去ログに移動していない記事の検索</strong> : 
 <input type="hidden" name="andor" value="and">
@@ -18,23 +19,25 @@
 <input type="text" name="word" size="32" value="[% word %]">
 <input type="submit" value="検索">
 記事数 [% NS %] （親 [% total %]、返信 [% RS %]） から検索
+</form>
+[% END %]
 <p>過去ログに移動したスレッドの検索は、
-<a href="http://forum.test.mozilla.gr.jp/srch.cgi">検索</a>
+<a href="srch.cgi">検索</a>
 より行うことができます。</p>
-</form></div>
+</div>
 
 [% IF use_password != 0 %]
   <hr>
   <div class="Forms">
   <form action="[% cgi_f %]" method="[% met %]">[% nf %][% pf %]
     <strong>削除 / 編集フォーム</strong><br>
-    記事番号 <input type="text" name="del" size="8" value="" [% ff %]>
+    記事番号 <input type="text" name="del" size="8" value="">
     <select name="mode">
       <option value="nam">編集</option>
       <option value="key">削除</option>
     </select>
-    パスワード <input type="password" name="delkey" size="8" [% ff %]>
-    <input type="submit" value=" 送信 " [% fm %]>
+    パスワード <input type="password" name="delkey" size="8">
+    <input type="submit" value=" 送信 ">
   </form>
   </div>
 [% END %]

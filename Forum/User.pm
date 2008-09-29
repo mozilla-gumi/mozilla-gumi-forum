@@ -23,13 +23,16 @@ use Forum::Constants;
     validate_password_admin
     get_uid
     restore_cookie
+    revoke_cookie
     parse_ua
+    user_data
 );
 
 our %conf = {
     'uid'      => 0,
     'ua_id'    => 0,
     'gid'      => 0,
+    'name'     => '',
 };
 
 sub new {
@@ -51,6 +54,7 @@ sub validate_password_admin {
         Forum->cgi->add_cookie('-name', 'auth_user', '-value', $auth_user);
         Forum->cgi->add_cookie('-name', 'auth_key', '-value', $auth_key);
         $conf{'uid'} = $auth_user;
+        $conf{'name'} = 'admin';
         return $auth_user;
     }
     return 0;
@@ -60,13 +64,35 @@ sub get_uid {
     return $conf{'uid'};
 }
 
+sub user_data {
+    return \%conf;
+}
+
 sub restore_cookie {
     my $user = Forum->cgi->cookie('auth_user');
     my $key  = Forum->cgi->cookie('auth_key');
     if (defined($user) && defined($key)) {
         my $dbh = Forum->dbh;
         $conf{'uid'} = $dbh->db_auth_cookie($user, $key);
+##### TEMPORARY HACK - SHOULD MOVE 'name' TO DB.
+        $conf{'name'} = 'admin';
     }
+}
+
+sub revoke_cookie {
+    my $user = Forum->cgi->cookie('auth_user');
+    my $key  = Forum->cgi->cookie('auth_key');
+    if (defined($user) && defined($key)) {
+        my $dbh = Forum->dbh;
+        my $ret = $dbh->db_revoke_cookie($user, $key);
+        if ($ret != 0) {
+            $conf{'uid'} = 0;
+            $conf{'gid'} = 0;
+            $conf{'name'} = '';
+        }
+        return $ret;
+    }
+    return 0;
 }
 
 sub parse_ua {
