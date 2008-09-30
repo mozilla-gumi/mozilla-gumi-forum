@@ -450,4 +450,6 @@ td textarea{
   margin: auto;
 }
 
-
+div.menubar {
+  padding-bottom: 10px;
+}
