@@ -89,3 +89,5 @@
 →[<a href=\"$cgi_f?mode=cookdel\"$TGT>cookieの削除</a>]<br>
 cookie...ブラウザが入力内容を保存しておく機能\です。別のサイトで利用されることは通常ありません。</li>
 -->
+
+[% PROCESS htmlfoot.tpl %]

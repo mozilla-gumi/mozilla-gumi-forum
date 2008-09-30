@@ -32,3 +32,5 @@
 [% END %]
 
 <hr />
+
+[% PROCESS htmlfoot.tpl %]

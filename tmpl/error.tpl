@@ -116,4 +116,5 @@
 </div>
 [% END %]
 
+[% PROCESS htmlfoot.tpl %]
 

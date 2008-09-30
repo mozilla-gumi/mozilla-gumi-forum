@@ -139,6 +139,19 @@ sub db_auth_cookie {
     return 0;
 }
 
+sub db_revoke_cookie {
+    my ($self, $user, $key) = @_;
+    my $sth = $self->prepare('SELECT uid FROM auth WHERE cookie = ? AND ' .
+        'uid = ?');
+    $sth->execute($key, $user);
+    if (defined(my $ref = $sth->fetchrow_hashref())) {
+        $sth = $self->prepare('DELETE FROM auth WHERE uid = ? AND cookie = ?');
+        $sth->execute($user, $key);
+        return $ref->{'uid'};
+    }
+    return 0;
+}
+
 sub db_auth_setcookie {
     my ($self, $uid, $hash) = @_;
     my $sth = $self->prepare('INSERT INTO auth (uid, cookie, lastdate) VALUES (?, ?, NOW())');

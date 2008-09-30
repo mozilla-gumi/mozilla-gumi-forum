@@ -16,6 +16,7 @@ use Template;
 use Forum::Constants;
 use Forum::Config;
 use Forum::Util;
+use Forum::User;
 
 %Forum::Template::EXPORT = qw(
     new
@@ -55,6 +56,8 @@ sub new {
         CONSTANTS => _load_constants(),
         VARIABLES => {
             'Param'    => sub { return $obj_config->GetHash(); },
+            'in_group' => sub { return Forum->user->group_check($_[0]); },
+            'user'     => sub { return Forum->user->user_data; },
         },
     };
 

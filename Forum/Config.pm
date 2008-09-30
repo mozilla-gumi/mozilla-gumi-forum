@@ -16,6 +16,7 @@ use File::Temp;
 use Safe;
 
 use Forum::Constants;
+use Forum::Error;
 
 %Forum::Config::EXPORT = qw(
     new

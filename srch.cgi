@@ -11,42 +11,28 @@ $ver="Child Search v8.92";# (ツリー式掲示板)
 # W W W :http://www.cj-c.com/
 #------------------------------------------
 
-#---[設定ファイル]-------------------------
-
-# 同じようにいくつでも増やせます。
-# [ ]内の数字を使いCGIにアクセスするとその設定ファイルで動作します。
-# $set[12] の設定ファイルを使う場合: http://www.---.com/cgi-bin/srch.cgi?no=12
-$set[0]="./set.cgi";
-$set[1]="./set1.cgi";
-$set[2]="./set2.cgi";
-$set[3]="./set3.cgi";
-$set[4]="./set4.cgi";
+$set[0] = "./set.cgi";
 
 # ---[設定ここまで]--------------------------------------------------------------------------------------------------
 &d_code_;
-if($no eq ""){$no=0;}
-if($set[$no]){unless(-e $set[$no]){&er_('設定ファイルが無いです!');}else{$SetUpFile="$set[$no]"; require"$SetUpFile";}}
-else{&er_('設定ファイルがCGIに設定されてません!');}
-# ---[フォームスタイルシート設定等]----------------------------------------------------------------------------------
+Forum->template->set_vars('mode_id', 'search');
+
+$SetUpFile = $set[0];
+require $SetUpFile;
+
+
 $ag=$ENV{'HTTP_USER_AGENT'};
-if($fss && $ag =~ /IE|Netscape6/){
-	$fm=" onmouseover=\"this.style.$on\" onmouseout=\"this.style.$off\"";
-	$ff=" onFocus=\"this.style.$on\" onBlur=\"this.style.$off\"";
-	$fsi="$fst";
-}
 if($logs){unless(($logs eq "$log" || $logs=~ /^[\d]+$/ || $logs eq "all" || $logs eq "recent")){&er_("そのファイルは閲覧できません!");}}
-$nf="<input type=\"hidden\" name=\"no\" value=\"$no\">\n";
 $SL="$klog_d\/1$klogext";
-# ---[簡易パスワード制限関連]----------------------------------------------------------------------------------------
-if($s_ret){$P=$FORM{"P"}; $pf="<input type=\"hidden\" name=\"P\" value=\"$P\">\n"; $pp="&amp;P=$P";}else{$pf=""; $pp="";}
-if($s_ret && $P eq ""){&er_("<a href=\"$cgi_f?no=$no\">認証</a>してください!");}
-if($P ne "R"){if($s_ret && $P ne "$s_pas"){&er_("パスワードが違います!");}}
-if($s_ret==2 && $P eq "R"){&er_("パスワードが違います!");}
+
+$pf = "";
+$pp = "";
+
 # ---[サブルーチンの読み込み/表示確定]-------------------------------------------------------------------------------
 if($mode eq "log"){&log_;}
-if($mode eq "del"){&del_;}
-if($mode eq "dl"){&dl_;}
-&srch_;
+elsif($mode eq "del"){&del_;}
+elsif($mode eq "dl"){&dl_;}
+else {&srch_;}
 exit;
 
 #--------------------------------------------------------------------------------------------------------------------
@@ -79,7 +65,6 @@ sub d_code_ {
     $andor=$FORM{'andor'};
     $mode= $FORM{'mode'};
     $logs =$FORM{'logs'};
-    $no   =$FORM{'no'};
     $FORM{'N'}=~ s/([^0-9,])*?//g;
     my $neq=$FORM{'N'};
     $Neq = '';
@@ -91,30 +76,9 @@ sub d_code_ {
 # -> HTMLヘッダを出力する(hed_)
 #
 sub hed_ {
-#    print "Content-type: text/html; charset=Shift_JIS\n\n";
     print Forum->cgi->header();
-    $obj_template->process('htmlhead.tpl', \%tmplVars);
-$BG="Act";
-if($mode eq "log"){$T1="$BG";}else{$T2="$BG";}
-if($klog_s){$klog_link="<a class=\"Menu$T1\" href=\"$srch?mode=log&amp;no=$no$pp\">過去ログ</a>\n";}
-if($M_Rank){$rank_link="<a class=\"Menu\" href=\"$cgi_f?mode=ran&amp;no=$no$pp\">発言ランク</a>\n";}
-if($topok){$New_link="<a class=\"Menu\" href=\"$cgi_f?mode=new&amp;no=$no$pp\">新規投稿</a>\n";}
-if($TrON){$TrL="<a class=\"Menu\" href=\"$cgi_f?H=T&amp;no=$no$pp$Wf\">ツリー表\示</a>\n";}
-if($TpON){$TpL="<a class=\"Menu\" href=\"$cgi_f?H=F&amp;no=$no$pp$Wf\">トピック表\示</a>\n";}
-if($ThON){$ThL="<a class=\"Menu\" href=\"$cgi_f?mode=alk&amp;no=$no$pp$Wf\">スレッド表\示</a>\n";}
-if($i_mode){$FiL="<a class=\"Menu\" href=\"$cgi_f?mode=f_a&amp;no=$no$pp\">アップファイル一覧</a>\n";}
-$HEDF= <<"_HTML_";
-<hr class="Hidden">
-<div class="Menu">
-$New_link<a class="Menu" href="$cgi_f?mode=n_w&amp;no=$no$pp">新着記事</a>
-$TrL$ThL$TpL$rank_link$FiL<a class="Menu$T2" href="$srch?no=$no$pp">検索</a>
-$klog_link<a class="Menu" href="$cgi_f?mode=man&amp;no=$no$pp">ヘルプ</a>
-</div>
-<hr>
-
-_HTML_
-print"$HEDF";
-if($KLOG){print"<br>(現在 過去ログ$KLOG を表\示中)";}
+    Forum->template->process('htmlhead.tpl', \%tmplVars);
+    if ($KLOG) {print "<br>(現在 過去ログ$KLOG を表\示中)"; }
 }
 
 #--------------------------------------------------------------------------------------------------------------------
@@ -122,15 +86,7 @@ if($KLOG){print"<br>(現在 過去ログ$KLOG を表\示中)";}
 # -> HTMLフッタを出力する(foot_)
 #
 sub foot_ {
-print <<"_HTML_";
-$HEDF
-<div id="Credit">
-<!--著作権表\示 削除不可-->
-- <a href="http://www.cj-c.com/"$TGT>Child Tree</a> -<br>
-</div>
-</body></html>
-_HTML_
-exit;
+    Forum->template->process('htmlfoot.tpl', \%tmplVars);
 }
 #--------------------------------------------------------------------------------------------------------------------
 # [検索機能&表示]
@@ -157,9 +113,9 @@ print <<"_STOP_";
 $klog_msg</li>
 </ul>
 <hr class="Hidden">
-<form action="$srch" method="$Met">$nf$pf<input type="hidden" name="no" value="0">
+<form action="$srch" method="$Met">$pf<input type="hidden" name="no" value="0">
 <table class="Submittion"><tr>
-<td class="justify"><strong>キーワード</strong></td><td><input type="text" name="word" size="32" value="$word"$ff></td>
+<td class="justify"><strong>キーワード</strong></td><td><input type="text" name="word" size="32" value="$word"></td>
 <td class="justify"><strong>検索条件</strong></td>
 <td><select name="andor"><option value="and">(AND)<option value="or"$OC>(OR)</select></td></tr>
 <tr><td class="justify"><strong>検索範囲</strong></td><td><select name="logs"><option value="$log">(現在のログ)
@@ -184,18 +140,18 @@ if($FORM{"KYO"}){$CB=" checked";}
 if($FORM{"bigmin"}){$CB2=" checked"; $BM=0;}else{$BM=1;}
 print <<"_SS_";
 </select></td>
-<td class="justify"><strong>強調表\示</strong></td><td><input type="checkbox" name="KYO" value="1"$CB$fm>ON
+<td class="justify"><strong>強調表\示</strong></td><td><input type="checkbox" name="KYO" value="1"$CB>ON
 (自動リンクOFF)</td></tr>
 <tr><td class="justify"><strong>結果表\示件数</strong></td><td><select name="PAGE">
 _SS_
 foreach $KH (@klog_h){$S=""; if($klog_h==$KH){$S=" selected";} print"<option value=$KH$S>$KH件\n";}
 print <<"_SS_";
 </select></td>
-<td class="justify"><strong>記事No検索</strong></td><td><input type="checkbox" name="ALL" value="1"$KNS$fm>ON</td></tr>
-<tr><td colspan="2"><input type="checkbox" name="bigmin" value="1"$CB2$fm>大文字と小文字を区別する</td>
+<td class="justify"><strong>記事No検索</strong></td><td><input type="checkbox" name="ALL" value="1"$KNS>ON</td></tr>
+<tr><td colspan="2"><input type="checkbox" name="bigmin" value="1"$CB2>大文字と小文字を区別する</td>
 <td colspan="2" align="right">
-<input type="submit" value=" 検 索 "$fm>
-<input type="reset" value="リセット"$fm>
+<input type="submit" value=" 検 索 ">
+<input type="reset" value="リセット">
 </td></tr></table></form>$nowlog
 _SS_
 if($word ne "") {
@@ -262,7 +218,7 @@ if($count > 0){
 		if($I>1 && $I>$N){$NLog.="～$I "; $fromto.="～$I ";}
 		$NLog.="の検索結果"; $fromto .="の";
 		if($n>$I){
-			$NLog.=" / <strong><a href=\"$srch?mode=srch&amp;logs=$logs&amp;no=$no$pp&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h&amp;N=$I,$Stert\">";
+			$NLog.=" / <strong><a href=\"$srch?mode=srch&amp;logs=$logs&amp;$pp&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h&amp;N=$I,$Stert\">";
 			$NLog.="過去ログ$Nextからさらに検索→</a></strong>\n";
 		}
 	}
@@ -270,11 +226,11 @@ if($count > 0){
 	$nl=$page_end + 1;
 	$bl=$page - $klog_h;
 	if($bl >= 0){
-		$Bl ="<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$bl&amp;no=$no$pp&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">";
+		$Bl ="<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$bl&amp;$pp&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">";
 		$Ble="</a>";
 	}
 	if($page_end ne $end_data){
-		$Nl ="<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$nl&amp;no=$no$pp&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">";
+		$Nl ="<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$nl&amp;$pp&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">";
 		$Nle="</a>";
 	}
 $Plink="<div class=\"Caption01c\"><strong>$fromto全ページ</strong> /\n"; $a=0;
@@ -284,7 +240,7 @@ $Plink="<div class=\"Caption01c\"><strong>$fromto全ページ</strong> /\n"; $a=0;
 		if($i != 0){$Plink.=" ";}
 		if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}
 		else{
-			$Plink.="[<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$a&amp;no=$no$pp";
+			$Plink.="[<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$a&amp;$pp";
 			$Plink.="&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">$i</a>]\n";
 		}
 		$a+=$klog_h;
@@ -293,7 +249,7 @@ $Plink="<div class=\"Caption01c\"><strong>$fromto全ページ</strong> /\n"; $a=0;
 	print <<"_KT_";
 $Plink
 <form action="$srch" method="$Met"><input type="hidden" name="mode" value="del">
-<input type="hidden" name="logs" value="$logs">$nf$pf
+<input type="hidden" name="logs" value="$logs">$pf
 _KT_
 	foreach ($page .. $page_end) {
 		($IT,$nam,$date,$name,$email,$d_may,$comment,$url,
@@ -321,7 +277,6 @@ _KT_
 				$Pr="$Pr"."<br>$AEND $KB\KB\n";
 			}
 		}
-		if($font eq ""){$font=$text;}
 		if($hr eq ""){$hr=$ttb;}
 		if($type > 0){$t_com="記事No.$type への返信\n"; $KK="$type";}else{$t_com="親記事\n"; $KK="$nam";}
 		if($d_may eq ""){$d_may="$notitle";}
@@ -369,7 +324,7 @@ _KT_
 			if($TOPH==0){$MD="mode=res&amp;namber="; if($type){$MD.="$type";}else{$MD.="$nam";}}
 			elsif($TOPH==1){$MD="mode=one&amp;namber=$nam&amp;type=$type&amp;space=$sp";}
 			elsif($TOPH==2){$MD="mode=al2&amp;namber="; if($type){$MD.="$type";}else{$MD.="$nam";}}
-			$L=" <a href=\"$cgi_f?$MD&amp;no=$no$pp\">トピック表\示と返信</a> /";
+			$L=" <a href=\"$cgi_f?$MD&amp;$pp\">トピック表\示と返信</a> /";
 		}
 		print <<"_HITCOM_";
 <div class="ArtMain">
@@ -385,8 +340,8 @@ $url</div>
 $Pr
 $Smsg
 $t_com /$e$L$PLL
-<a href="$cgi_f?mode=al2&amp;namber=$KK&amp;no=$no$pp$IT"$TGT>関連記事表\示</a>
-チェック/<input type="checkbox" name="del" value="$nam"$fm></div></div><br>
+<a href="$cgi_f?mode=al2&amp;namber=$KK&amp;$pp$IT"$TGT>関連記事表\示</a>
+チェック/<input type="checkbox" name="del" value="$nam"></div></div><br>
 _HITCOM_
 
 
@@ -398,8 +353,8 @@ _HITCOM_
 print "</div><hr>$Plink\n$NLog";
 	if($kanrimode){
 	print <<"_KF_";
-<div align=right>パスワード/<input type=password name=pas size=4$ff>
-<input type=submit value="管理者削除用"$fm></form></div>
+<div align=right>パスワード/<input type=password name=pas size=4>
+<input type=submit value="管理者削除用"></form></div>
 _KF_
 	}
 }elsif($count == 0 && $word){print qq!<div class="Caption03l">該当する記事はありませんでした。</div>!;}
@@ -411,7 +366,8 @@ _KF_
 #
 
 sub log_ {
-&hed_("Past Log");
+    Forum->template->set_vars('mode_id', 'oldlog');
+    &hed_("Past Log");
 if($logs){
 	$logn=$logs;
 	$logn=~ s/$klogext//g; $logn=~ s/\.//; $logn=~ s/txt//; $logn=~ s/\///;
@@ -421,7 +377,7 @@ if($FORM{"KLOG_H"}){$klog_h[0]=$FORM{"KLOG_H"};}
 print <<"_LTOP_";
 <h2>過去ログ表\示</h2>
 <ul>
-<li>過去ログの検索は <a href="$srch?no=$no$pp">検索</a> より行えます。
+<li>過去ログの検索は <a href="$srch?$pp">検索</a> より行えます。
 <li>過去ログの表\示はトピック表\示となります。
 </ul>
 <div class="ArtList">
@@ -433,7 +389,7 @@ if(-e $SL){
 	close(NO);
 	$br=0;
 	for ($i=1;$i<=$n;$i++) {
-		print"<a href=\"$cgi_f?KLOG=$i&no=$no$pp\"$TGT>過去ログ$i</a>\n";
+		print"<a href=\"$cgi_f?KLOG=$i&amp;$pp\"$TGT>過去ログ$i</a>\n";
 		$br++; if($br==5){print"<br>";$br=0;}
 	}
 }else{print"現在表\示できる過去ログはありません。\n";}
@@ -447,7 +403,7 @@ print"</div><hr width=\"85\%\">";
 sub del_ {
 if(Forum->user->validate_password_admin($FORM{'pas'}) != 1){ &er_("パスワードが違います!"); }
 #if($FORM{'pas'} ne "$pass"){ &er_("パスワードが違います!"); }
-if($logs eq $log){&er_("現在ログは<a href='$cgi_f?no=$no$pp'>$cgi_f</a>管理モードより削除下さい。");}
+if($logs eq $log){&er_("現在ログは<a href='$cgi_f?$pp'>$cgi_f</a>管理モードより削除下さい。");}
 $logs="$klog_d/$logs";
 open(DB,"$logs") || &er_("Can't open $logs");
 @mens = <DB>;
@@ -475,7 +431,7 @@ sub auto_ {
 if($_[0]=~/<\/pre>/){$_[0]=~ s/(>|\n)((&gt;|＞|>)[^\n]*)/$1$2/g;}
 else{$_[0]=~ s/>((&gt;|＞|>)[^<]*)/><span class="Quoted">$1<\/span>/g;}
 $_[0]=~ s/([^=^\"]|^)((http|ftp|https)\:[\w\.\~\-\/\?\&\+\=\:\@\%\;\#\,\|]+)/$1<a href="$2"$TGT>$2<\/a>/g;
-$_[0]=~ s/([^\w^\.^\~^\-^\/^\?^\&^\+^\=^\:^\%^\;^\#^\,^\|]+)(No|NO|no|No.|NO.|no.|&gt;&gt;|＞＞|>>)([0-9\,\-]+)/$1<a href=\"$cgi_f?mode=red&amp;namber=$3&amp;no=$no$pp\"$TGT>$2$3<\/a>/g;
+$_[0]=~ s/([^\w^\.^\~^\-^\/^\?^\&^\+^\=^\:^\%^\;^\#^\,^\|]+)(No|NO|no|No.|NO.|no.|&gt;&gt;|＞＞|>>)([0-9\,\-]+)/$1<a href=\"$cgi_f?mode=red&amp;namber=$3&amp;$pp\"$TGT>$2$3<\/a>/g;
 {$_[0]=~ s/&gt;([^<]*)/<span class="Quoted">&gt;$1<\/span>/g;}
 }
 #--------------------------------------------------------------------------------------------------------------------

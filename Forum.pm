@@ -28,6 +28,9 @@ use Forum::User;
     cgi
     config
     template
+    dbh
+    user
+    error
 );
 
 our $_request = {};
@@ -74,7 +77,7 @@ sub user {
 sub error {
     my $this = shift;
     $this->request->{error} ||= new Forum::Error;
-    return $this->request->{errro};
+    return $this->request->{error};
 }
 
 ################################################################## PRIVATE

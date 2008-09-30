@@ -43,3 +43,5 @@
   </tr>
 [% END %]
 </table>
+
+[% PROCESS htmlfoot.tpl %]

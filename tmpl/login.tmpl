@@ -1,0 +1,27 @@
+[% PROCESS htmlhead.tpl
+   htmltitle = "ログインページ"
+%]
+[% IF !target %]
+  [% target = "login.cgi" %]
+[% END %]
+
+<div class="Caption03l">
+
+<p>ログインするには正しいユーザ名・パスワードの入力が必要です。</p>
+<form action="[% target FILTER html %]" method="POST">
+<table>
+  <tr>
+    <td><label for="login_name">ログイン名 :</label></td>
+    <td><input size="20" id="login_name" name="login_name" value="admin" disabled="disabled" />
+  </tr>
+  <tr>
+    <td><label for="password">パスワード :</label></td>
+    <td><input type="password" size="20" id="password" name="password" />
+  </tr>
+</table>
+<input type="submit" name="login" value="ログイン" id="login" />
+</form>
+
+</div>
+
+[% PROCESS htmlfoot.tpl %]
