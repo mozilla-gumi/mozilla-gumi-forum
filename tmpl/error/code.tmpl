@@ -1,0 +1,26 @@
+[% PROCESS htmlhead.tpl
+   htmltitle = "処理エラーが発生しました"
+%]
+
+<div class="ErrMsg">
+[% IF error == 'cookie_novalue' %]
+    無効なパラメータでcookie設定をしようとしました。
+[% ELSIF error == 'nested_transaction' %]
+    トランザクションを重ねて開始しようとしました。
+[% ELSIF error == 'not_in_transaction' %]
+    トランザクション中でないのに終了しようとしました。
+[% ELSIF error == 'already_locked' %]
+    テーブルを二重ロックしようとしました。
+[% ELSIF error == 'not_locked' %]
+    ロックしていないのにテーブルのロックを開放しようとしました。
+[% ELSE %]
+    未定義エラー - [% error %]
+[% END %]
+</div>
+
+<div>
+  このエラーが出たときにどのような操作をしていたかとエラーコード [% error %] を、
+  <a href="http://bugzilla.mozilla.gr.jp/">bugzilla-jp</a> にバグとして登録してください。
+</div>
+
+[% PROCESS htmlfoot.tpl %]

@@ -90,6 +90,8 @@ sub LOCATIONS {
         'datacbbs'    => "$datapath/cbbs",
         'datadat'     => "$datapath/dat",
         'instname'    => $instname,
+        'ipdeny'      => "$datapath/cbbs/IpAcDeny.cgi",
+        'worddeny'    => "$datapath/cbbs/WordDeny.cgi",
     };
 }
 

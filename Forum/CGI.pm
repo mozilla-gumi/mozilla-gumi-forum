@@ -63,8 +63,8 @@ sub add_cookie {
         $param{$key} = $value;
     }
 
-    if (! exists($param{'-value'}) || ! $param{'-value'}) {
-        Forum->error->throw_error_code('cookie_novalue');
+    if (! (defined($param{'-name'}) && defined($param{'-value'}))) {
+        return;
     }
     $param{'-path'} = Forum->config->GetParam('cookie_path')
         if Forum->config->GetParam('cookie_path');

@@ -2,15 +2,29 @@
 
 require './common.pl';
 require './set.cgi';
+use strict;
+use vars qw (
+    $klogext $K_I $K_T $K_ST $K_L $klog_d $TGT $cgi_f $lockf $cloc $met $pf $pp
+    $i_dir $end_ok $i_Url $t_max $a_max $Keisen $TOPH $log %tmplVars %conf
+    $mas_c $notitle $i_mode $zure $noname $K_SP $topok
+);
 
-$res_r=1;
+my %FORM;
+my ($mode, $end, $space, $kiji, $namber, $type, $delkey, $mo, $send, $W, $H);
+my ($txt, $vRSS, $sel, $ICON, $hr, $font, $smile, $ccauth, $ccmd5);
+my ($url, $email, $actime, $d_may, $name, $OS, $BROWSER, $MUA, $userenv);
+my ($comment, @d_, @E_, @I_);
+
+my ($Bl, $Ble, $Nl, $Nle);
+
 &d_code_;
 
-$ag=$ENV{'HTTP_USER_AGENT'};
+my $ag=$ENV{'HTTP_USER_AGENT'};
 
 $pf="";
 $pp="";
 
+my $KLOG;
 if ($FORM{'KLOG'}) {
     $KLOG=$FORM{'KLOG'};
     $tmplVars{'TrON'}=0;
@@ -45,17 +59,25 @@ my $FSize=0;
 my $RS=0;
 my @lines=();
 my %R=();
+my $Line;
+my $lines;
+my $msg;
+my $NewMsg;
 
 open(DB,"$log");
 while ($Line=<DB>) {
-    if($FORM{"mode2"} eq "Backup"){push(@lines,$Line);}
-    ($namber,$date,$name,$email,$d_may,$comment,$url,
+    my ($namber,$date,$name,$email,$d_may,$comment,$url,
         $space,$end,$type,$delk,$ip,$tim) = split(/<>/,$Line);
-    ($Ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$ip);
+    my ($Ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$ip);
+    my $SP;
+    my @L;
     if($i_mode && $ico){$FSize+= -s "$i_dir/$ico";}
     if($type){
         if($Keisen){
-            $SPS=$space/15; $Lg=0; $Tg=0; $S="";
+            my $SPS=$space/15;
+            my $Lg=0;
+            my $Tg=0;
+            my $S="";
             if($SP){
                 if($SP > $SPS){if($L[$SPS]){$Tg=1; $L[$SP]="";}else{$Lg=1; $L[$SP]="";}}
                 elsif($SP==$SPS && $L[$SPS]){$Tg=1;}elsif($SP < $SPS){$Lg=1;}
@@ -75,15 +97,19 @@ if($FORM{"mode2"} eq "LockOff"){
     if(-e $lockf){rmdir($lockf); $msg.="($lockf解除)";}else{$msg.="($lockf無し)";}
     if(-e $cloc){rmdir($cloc);   $msg.="($cloc解除)"; }else{$msg.="($cloc無し)";}
 }
-$total=@NEW; $NS=$RS+$total;
-$page_=int(($total-1)/$a_max);
+my $total=@NEW;
+my $NS=$RS+$total;
+my $page_=int(($total-1)/$a_max);
+my $l_size;
 if(-s $log){$l_size=int((-s $log)/1024);}else{$l_size=0;}
-if($topok==0){$NewMsg="<li><a href=\"$cgi_f?mode=new&amp;&amp;pass=$FORM{'pass'}$pp\">管理用新規作成</a>\n";}
+if($topok==0){$NewMsg="<li><a href=\"$cgi_f?mode=new&amp;$pp\">管理用新規作成</a>\n";}
+my $FP = '';
+my $FileSize;
 if($i_mode || $mas_c){
     if($FSize){$FSize=int($FSize/1024); $FileSize="<br>アップファイル合計サイズ：$FSize\KB";}else{$FSize=0;}
     $FP ="<form action=\"$cgi_f\" method=\"$met\"$TGT>\n";
     $FP.="<strong>[画像/記事表\示許可]</strong><br><input type=\"hidden\" name=\"mode\" value=\"ent\">$pf\n";
-    $FP.="<input type=\"hidden\" name=\"pass\" value=\"$FORM{'pass'}\"><input type=\"submit\" value=\"表\示許可システム\"></form>\n";
+    $FP.="<input type=\"submit\" value=\"表\示許可システム\"></form>\n";
 }
 print <<"_HTML_";
 <h2>管理モード</h2>
@@ -96,48 +122,46 @@ print <<"_HTML_";
 <li>記事削除は、その記事に対する返信がない場合は完全削除になります。<br>
 その記事に対する返信がある場合は完全に削除されず削除記事になります。</li>
 <li>削除記事は「記事完全削除」をチェックすると完全に消せます。</li>
-<li><a href="#FMT">ロック解除/ログ初期化/フリーフォーム修復/ログコンバート$BUL</a>
+<li><a href="#FMT">ロック解除/ログ初期化/フリーフォーム修復/ログコンバート</a>
 $NewMsg</li>
 </ul>
+$FP
 _HTML_
-print "$FP";
-if($cou){
-    open(NO,"$c_f") || Forum->error->throw_error_user("Can't open $c_f");
-    $cnt = <NO>;
-    close(NO);
-    print 'カウント数/' . $cnt . '<br>';
-}
 print <<"_HTML_";
 $msg
-<form action=\"deletepost.cgi\" method="$met">
+<form action="deletepost.cgi" method="POST">
 <input type="hidden" name="page" value="$FORM{"page"}">
 <hr>
 _HTML_
+my $page;
 if($FORM{'page'} eq ''){$page=0;}else{$page=$FORM{'page'};}
-$end_data=@NEW - 1;
-$page_end=$page + ($a_max - 1);
+my $end_data=@NEW - 1;
+my $page_end=$page + ($a_max - 1);
 if($page_end >= $end_data){$page_end=$end_data;}
-$nl=$page_end + 1;
-$bl=$page - $a_max;
-if($bl >= 0){$Bl="<a href=\"$cgi_f?mode=del&amp;page=$bl&amp;pass=$FORM{'pass'}&amp;$pp\">"; $Ble="</a>";}
-if($page_end ne $end_data){$Nl="<a href=\"$cgi_f?mode=del&amp;page=$nl&amp;pass=$FORM{'pass'}&amp;$pp\">"; $Nle="</a>";}
-$Plink="<div class=\"Caption01c\"><strong>全ページ</strong> $Bl$Ble /\n\n";
+my $nl=$page_end + 1;
+my $bl=$page - $a_max;
+if($bl >= 0){$Bl="<a href=\"$cgi_f?mode=del&amp;page=$bl&amp;$pp\">"; $Ble="</a>";}
+if($page_end ne $end_data){$Nl="<a href=\"$cgi_f?mode=del&amp;page=$nl&amp;$pp\">"; $Nle="</a>";}
+my $Plink="<div class=\"Caption01c\"><strong>全ページ</strong> $Bl$Ble /\n\n";
 $a=0;
-for($i=0;$i<=$page_;$i++){
-    $af=$page/$a_max;
+for(my $i=0;$i<=$page_;$i++){
+    my $af=$page/$a_max;
     if($i != 0){$Plink.=" ";}
-    if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}else{$Plink.="[<a href=\"$cgi_f?page=$a&amp;mode=del&amp;pass=$FORM{'pass'}&amp;$pp\">$i</a>]\n";}
+    if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}else{$Plink.="[<a href=\"managearticle.cgi?page=$a&amp;$pp\">$i</a>]\n";}
     $a+=$a_max;
 }
 $Plink.="$Nl$Nle\n</div>";
 print"$Plink\n";
 
 #test
+print <<__HTML_TBL_HD;
+<table class="Tree" summary="Tree" cellspacing="0" cellpadding="0" border="0">
+__HTML_TBL_HD
 foreach ($page .. $page_end) {
-    ($namber,$date,$name,$email,$d_may,$comment,$url,
+    my ($namber,$date,$name,$email,$d_may,$comment,$url,
         $space,$end,$type,$delkey,$Ip) = split(/<>/,$NEW[$_]);
-    ($ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$Ip);
-    ($txt,$sel,$yobi)=split(/\|\|/,$SEL);
+    my ($ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$Ip);
+    my ($txt,$sel,$yobi)=split(/\|\|/,$SEL);
     if($ico){$ico=" [File:<a href=\"$i_Url\/$ico\"$TGT>$ico</a>]";}
 if((!$name)||($name eq ' ')||($name eq '　')){$name=$noname;}
     if($email ne ""){$name = "<a href=\"mailto:$email\">$name</a>";}
@@ -145,16 +169,16 @@ if((!$name)||($name eq ' ')||($name eq '　')){$name=$noname;}
     if($yobi){$yobi=" [ID:$yobi]";}
     if(length($d_may)>$t_max){$d_may=substr($d_may,0,($t_max-2));$d_may="$d_may..";}
     $date=substr($date,2,19);
-print '<table class="Tree" summary="Tree" cellspacing="0" cellpadding="0" border="0">';
-print '<tr><td><input type="radio" name="kiji" value="';
-print $namber;
-print '>ツリー削除</td><td class="Highlight">' . "\n" . '<input type="checkbox" name="del" value="' . "$namber\">\n";
-    print <<"_HTML_";
-<a href="$cgi_f?mode=nam&amp;pass=$FORM{'pass'}&amp;kiji=$namber&amp;mo=1&amp;$pp">$d_may</a>
-/ $name :$date <span class="ArtId">(#$namber)</span>
-[<a href="editdenyip.cgi?mo=$ip" $TGT>$ip</a>]$ico
+print <<__HTML_FORM;
+<tr>
+  <td><input type="checkbox" name="delid" value="t$namber">ツリー削除</td>
+  <td class="Highlight">
+    <input type="checkbox" name="delid" value="$namber">
+    <a href="$cgi_f?mode=nam&amp;kiji=$namber&amp;mo=1&amp;$pp">$d_may</a>
+    / $name :$date <span class="ArtId">(#$namber)</span>
+    [<a href="editdenyip.cgi?mo=$ip" $TGT>$ip</a>]$ico
 </td></tr>
-_HTML_
+__HTML_FORM
 
 ##H=T
 #foreach ($page .. $page_end) {
@@ -206,19 +230,20 @@ _HTML_
 #print '<input type="radio" name="kiji" value="' . $namber . '" ';
 #print '>ツリー削除<br><input type="checkbox" name="del" value="' . "$namber\">\n";
 #	print <<"_HTML_";
-#<a href="$cgi_f?mode=nam&amp;pass=$FORM{'pass'}&amp;kiji=$namber&amp;mo=1&amp;$pp">$d_may</a>
+#<a href="$cgi_f?mode=nam&amp;kiji=$namber&amp;mo=1&amp;$pp">$d_may</a>
 #/ $name :$date <span class="ArtId">(#$namber)</span>
-#[<a href="$cgi_f?mode=Den&amp;pass=$FORM{"pass"}&amp;mo=$ip"$TGT>$ip</a>]$ico</small><br>
+#[<a href="$cgi_f?mode=Den&amp;mo=$ip"$TGT>$ip</a>]$ico</small><br>
 #_HTML_
 
 ##test
-    $res=0;
-    @RES=split(/\n/,$R{$namber});
+    my $res=0;
+    my ($rspz, $rd_may);
+    my @RES=split(/\n/,$R{$namber});
     foreach $lines(@RES) {
-        ($Sen,$rnam,$rd,$rname,$rmail,$rdm,$rcom,$rurl,
+        my ($Sen,$rnam,$rd,$rname,$rmail,$rdm,$rcom,$rurl,
             $rsp,$re,$rtype,$rde,$rIp,$tim,$Se) = split(/<>/,$lines);
-        ($rip,$ico,$Ent,$fimg,$TXT,$rSEL,$R)=split(/:/,$rIp);
-        ($txt,$sel,$ryobi)=split(/\|\|/,$rSEL);
+        my ($rip,$ico,$Ent,$fimg,$TXT,$rSEL,$R)=split(/:/,$rIp);
+        my ($txt,$sel,$ryobi)=split(/\|\|/,$rSEL);
         if ($namber eq "$rtype"){
             if($rmail){$rname="<a href=\"mailto:$rmail\">$rname</a>";}
             if($rd_may eq ""){$rd_may="$notitle";}
@@ -303,39 +328,59 @@ if((!$rname)||($rname eq ' ')||($rname eq '　')){$rname=$noname;}
 #			}
 #if((!$rname)||($rname eq ' ')||($rname eq '　')){$rname=$noname;}
 #}
-            print <<"_HTML_";
-<input type="checkbox" name="del" value="$rnam">
-<a href="$cgi_f?mode=nam&amp;pass=$FORM{'pass'}&amp;kiji=$rnam&amp;mo=1&amp;$pp">$rdm</a>
-/ $rname :$rd $ryobi <span class="ArtId">(#$rnam)</span>
-[<a href="editdenyip.cgi?mo=$rip"$TGT>$rip</a>]$ico $re</td></tr>
+            print <<_HTML_;
+
+  <input type="checkbox" name="delid" value="$rnam">
+  <a href="$cgi_f?mode=nam&amp;kiji=$rnam&amp;mo=1&amp;$pp">$rdm</a>
+  / $rname :$rd $ryobi <span class="ArtId">(#$rnam)</span>
+  [<a href="editdenyip.cgi?mo=$rip"$TGT>$rip</a>]$ico $re</td>
+</tr>
 _HTML_
             }
 
         }
-        print "</table><br>\n";
+#        print "</table><br>\n";
 #	print"<hr width=\"90\%\">";
     }
+    print "</table><br>\n";
 
-    $tmplVars{'Bl'} = $Bl;
-    $tmplVars{'a_max'} = $a_max;
-    $tmplVars{'Ble'} = $Ble;
-    $tmplVars{'Nl'} = $Nl;
-    $tmplVars{'Nle'} = $Nle;
-    $tmplVars{'Plink'} = $Plink;
-    $tmplVars{'ttb'} = $ttb;
-    $tmplVars{'FORM'} = \%FORM;
-    if ( -e $lockf ) {$tmplVars{'lockf'} = $lockf; }
-    if ( -e $cloc ) {$tmplVars{'cloc'} = $cloc; }
-    $tmplVars{'log'} = $log;
+$tmplVars{'Bl'} = $Bl;
+$tmplVars{'a_max'} = $a_max;
+$tmplVars{'Ble'} = $Ble;
+$tmplVars{'Nl'} = $Nl;
+$tmplVars{'Nle'} = $Nle;
+$tmplVars{'Plink'} = $Plink;
+$tmplVars{'FORM'} = \%FORM;
+if ( -e $lockf ) {$tmplVars{'lockf'} = $lockf; }
+if ( -e $cloc ) {$tmplVars{'cloc'} = $cloc; }
+$tmplVars{'log'} = $log;
 
-    print '</ul><input type="checkbox" name="kiji" value="A" ' . "\">記事完全削除<br>\n";
-    print '<input type="submit" value=" 削 除 " ' . "\">\n";
-    print '<input type="reset" value="リセット" ' . "\"></form>\n";
-    print "<strong>";
-    if($Bl){print"<div class=\"Caption01r\">[ $Bl前の返信$a_max件$Ble ]\n";}
-    if($Nl){if($Bl){print"| ";}else{print "<div class=\"Caption01r\">";} print"[ $Nl次の返信$a_max件$Nle ]\n</div>\n";}else{print "</div>";}
-    print <<"_HTML_";
-</strong><br>$Plink
+print <<"__HTML__";
+</ul>
+<input type="checkbox" name="fulldel" value="yes">記事完全削除<br>
+<input type="submit" value=" 削 除 ">
+<input type="reset" value="リセット">
+</form>
+<strong>
+__HTML__
+
+if ($Bl) {
+    print"<div class=\"Caption01r\">[ $Bl前の返信$a_max件$Ble ]\n";
+}
+if ($Nl) {
+    if ($Bl) {
+        print"| ";
+    } else {
+        print "<div class=\"Caption01r\">";
+    }
+    print"[ $Nl次の返信$a_max件$Nle ]\n</div>\n";
+} else {
+    print "</div>";
+}
+
+print <<"_HTML_";
+</strong><br>
+$Plink
 <SCRIPT language="JavaScript">
 <!--
 function Link(url) {
@@ -346,18 +391,20 @@ function Link(url) {
 </SCRIPT>
 <a name="FMT"><hr width="95\%"></a>
 *JavaScript を ONにしてください*
-<table summary="lock" border="1" bordercolor="$ttb" width="90\%">
+<table summary="lock" border="1" width="90\%">
 <tr><td colspan="2"><form action="$cgi_f" method="$met"><strong>[ロックファイルの解除(削除)]</strong><ul>
-<input type="button" value="ロック解除" onClick="Link('$cgi_f?mode=del&amp;pass=$FORM{"pass"}&amp;mode2=LockOff&amp;$pp')">
+<input type="button" value="ロック解除" onClick="Link('$cgi_f?mode=del&amp;mode2=LockOff&amp;$pp')">
 <li>ロックファイルがどうしても削除されない場合に試してください。問題が無い場合はあまり使わないで下さい<ul>
 _HTML_
+
     if(-e $lockf){print"<li>メインログ($lockf):ロック中\n";}
     if(-e $cloc){print"<li>カウンタログ($cloc):ロック中\n";}
-    print<<"_HTML_";
+
+print<<"_HTML_";
 </ul><li>ロック中のログがあっても、ユーザが操作中の場合があります。しばらく様子を見て実行してください。
 </ul></form></td></tr>
+</td></tr></table>
 _HTML_
-    print"</td></tr></table>\n";
 
 Forum->template->process('htmlfoot.tpl', \%tmplVars);
 
@@ -369,35 +416,15 @@ exit;
 #  tmpl : 
 sub d_code_ {
     my %params;
-    my $file;
     my $curNW;
     my ($vkey, $valarr, @values, $value);
-    $file = "";
-    if ($ENV{'CONTENT_LENGTH'} &&
-        ($ENV{'CONTENT_TYPE'} =~ /^multipart\/form-data/)) {
-        # form upload : ups
-        $filename = $obj_cgi->param('ups');
-        $Read = "";
-        while (<$filename>) {$Read .= $_; }
-        $Fsize = length($Read);
-    }
-    %params = $obj_cgi->Vars;
+    %params = Forum->cgi->Vars;
     while (($vkey, $valarr) = each(%params)) {
         if ($vkey eq 'ups') {next; }
         @values = split("\0", $valarr);
         foreach $value (@values) {
             if ($value !~ /[\x00-\x7E]*/) {
                 $value = encode('shiftjis', decode('Guess', $value));
-            }
-            if ($vkey ne 'del') {
-                foreach $curNW (@NW) {
-                    $curNW =~ s/\n//;
-                    if (index($value, $curNW) >= 0) {
-                        $curNW =~ s/</\&lt\;/g;
-                        $curNW =~ s/>/\&gt\;/g;
-                        Forum->error->throw_error_user("「$curNW」は使用できません!");
-                    }
-                }
             }
             $value =~ s/&/&amp\;/g;
             $value =~ s/</\&lt\;/g;
