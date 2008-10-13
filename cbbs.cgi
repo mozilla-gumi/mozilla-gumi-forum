@@ -3,6 +3,7 @@
 require './common.pl';
 
 use Forum::Captcha;
+use Forum::CGI;
 
 my @set;
 $set[0]="./set.cgi";
