@@ -68,53 +68,6 @@ h4 {
   margin-left: 1%;
 }
 
-a:link {
-  color: #0000ff;
-}
-
-a:visited {
-  color: purple;
-}
-
-/* Hyper links for Menu */
-a.MenuAct:link,
-a.MenuAct:visited,
-a.Menu:link,
-a.Menu:visited
-{
-  color: #003366;
-  text-decoration: none;
-  padding: 2px 8px 2px 8px;
-  margin-bottom: 2px;
-  font-weight: bold;
-  border: 1px solid #003366;
-  border-style: outset;
-}
-
-a.Menu:link,
-a.Menu:visited {
-  background-color: #B3BBC8;
-}
-
-/* Active State */
-a.MenuAct:link,
-a.MenuAct:visited {
-  background-color: #C7D0D9;
-}
-
-a.MenuAct:hover,
-a.Menu:hover {
-  text-decoration: underline;
-}
-
-a.MenuAct:hover:active,
-a.Menu:hover:active
-{
-  color: white;
-  border: 1px solid #003366;
-  border-style: inset;
-}
-
 /* small caption 1 */
 div.Caption01c,
 div.Caption01r,
@@ -198,17 +151,6 @@ div.ArtList
   margin-right : auto;
   background-color: white;
   line-height: 1.5em;
-}
-
-/* menu */
-div.Menu
-{
-  font-size: 0.8em;
-  white-space: nowrap;
-  text-align: center;
-  margin-top: 1.5em;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 /* Error Messages */
@@ -450,6 +392,51 @@ td textarea{
   margin: auto;
 }
 
-div.menubar {
-  padding-bottom: 10px;
+
+
+/* ------------------------------------------------------------------------
+REFACTORED CSS DEFINITIONS - (C) 2008 - Mozilla-Gumi Forum Contributors
+------------------------------------------------------------------------ */
+div.menubar
+{
+  margin-bottom: 0.5em;
 }
+
+div.menu
+{
+  white-space: nowrap;
+  text-align: center;
+  margin: 0.5em auto 0.5em auto;
+  padding-bottom: 0.5em;
+}
+
+div.menu a:link,
+div.menu a:visited
+{
+  color: #003366;
+  text-decoration: none;
+  padding: 0.2em 0.5em 0.2em 0.5em;
+  font-weight: bold;
+  border: 1px solid #003366;
+  border-style: outset;
+  background-color: #B3BBC8;
+}
+
+div.menu a.act
+{
+  background-color: #C7D0D9;
+}
+
+div.menu a:hover
+{
+  text-decoration: underline;
+}
+
+div.menu a:hover:active
+{
+  color: white;
+  border: 1px solid #003366;
+  border-style: inset;
+}
+
+

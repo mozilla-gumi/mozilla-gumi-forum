@@ -166,12 +166,12 @@
 <tr>
   <td>
     * 関連する返信記事をメールで受信しますか?
-    <select name="send">
+    <select name="send" disabled="disabled">
       <option value="0">いいえ
       <option value="1" [% PVE %]>はい
    </select>
     * アドレスの表示
-    <select name="pub">
+    <select name="pub" disabled="disabled">
       <option value="0">非表示
       <option value="1" [% IF c_pub %]selected="selected"[% END %]>表示
     </select>

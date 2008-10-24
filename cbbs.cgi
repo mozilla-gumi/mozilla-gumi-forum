@@ -3,34 +3,24 @@
 require './common.pl';
 
 use Forum::Captcha;
-
-#------------------------------------------
-my $ver = "Child Tree v8.92 (modified)";# (ツリー式掲示板)
-#------------------------------------------
-# Copyright(C) りゅういち
-# E-Mail:ryu@cj-c.com
-# W W W :http://www.cj-c.com/
-#------------------------------------------
-
-#---[設定ファイル]-------------------------
+use Forum::CGI;
 
 my @set;
 $set[0]="./set.cgi";
 my @NW;
 my @ips;
 
-# 排除IP/禁止文字列設定ファイル
-my $IpFile = "../data/cbbs/IpAcDeny.cgi";
-my $NWFile = "../data/cbbs/WordDeny.cgi";
+my $IpFile = Forum::Constants::LOCATIONS()->{'ipdeny'};
+my $NWFile = Forum::Constants::LOCATIONS()->{'worddeny'};
 
 # ---[排除IP/禁止文字列読み込み]-------------------------------------------------------------------------------------
 if (-e $NWFile) {
-    open(DE, "$NWFile");
+    open(DE, $NWFile);
     while (<DE>) {push(@NW, $_); }
     close(DE);
 }
 if (-e $IpFile) {
-    open(DE, "$IpFile");
+    open(DE, $IpFile);
     while (<DE>) {push(@ips, $_); }
     close(DE);
 
@@ -102,6 +92,7 @@ elsif ($mode eq "" || $mode eq "wri") {
 Forum->template->set_vars('mode_id', $mode_id);
 
 # ---[サブルーチンの読み込み/表示確定]-------------------------------------------------------------------------------
+if ($mode eq "cmin") {&set_("M");}
 if (($conf{'rss'} eq 1) && ($mode eq 'RSS')) {&RSS; }
 if ($mode eq "ent") {&ent_;}
 if ($mode eq "man") {&man_;}
@@ -119,7 +110,6 @@ if ($mode eq "ran") {&ran_;}
 if ($mode eq "f_a") {&f_a_;}
 if ($mode eq "img") {&img_;}
 if ($mode eq "red") {&read;}
-if ($mode eq "cmin") {&set_("M");}
 if ($mode eq "cookdel") {&cookdel;}
 
 unless(-e $log) {
@@ -1282,7 +1272,7 @@ if($tag){
     $comment=~ s/\&quot\;/\"/g;
     $comment=~ s/<>/\&lt\;\&gt\;/g;
 }
-if($locks){&lock_("$lockf");}
+if($locks){&lock_($lockf);}
 if($M_Rank){&rank;}
 open(LOG,"$log") || &er_("Can't open $log");
 @lines = <LOG>;
@@ -1379,30 +1369,6 @@ if($t_mail || $o_mail){&mail_;}
 if($H eq "F" && $tpend && $type){$FORM{"namber"}=$type; $space=0; &all2;}
     if ($conf{'rss'} eq 1) {&RSS; }
 }
-#--------------------------------------------------------------------------------------------------------------------
-# [cookie発行]
-# -> cookieを発行する(set_)
-#
-sub set_ {
-    if($_[0] eq "I"){$kday=1826;}else{$kday=30;}
-    ($secg,$ming,$hourg,$mdayg,$mong,$yearg,$wdayg,$ydayg,$isdstg) = gmtime(time + $kday*24*60*60);
-$yearg += 1900;
-if($secg  < 10){$secg ="0$secg"; }
-if($ming  < 10){$ming ="0$ming"; }
-if($hourg < 10){$hourg="0$hourg";}
-if($mdayg < 10){$mdayg="0$mdayg";}
-$month = ('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec')[$mong];
-$youbi = ('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday')[$wdayg];
-$date_gmt = "$youbi, $mdayg\-$month\-$yearg $hourg:$ming:$secg GMT";
-if($SEL_C){$Csel=",sel:$sel";}else{$Csel="";}
-if($TXT_C){$Ctxt=",txt:$txt";}else{$Ctxt="";}
-$cook="name\:$name\,email\:$email\,url\:$url\,delkey\:$delkey\,pub\:$FORM{'pub'}\,ico\:$CICO\,font\:$font\,hr\:$hr$Csel$Ctxt";
-if($_[0] eq "P"){print"Set-Cookie: $s_pas=$s_pas; expires=$date_gmt\n";}
-elsif($_[0] eq "M"){print"Set-Cookie: Cmin=$FORM{'min'}; expires=$date_gmt\n";}
-elsif($_[0] eq "I"){print"Set-Cookie: UID=$_[1]; expires=$date_gmt\n";}
-else{print "Set-Cookie: CBBS=$cook; expires=$date_gmt\n";}
-}
-
 #--------------------------------------------------------------------------------------------------------------------
 # [記事編集]
 # -> 記事編集のフォームを出力(hen_)
@@ -2603,13 +2569,9 @@ sub forms_ {
 #        if ($FORM{'send'}) {$PVE = " selected"; }
     } else {
         $c_name  = Forum->cgi->cookie('name');
-        $c_email = Forum->cgi->cookie('email');
         $c_url   = Forum->cgi->cookie('url');
         $c_key   = Forum->cgi->cookie('delkey');
-        $c_pub   = Forum->cgi->cookie('pub');
         $c_ico   = Forum->cgi->cookie('ico');
-        $c_font  = Forum->cgi->cookie('font');
-        $c_hr    = Forum->cgi->cookie('hr');
         if ($SEL_C) {$c_sel = Forum->cgi->cookie('sel'); }
         if ($TXT_C) {$c_txt = Forum->cgi->cookie('txt'); }
 
@@ -2970,6 +2932,33 @@ sub res_ {
     }
     &foot_;
 }
+
+##------------------------------------------------------------------------------
+# set_ - set cookie
+#  vars : mode, parameter
+#  tmpl : 
+sub set_ {
+    my ($mode) = (@_);
+    if ($mode eq 'P') {
+        Forum->cgi->add_cookie('-name', $s_pas, '-value', $s_pas, '-expires', '+30d');
+    } elsif ($mode eq 'M') {
+        Forum->cgi->add_cookie('-name', 'Cmin', '-value', $FORM{'min'}, '-expires', '+30d');
+    } elsif ($mode eq 'I') {
+        Forum->cgi->add_cookie('-name', 'UID', '-value', $_[1], '-expires', '+1826d');
+    } else {
+        Forum->cgi->add_cookie('-name', 'name', '-value', $name, '-expires', '+30d');
+        Forum->cgi->add_cookie('-name', 'url', '-value', $url, '-expires', '+30d');
+        Forum->cgi->add_cookie('-name', 'delkey', '-value', $delkey, '-expires', '+30d');
+        Forum->cgi->add_cookie('-name', 'ico', '-value', $ico, '-expires', '+30d');
+        if ($SEL_C) {
+            Forum->cgi->add_cookie('-name', 'sel', '-value', $sel, '-expires', '+30d');
+        }
+        if ($TXT_C) {
+            Forum->cgi->add_cookie('-name', 'txt', '-value', $txt, '-expires', '+30d');
+        }
+    }
+}
+
 
 
 ################################################################################

@@ -28,18 +28,16 @@ use Forum::Constants;
     user_data
 );
 
-our %conf = {
-    'uid'      => 0,
-    'ua_id'    => 0,
-    'gid'      => 0,
-    'name'     => '',
-};
+our %conf;
 
 sub new {
     my ($self) = @_;
 
-    $self->restore_cookie();
-    $self->parse_ua();
+    $conf{'uid'} = $self->restore_cookie();
+    $conf{'gid'} = $self->group_check();
+    $conf{'ua_id'} = $self->parse_ua();
+    $conf{'name'} = '';
+    $self->fetch_userdata();
 
     return $self;
 }
@@ -64,8 +62,26 @@ sub get_uid {
     return $conf{'uid'};
 }
 
+sub get_name {
+    return $conf{'name'};
+}
+
+sub get_ua_id {
+    return $conf{'ua_id'};
+}
+
 sub user_data {
     return \%conf;
+}
+
+sub fetch_userdata {
+    my ($self);
+    if ($conf{'uid'} eq 0) {
+    }
+##### TEMPORARY HACK - SHOULD MOVE 'name' TO DB.
+    if ($conf{'uid'} eq 1) {
+        $conf{'name'} = 'admin';
+    }
 }
 
 sub restore_cookie {
@@ -74,9 +90,9 @@ sub restore_cookie {
     if (defined($user) && defined($key)) {
         my $dbh = Forum->dbh;
         $conf{'uid'} = $dbh->db_auth_cookie($user, $key);
-##### TEMPORARY HACK - SHOULD MOVE 'name' TO DB.
-        $conf{'name'} = 'admin';
+        return $conf{'uid'};
     }
+    return 0;
 }
 
 sub revoke_cookie {

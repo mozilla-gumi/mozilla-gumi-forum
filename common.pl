@@ -11,10 +11,10 @@ use Forum::Config;
 use Forum::Error;
 
 our $obj_cgi        = Forum->cgi;
+our $obj_user       = Forum->user;
 our $obj_template   = Forum->template;
 our $obj_config     = Forum->config;
 our $obj_db         = Forum->dbh;
-our $obj_user       = Forum->user;
 
 our %tmplVars;
 
@@ -213,7 +213,7 @@ sub lock_ {
         if (-e $_[0]) {
             rmdir($_[0]);
         }
-        &er_('locked' ,"1");
+        Forum->error->throw_error_user('locked');
     }
 }
 

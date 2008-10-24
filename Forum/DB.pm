@@ -123,20 +123,21 @@ sub db_ua_getid {
 
 sub db_auth_cookie {
     my ($self, $user, $key) = @_;
+    my $uid = 0;
     my $expr = Forum->config->GetParam('admin_authexpr');
-    my $sth = $self->prepare('SELECT uid FROM auth WHERE cookie = ? AND ' .
-        'uid = ? AND ' .
-        'DATE_SUB(NOW(), INTERVAL ? DAY) < lastdate');
-    $sth->execute($key, $user, $expr);
+    $self->_db_auth_cookie_squash();
+    my $sth = $self->prepare(
+        'SELECT uid FROM auth WHERE cookie = ? AND uid = ?');
+    $sth->execute($key, $user);
     if (defined(my $ref = $sth->fetchrow_hashref())) {
+        $sth->finish();
         $sth = $self->prepare('UPDATE auth SET lastdate = NOW() ' .
             'WHERE uid = ? AND cookie = ?');
         $sth->execute($user, $key);
-        $self->_db_auth_cookie_squash();
-        return $ref->{'uid'};
+        $uid = $ref->{'uid'} ||= 0;
     }
-    $self->_db_auth_cookie_squash();
-    return 0;
+    $sth->finish();
+    return $uid;
 }
 
 sub db_revoke_cookie {

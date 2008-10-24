@@ -9,7 +9,7 @@ if (Forum->user->group_check('admin') == 0) {
     Forum->error->throw_error_user('not_logged_in');
 }
 
-my $NWFile = "../data/cbbs/WordDeny.cgi";
+my $NWFile = Forum::Constants::LOCATIONS()->{'worddeny'};
 
 print Forum->cgi->header();
 Forum->template->set_vars('mode_id', 'admin');
