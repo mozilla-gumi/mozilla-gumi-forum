@@ -1,0 +1,15 @@
+[% PROCESS htmlhead.tpl
+    htmltitle = 'カウンタ編集'
+%]
+
+[% IF edited %]
+  <h3>カウンタ値編集完了</h3>
+[% END %]
+
+<form action="editcounter.cgi" method="POST">
+<strong>カウンタ値編集</strong><br>
+現在のカウント : <input type="text" name="newcount" value="[% cnt %]" size="7">
+<input type="submit" value="編集">
+</form>
+
+[% PROCESS htmlfoot.tpl %]

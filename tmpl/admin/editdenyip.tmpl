@@ -1,0 +1,46 @@
+[% PROCESS htmlhead.tpl
+    htmltitle = 'IPアドレス拒否設定編集'
+%]
+
+
+<table summary="deny" width="95%">
+<tr><th>排除IP/禁止文字列設定モード</th></tr>
+</table>
+
+[% IF action == 'add' %]
+  <h3>登録完了</h3>
+[% ELSIF action == 'del' %]
+  <h3>削除完了</h3>
+[% END %]
+
+<ul>
+  <li>指定した物が含まれているとそれぞれ排除されます。</li>
+  <li><strong>[排除IP]</strong> IPアドレスは4桁で構成されており、通常4桁目がアクセス毎に変わります。よって、3桁目までを指定します。<br>
+    例) 127.0.0.1 を排除したい場合は 127.0.0. と指定する。192.168.0.1 → 192.168.0. (*)自分のIPは絶対に設定しない!</li>
+</ul>
+
+<hr>
+
+<strong>■ 排除IPの追加</strong>
+
+<form action="editdenyip.cgi" method="POST">
+<input type="hidden" name="m" value="Add">
+排除IP / <input type="text" name="u" size="25" value="[% opt_ip %]">
+<input type="submit" value="追加">
+</form>
+
+<strong>■ 登録済みの排除IP</strong>
+<form action="editdenyip.cgi" method="POST">
+<input type="hidden" name="m" value="Del">
+<ol>
+[% FOREACH ip = ip_list %]
+  <li><input type="checkbox" name="del" value="[% ip FILTER html %]">[% ip FILTER html %]</li>
+[%- END %]
+</ol>
+<input type="submit" value="削除">
+<input type="reset" value="リセット">
+</form>
+
+<hr width="95%">
+
+[% PROCESS htmlfoot.tpl %]
