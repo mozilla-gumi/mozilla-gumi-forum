@@ -60,7 +60,7 @@ Forum->template->set_vars('word_list', \@deny);
 close(DB);
 
 print Forum->cgi->header();
-Forum->template->process('admin/editdenyword.tpl', \%tmplVars);
+Forum->template->process('admin/editdenyword.tmpl', \%tmplVars);
 
 exit;
 
