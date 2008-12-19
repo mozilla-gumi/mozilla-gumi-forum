@@ -6,3 +6,9 @@ function pvcheck() {
     }
 }
 
+function add_linkify(link) {
+    var com_box = document.getElementById("comment");
+    com_box.value += " " + link + " ";
+    com_box.focus();
+}
+
