@@ -60,13 +60,25 @@
     <input type="radio" name="pre" value="0" checked="checked">自動改行
     <input type="radio" name="pre" value="1">手動改行（等幅フォント）
     <br>
-    <textarea name="comment" rows="12" cols="75"
+    <textarea id="comment" name="comment" rows="12" cols="75"
       [% IF BBFACE %]
         onselect="storeCaret(this);"
         onclick="storeCaret(this);"
         onkeyup="storeCaret(this);"
       [% END %]
     >[% IF com_nodisp %]コメント表示: 未許可[% ELSE %][% com %][% END %]</textarea>
+  </td>
+</tr>
+<!-- Auto-linkify -->
+<tr>
+  <td>自動リンク</td>
+  <td>
+    <span onclick="add_linkify('mozillazine-jp <id>');">MozillaZine-jp</span>
+    /
+    <span onclick="add_linkify('bug-jp <id>');">Bugzilla-jp</span>
+    /
+    <span onclick="add_linkify('bug-org <id>');">bmo (bugzilla.mozilla.org)</span>
+    (クリックで挿入)
   </td>
 </tr>
   [% IF multipart == 1 %][% PROCESS multipart_disp %][% END %]

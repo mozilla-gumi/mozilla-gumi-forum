@@ -1,0 +1,46 @@
+[% PROCESS htmlhead.tpl
+    htmltitle = '禁止文字列設定編集'
+%]
+
+
+<table summary="deny" width="95%">
+<tr><th>禁止文字列設定モード</th></tr>
+</table>
+
+[% IF action == 'add' %]
+  <h3>登録完了</h3>
+[% ELSIF action == 'del' %]
+  <h3>削除完了</h3>
+[% END %]
+
+<ul>
+  <li>指定した文字列が含まれていると投稿が禁止されます。</li>
+  <li>大文字小文字は区別されます。</li>
+  <li>例) 宣伝記事→URLを指定。タグ→開始タグの一部 &lt;img &lt;font 等。</li>
+</ul>
+
+<hr>
+
+<strong>■ 禁止文字列の追加</strong>
+
+<form action="editdenyword.cgi" method="POST">
+<input type="hidden" name="m" value="Add">
+禁止文字列 : <input type="text" name="u" size="25" value="[% opt_ip %]">
+<input type="submit" value="追加">
+</form>
+
+<strong>■ 登録済みの禁止文字列</strong>
+<form action="editdenyword.cgi" method="POST">
+<input type="hidden" name="m" value="Del">
+<ol>
+[% FOREACH word = word_list %]
+  <li><input type="checkbox" name="del" value="[% word FILTER html %]">[% word FILTER html %]</li>
+[%- END %]
+</ol>
+<input type="submit" value="削除">
+<input type="reset" value="リセット">
+</form>
+
+<hr width="95%">
+
+[% PROCESS htmlfoot.tpl %]

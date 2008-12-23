@@ -98,6 +98,12 @@ sub filter_orig_auto {
     $var =~ s/([^=^\"]|^)((ftp)\:[\w\.\~\-\/\?\&\+\=\:\@\%\;\#\,\|]+)/$1<a href="$2">$2<\/a>/g;
     # mark ">xxxx" lines as quoted
     $var =~ s/\r\n((?:&gt;|>)[^\r\n]*)/\r\n<span class="Quoted">$1<\/span>/g;
+
+    # bug-jp 6389
+    $var =~ s!mozillazine-jp +([0-9]+)!<a href="http://forums.mozillazine.jp/viewtopic.php?t=$1">mozillazine-jp $1</a>!g;
+    $var =~ s!bug-jp +([0-9]+)!<a href="http://bugzilla.mozilla.gr.jp/show_bug.cgi?id=$1">bug-jp $1</a>!g;
+    $var =~ s!bug-org +([0-9]+)!<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=$1">bug-org $1</a>!g;
+
     if ($preremoved eq 1) {
         $var = '<pre>' . $var . '</pre>';
         $var =~ s/<br[\/ ]*/\n/g;
