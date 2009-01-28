@@ -30,7 +30,7 @@
   [% IF user.uid != 0 %]
     <a " href="login.cgi?logout=1">ログアウト ([% user.name %])</a>
   [% ELSE %]
-    <a [% IF mode_id == 'login' %]class="act"[% END %] href="login.cgi">ログイン</a>
+    <a [% IF mode_id == 'login' %]class="act"[% END %] href="login.cgi">管理者ログイン</a>
   [% END %]
   <a [% IF mode_id == 'manual' %]class="act"[% END %] href="[% cgi_f %]?mode=man&amp;[% no %][% pp %]">ヘルプ</a>
 </div>
