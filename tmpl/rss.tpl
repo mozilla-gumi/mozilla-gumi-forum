@@ -26,7 +26,7 @@
   [% FOREACH item = items %]
   <item rdf:about="[% rsstarget %]?mode=one&amp;namber=[% item.nam %]&amp;type=[% item.ty %]&amp;space=[% item.sp %]">
     <title>[% item.d_may %]</title>
-    <link>[% rsstarget %]?mode=red&amp;namber=[% item.nam %]&amp;type=[% item.ty %]&amp;space=[% item.sp %]</link>
+    <link>[% rsstarget %]?mode=one&amp;namber=[% item.nam %]&amp;type=[% item.ty %]&amp;space=[% item.sp %]</link>
     <description>[% item.desc %]</description>
     <content:encoded><![CDATA[[% item.content %]]]></content:encoded>
     <dc:name>[% item.name %]</dc:name>
