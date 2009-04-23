@@ -31,9 +31,6 @@
   <link rel="bookmark" href="http://www.mozilla.gr.jp/docs/" title="もじら組 ドキュメント">
   <link rel="bookmark" href="http://mozillazine.jp/" title="MozillaZine 日本語版">
 
-  <!-- icon -->
-  <link rel="icon" type="image/png" href="http://www.mozilla.gr.jp/images/marumo16.png" title="もじら組アイコン">
-
   <link rel="alternate" type="application/xml" title="もじら組forum RSS" href="http://www.mozilla.gr.jp/forums/news.rdf">
   <link rel="stylesheet" type="text/css" href="[% styledir %]/cbbs.css" title="現代版">
   <link rel="alternate stylesheet" type="text/css" href="[% styledir %]/mozillagumi.css" title="幕末版（もじら組標準）">
