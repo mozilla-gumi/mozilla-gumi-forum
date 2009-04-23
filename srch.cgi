@@ -1,7 +1,6 @@
 #! /usr/bin/perl
 
 require './common.pl';
-require './jcode.pl';
 
 #------------------------------------------
 $ver="Child Search v8.92";# (ツリー式掲示板)
@@ -306,18 +305,26 @@ _KT_
 		if($IT ne "" && $logs eq "all"){
 			$IT=~s/$klogext//; $IT=~s/^\n//; $IT=~s/\.txt$//; $PLL="過去ログ$ITより /"; $IT="&KLOG=$IT";
 		}else{$IT="";}
-		if($FORM{"KYO"}){
-			if($comment=~/<\/pre>/){$comment=~ s/(>|\n)((&gt;|＞|>)[^\n]*)/$1<font color=$res_f>$2<\/font>/g;}
-			else{$comment=~ s/>((&gt;|＞|>)[^<]*)/><font color=$res_f>$1<\/font>/g;}
-			&jcode'convert(*comment,'euc');
-			foreach $KEY (@key_ws){
-				&jcode'convert(*KEY,'euc');
-				$comment=~ s/$KEY/<b STYLE="background-color:$Kyo_f\;">$KEY<\/b>/g;
-				if($BM){$comment=~ s/($KEY)/<b STYLE="background-color:$Kyo_f\;">$1<\/b>/ig;}
-				else{$comment=~ s/$KEY/<b STYLE="background-color:$Kyo_f\;">$KEY<\/b>/g;}
+		if ($FORM{"KYO"}) {
+			if ($comment =~ /<\/pre>/) {
+                $comment =~ s/(>|\n)((&gt;|＞|>)[^\n]*)/$1<font color=$res_f>$2<\/font>/g;
+            } else {
+                $comment =~ s/>((&gt;|＞|>)[^<]*)/><font color=$res_f>$1<\/font>/g;
+            }
+            Encode::from_to($comment, 'euc-jp', 'sjis');
+			foreach $KEY (@key_ws) {
+                Encode::from_to($KEY, 'euc-jp', 'sjis');
+				$comment =~ s/$KEY/<b STYLE="background-color:$Kyo_f\;">$KEY<\/b>/g;
+				if ($BM) {
+                    $comment =~ s/($KEY)/<b STYLE="background-color:$Kyo_f\;">$1<\/b>/ig;
+                } else {
+                    $comment =~ s/$KEY/<b STYLE="background-color:$Kyo_f\;">$KEY<\/b>/g;
+                }
 			}
-			&jcode'convert(*comment,'sjis');
-		}else{&auto_($comment);}
+            Encode::from_to($comment, 'sjis', 'euc-jp');
+		} else {
+            &auto_($comment);
+        }
 		if($o_mail){$Smsg="[メール転送/";if($Se==2 || $Se==1){$Smsg.="ON]\n";}else{$Smsg.="OFF]\n";}}
 		if($e){$e=" END /";}
 		if($logs eq $log){
