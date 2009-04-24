@@ -2941,6 +2941,7 @@ sub n_w_ {
     Forum->template->set_vars('new_t', $new_t);
     Forum->template->set_vars('total', $total);
     Forum->template->set_vars('Pg', $Pg);
+    Forum->template->set_vars('Pg2', $Pg2);
     Forum->template->set_vars('Bl', $Bl);
     Forum->template->set_vars('Ble', $Ble);
     Forum->template->set_vars('af', $page / $new_s);
@@ -2950,6 +2951,7 @@ sub n_w_ {
     Forum->template->set_vars('pp', $pp);
     Forum->template->set_vars('new_su', $FORM{"s"});
     Forum->template->set_vars('new_count', $#NEW);
+    $new_su = $FORM{'s'};
 
     my @new_articles;
     if (@NEW) {
