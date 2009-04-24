@@ -20,9 +20,11 @@ JavaScriptを有効にしておくとクリックでコメント欄に入力できます。<br>
 の形式で書くとそれぞれのバグにリンクされます。
 </li>
 -->
-</ul>
-<ul>
 <li>Mozilla 製品になんら関係ない宣伝投稿、言い争いなどはご遠慮ください。
 そのような書き込みがあった場合、返信は必要なく、管理の手間が増えるだけですのでしない様
 にお願いします。</li>
 <li><strong>半角カナは使用しない</strong>でください。文字化けの原因になります。</li>
+<li>本フォーラムシステムのアップグレードに関しては
+<a href="http://www.mozilla.gr.jp/~shimono/mozwiki/index.php/Forum.mgj:roadmap">ロードマップ</a>をご覧ください。
+コメントがありましたら、本フォーラムもしくは<a href="http://bugzilla.mozilla.gr.jp">Bugzilla-jp</a>
+などにお願いします。</li>
