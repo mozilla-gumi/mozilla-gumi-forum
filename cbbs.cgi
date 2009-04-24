@@ -1621,7 +1621,7 @@ sub h_w_ {
         &lock_("$lockf");
     }
     if ($FORM{"pre"}) {
-        $comment = '<pre>' . $comment '</pre>';
+        $comment = '<pre>' . $comment . '</pre>';
     }
     @new = ();
     $flag = 0;
@@ -1731,11 +1731,11 @@ sub h_w_ {
             ($KI, $Kico, $E, $Kfi, $KTX, $KS, $KR) = split(/:/, $ki);
             if ($UPt) {
                 if (($UPt eq $kty) && $Kico) {
-                    $SIZE += (-s "$i_dir/$Kico";)
+                    $SIZE += (-s "$i_dir/$Kico");
                 }
             } else {
                 if (($UP eq $kty) && $Kico) {
-                    $SIZE += (-s "$i_dir/$Kico";)
+                    $SIZE += (-s "$i_dir/$Kico");
                 }
             }
             if ($UP eq $knam) {
