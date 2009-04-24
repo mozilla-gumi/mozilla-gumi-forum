@@ -38,15 +38,15 @@
   <link rel="alternate stylesheet" type="text/css" href="[% styledir %]/jlp.css" title="未来版（JLP標準）">
   <link rel="alternate stylesheet" type="text/css" href="[% styledir %]/cjc.css" title="紅鮭版（CJ-C風）">
 
-  <title>Mozilla-gumi Forum [[% htmltitle %]]</title>
+  <title>もじら組フォーラム [[% htmltitle %]]</title>
 </head>
 <body text="#003366" link="blue" vlink="purple" bgcolor="#C7D0D9">
 
 <div class="banner">
   <h1>
-    <a href="http://www.mozilla.gr.jp/"><img src="file/logo.gif" width="186"
+    <a href="http://www.mozilla.gr.jp/"><img src="common/logo.png" width="186"
       height="67" border="0" alt="もじら組纏"></a>
-    <a href="./">Mozilla-gumi Forum</a>
+    <a href="./">もじら組フォーラム</a>
   </h1>
 </div>
 
