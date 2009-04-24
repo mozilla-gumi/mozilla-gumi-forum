@@ -1,3 +1,9 @@
+[% IF BG == "" %]
+    [% PROCESS htmlhead.tpl
+        htmltitle = "ÉGÉâÅ["
+    %]
+[% END %]
+
 <div class="ErrMsg">
 [% adminerror = 0 %]
 [% IF errmsg == 'noname' %]

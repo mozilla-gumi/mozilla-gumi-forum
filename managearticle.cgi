@@ -6,7 +6,7 @@ use strict;
 use vars qw (
     $klogext $K_I $K_T $K_ST $K_L $klog_d $TGT $cgi_f $lockf $cloc $met $pf $pp
     $i_dir $end_ok $i_Url $t_max $a_max $Keisen $TOPH $log %tmplVars %conf
-    $mas_c $notitle $i_mode $zure $noname $K_SP $topok
+    $mas_c $notitle $zure $noname $K_SP $topok
 );
 
 my %FORM;
@@ -70,7 +70,6 @@ while ($Line=<DB>) {
     my ($Ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$ip);
     my $SP;
     my @L;
-    if($i_mode && $ico){$FSize+= -s "$i_dir/$ico";}
     if($type){
         if($Keisen){
             my $SPS=$space/15;
@@ -104,12 +103,6 @@ if(-s $log){$l_size=int((-s $log)/1024);}else{$l_size=0;}
 if($topok==0){$NewMsg="<li><a href=\"$cgi_f?mode=new&amp;$pp\">管理用新規作成</a>\n";}
 my $FP = '';
 my $FileSize;
-if($i_mode || $mas_c){
-    if($FSize){$FSize=int($FSize/1024); $FileSize="<br>アップファイル合計サイズ：$FSize\KB";}else{$FSize=0;}
-    $FP ="<form action=\"$cgi_f\" method=\"$met\"$TGT>\n";
-    $FP.="<strong>[画像/記事表\示許可]</strong><br><input type=\"hidden\" name=\"mode\" value=\"ent\">$pf\n";
-    $FP.="<input type=\"submit\" value=\"表\示許可システム\"></form>\n";
-}
 print <<"_HTML_";
 <h2>管理モード</h2>
 <ul>
@@ -195,7 +188,6 @@ __HTML_FORM
 #		elsif($Icon && $comment=~/<br>\(携帯\)$/){$mICO="$Ico_km";}
 #		$news.="<img src=\"$IconDir\/$mICO\" border=\"0\"$WHm>";
 #	}
-#	if($ico && $i_mode){$Pr=""; &size(1); $Pr=" "."$Pr";}else{$Pr="";}
 #	if($d_may eq ""){$d_may="$notitle";}
 #	if($yobi){$yobi="[ID:$yobi]";}
 #	if($txt){$Txt="$TXT_T:[$txt]　";}else{$Txt="";}
@@ -283,7 +275,6 @@ if((!$rname)||($rname eq ' ')||($rname eq '　')){$rname=$noname;}
 #				elsif($Icon && $rcom=~/<br>\(携帯\)$/){$mrICO="$Ico_km";}
 #				$news.="<img src=\"$IconDir\/$mrICO\" border=\"0\"$WHm>";
 #			}
-#			if($ico && $i_mode){$Pr=""; &size(1); $Pr=" "."$Pr";}else{$Pr="";}
 #			if($rdm eq ""){$rdm="$notitle"; }
 #			if($yobi){$yobi="[ID:$yobi]";}
 #			if($txt){$Txt="$TXT_T:[$txt]　";}else{$Txt="";}

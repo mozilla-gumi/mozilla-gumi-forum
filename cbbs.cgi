@@ -106,7 +106,6 @@ if ($mode eq "res") {&res_;}
 if ($mode eq "key") {&key_;} # delete post
 if ($mode eq "one") {&one_;}
 if ($mode eq "ran") {&ran_;}
-if ($mode eq "f_a") {&f_a_;}
 if ($mode eq "img") {&img_;}
 if ($mode eq "red") {&read;}
 if ($mode eq "cookdel") {&cookdel;}
@@ -204,14 +203,7 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
             $Smsg .= "OFF]\n";
         }
     }
-    if ($ico && $i_mode) {
-        $Pr = "";
-        &size();
-        $Pr = "<tr><td align=\"center\">$Pr</td></tr>\n";
-        $SIZE += $Size;
-    } else { 
-        $Pr = "";
-    }
+    $Pr = "";
     $agsg = "";
     $UeSt = "";
     $Pre = "";
@@ -406,8 +398,6 @@ sub html2_ {
     $tmplVars{'henko'} = $Henko;
     $obj_template->process('topiclist.tpl', \%tmplVars);
 
-    if($i_mode){&minf_("F");}
-
     $end_data=@NEW-1;
     $page_end=$page+($tpmax*$tab_m-1);
     if($page_end >= $end_data){$page_end=$end_data;}
@@ -425,7 +415,9 @@ sub html2_ {
     }else{
         $Nl=""; $Nle="";
     }
-    if($cou){&con_;}
+    if($cou){
+        print "<div class=\"Counter\">" . &con_() . "</div><br>\n";
+    }
     print"<div class=\"Caption03l\">全 $total トピック中 $Pg ～ $Pg2 を表\示</div>\n";
     $Plink="$Bl$Ble\n"; $a=0;
     for($i=0;$i<=$page_;$i++){
@@ -474,10 +466,6 @@ sub html2_ {
                 print"<th width=\"46\%\">トピックタイトル</th><th width=\"8\%\">記事数</th>$TP$SK<th width=\"15\%\">最終更新</th>$EE</tr>\n";
             }
             $TableChange++;
-            if($i_mode){
-                $File=0; $Size=0;
-                if($ico){$File++; $Size+=-s "$i_dir/$ico";}
-            }
             if(($time_k-$tim) > $new_t*3600){$news="$hed_i";}else{$news="$new_i";}
             if($yobi){$yobi="[ID:$yobi]";}
             if((!$name)||($name eq ' ')||($name eq '　')){$name=$noname;}
@@ -496,7 +484,6 @@ sub html2_ {
                     ($rtxt,$rsel,$rid)=split(/\|\|/,$rSEL);
                     if($SEL_R==0){$sel="$rsel";} if($TXT_R==0){$txt=$rtxt;}
                     if($rid){$rid="<br>[ID:$rid]";}
-                    if($i_mode){if($ico){$File++; $Size+=-s "$i_dir/$ico";}}
                     $ksu++;
                     if($BeTime < $rtim || $tim !~/[\d]+/){
                         if($rmail && $rSe < 2){$rn="$rname <a href=\"mailto:$SPAM$rmail\">$AMark</a>";}
@@ -614,7 +601,9 @@ if($FORM{'page'} eq ''){$page=0;}else{$page=$FORM{'page'};}
 $PAGE=$page/$topic;
 &get_uid();
 &hed_("One Topic All View / $TitleHed / Page: $PAGE");
-if($cou){&con_;}
+if($cou){
+        print "<div class=\"Counter\">" . &con_() . "</div><br>\n";
+}
 if($rev){
     print"$fhy\n";
     if($r_max && ($total-1) >= $r_max){
@@ -765,7 +754,6 @@ foreach $lines (@TREE) {
     if(length($d_may)>$t_max){$d_may=substr($d_may,0,($t_max-2)); $d_may="$d_may..";}
 if((!$name)||($name eq ' ')||($name eq '　')){$name=$noname;}
     if($email && $Se < 2){$name="$name <a href=\"mailto:$email\">$AMark</a>";}
-    if($ico && $i_mode){$Pr=""; &size(1); $Pr=" "."$Pr"; $SIZE+=$Size;}else{$Pr="";}
     $psp=$space+15;$nsp=$space-15;
     if(($namber eq "$ty" || $type eq "$nam" || $type eq "$ty") && $ON==0){
         if($rs && $sp <= $space && $type){$ON=1;}
@@ -930,8 +918,9 @@ print <<"_HTML_";
 <li>$all_i をクリックするとそのツリーを一括で表\示します。</li>
 </ul>$Henko<hr>
 _HTML_
-if($i_mode){&minf_("T");}
-if($cou){&con_;}
+if($cou){
+        print "<div class=\"Counter\">" . &con_() . "</div><br>\n";
+}
 print"<div class=\"Caption03l\">全 $total ツリー中 $Pg ～ $Pg2 番目を表\示</div>\n";
 $Plink="<div class=\"Caption01c\"><strong>全ページ</strong> /\n"; $a=0;
 for($i=0;$i<=$page_;$i++){
@@ -962,7 +951,6 @@ if((!$name)||($name eq ' ')||($name eq '　')){$name=$noname;}
         elsif($Icon && $comment=~/<br>\(携帯\)$/){$mICO="$Ico_km";}
         $news.="<img src=\"$IconDir\/$mICO\" border=\"0\"$WHm>";
     }
-    if($ico && $i_mode){$Pr=""; &size(1); $Pr=" "."$Pr";}else{$Pr="";}
     if($d_may eq ""){$d_may="$notitle";}
     if($yobi){$yobi="[ID:$yobi]";}
     if($txt){$Txt="$TXT_T:[$txt]　";}else{$Txt="";}
@@ -1000,7 +988,6 @@ _HTML_
                 elsif($Icon && $rcom=~/<br>\(携帯\)$/){$mrICO="$Ico_km";}
                 $news.="<img src=\"$IconDir\/$mrICO\" border=\"0\"$WHm>";
             }
-            if($ico && $i_mode){$Pr=""; &size(1); $Pr=" "."$Pr";}else{$Pr="";}
             if($rdm eq ""){$rdm="$notitle"; }
             if($yobi){$yobi="[ID:$yobi]";}
             if($txt){$Txt="$TXT_T:[$txt]　";}else{$Txt="";}
@@ -1056,7 +1043,9 @@ while ($Line = <DB>) {
 }
 close(DB);
 &hed_("One Tree All Message");
-if($cou){&con_;}
+if($cou){
+        print "<div class=\"Counter\">" . &con_() . "</div><br>\n";
+}
 print<<"_ALLTOP_";
 <div class="Caption03l">ツリー一括表\示$IcCom</div>
 <table class="Tree" summary="tree">
@@ -1113,7 +1102,6 @@ if((!$name)||($name eq ' ')||($name eq '　')){$name=$noname;}
             elsif($Icon && $comment=~/<br>\(携帯\)$/){$mICO="$Ico_km";}
             $news.="<img src=\"$IconDir\/$mICO\" border=\"0\"$WHm>";
         }
-        if($i_mode && $ico){$Pr=""; &size(1); $Pr=" "."$Pr"; $CookOn="";}else{$Pr="";}
 if((!$name)||($name eq ' ')||($name eq '　')){$name=$noname;}
         print"<a href=\"#$nam\">$news $d_may</a>\n";
         print"/$name ($date) $yobi<span class=\"ArtId\">(#$nam)</span> $end$Pr</td></tr><tr><td>\n";
@@ -1121,70 +1109,6 @@ if((!$name)||($name eq ' ')||($name eq '　')){$name=$noname;}
 }
 print"</td></tr></table><br>\n";
 print"$ALLTREE</div>";
-&foot_;
-}
-#--------------------------------------------------------------------------------------------------------------------
-# [新着記事表示]
-# -> 新着記事を表示する(n_w_)
-#
-sub n_w_ {
-@NEW=();
-open(DB,"$log");
-while (<DB>) {
-    ($nam,$date,$name,$email,$d_may,$comment,$url,
-        $sp,$end,$ty,$del,$ip,$tim,$Se) = split(/<>/,$_);
-    if(($time_k - $tim) <= $new_t*3600){push(@NEW,"$tim<>$_<>");}
-}
-close(DB);
-
-&hed_("New Message");
-$total=@NEW;
-$page_=int(($#NEW)/$new_s);
-if($FORM{'page'} eq ''){$page=0;}else{$page=$FORM{'page'};}
-$end_data=@NEW-1;
-$page_end=$page + ($new_s - 1);
-if($page_end >= $end_data) { $page_end = $end_data; }
-$Pg=$page+1; $Pg2=$page_end+1;
-$nl = $page_end + 1;
-$bl = $page - $new_s;
-if($bl >= 0){$Bl="<a href=\"$cgi_f?page=$bl&amp;mode=n_w&amp;$pp\">"; $Ble="</a>";}
-if($page_end ne $end_data){$Nl="<a href=\"$cgi_f?page=$nl&amp;mode=n_w&amp;$pp\">"; $Nle="</a>";}
-print <<"_FTOP_";
-<h2>$new_t時間以内に投稿された新着記事</h2>
-<div class="Caption03l">新着記事全 $total 件中 $Pg ～ $Pg2 番目を表\示</div>
-<div class="Caption01c"><strong>全ページ</strong> / 
-_FTOP_
-
-$Plink="$Bl$Ble\n";$a=0;
-for($i=0;$i<=$page_;$i++){
-    $af=$page/$new_s;
-    if($i != 0){$Plink.=" ";}
-    if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}else{$Plink.="[<a href=\"$cgi_f?mode=n_w&amp;page=$a&amp;$pp\">$i</a>]\n";}
-
-    $a+=$new_s;
-}
-$Plink.="$Nl$Nle";
-if($FORM{"s"} ne ""){$new_su=$FORM{"s"};}
-if($new_su){$SL1="新着順"; $SL2="<a href=\"$cgi_f?mode=n_w&amp;s=0&amp;$pp\">古い順</a>";}
-else{$SL1="<a href=\"$cgi_f?mode=n_w&amp;s=1&amp;$pp\">新着順</a>"; $SL2="古い順";}
-print"$Plink<br>[ $SL1 / $SL2 ]<br>\n</div><hr>\n";
-if(@NEW){
-    @NEW=sort @NEW;
-    if($new_su){@NEW=reverse(@NEW);}
-    foreach ($page..$page_end) {
-    $divdiv=$page;
-        ($Tim,$nam,$date,$name,$email,$d_may,$comment,$url,
-            $sp,$end,$ty,$del,$ip,$tim,$Se) = split(/<>/,$NEW[$_]);
-        ($Ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$ip);
-        ($ICON,$ICO,$font,$hr)=split(/\|/,$TXT);
-        ($txt,$sel,$yobi)=split(/\|\|/,$SEL);
-        &design($nam,$date,$name,$email,$d_may,$comment,$url,$sp,$end,$ty,$del,$Ip,$tim,$ico,
-            $Ent,$fimg,$ICON,$ICO,$font,$hr,$txt,$sel,$yobi,$Se,$ResNo,"N");
-        if($divdiv != $page_end){print"$HTML<br>\n<hr>"; $divdiv++;}else{print"$HTML</div><br>\n<hr>"; undef $divdiv;}
-    }
-    print"<div class=\"Caption01c\"><strong>全ページ</strong> / ";
-    print"$Plink<br></div>\n";
-}else{print"新着記事はありません。</div>\n";}
 &foot_;
 }
 #--------------------------------------------------------------------------------------------------------------------
@@ -1203,9 +1127,7 @@ sub wri_ {
         if (($com =~ /^<pre>/) && ($com =~ /<\/pre>$/)) {$Z = " checked"; }
         else {$T = " checked"; }
         $c_url = $url;
-        if ($i_mode && ($ResUp || (($ResUp == 0) && ($sp == 0)))) {
-            $FORM_E = " enctype=\"multipart/form-data\"";
-        } else {$FORM_E = ""; }
+        $FORM_E = "";
         if ($tag) {
             $comment =~ s/\&lt\;/</g;
             $comment =~ s/\&gt\;/>/g;
@@ -1303,7 +1225,6 @@ if ($res_r==1 && $type != 0) {
  		if($name eq $na && $comment eq $comment_tmp){&er_('twicepost',"1");}
         if(($FORM{'N'} eq $nam)&&(!$res_process)){	push(@r_data,$new_); $oya=1; $resres=1; $res_process=1;}
         if($ty == 0 && $nam eq "$type"){
-            if($i_mode && $ico){$SIZE+=-s "$i_dir/$ico";}
             if($sml==2 || $sml==1){if($SeMail !~ /$mail/){$SeMail[$MAIL_TO]=$mail; $MAIL_TO++;}}
 #			if($sml==2 || $sml==1){if($SeMail !~ /$mail/){if($q_mail){$SeMail.=" $mail";}else{$SeMail.=",$mail";}}}
             $new_line="$lines[$_]";
@@ -1316,7 +1237,6 @@ if ($res_r==1 && $type != 0) {
             $resres=1; $res_process=1;
             if($FORM{"AgSg"}==0){push(@new,@r_data); push(@new,$new_line);}
         }elsif($ty eq "$type"){
-            if($i_mode && $ico){$SIZE+=-s "$i_dir/$ico";}
             if($sml==2 || $sml==1){if($SeMail !~ /$mail/){$SeMail[$MAIL_TO]=$mail; $MAIL_TO++;}}
 #			if($sml==2 || $sml==1){if($SeMail !~ /$mail/){if($q_mail){$SeMail.=" $mail";}else{$SeMail.=",$mail";}}}
             if(($nam eq "$kiji" && $oya==0)||($ty eq "$kiji" && $oya==0 && $space > 15) && $FORM{'N'} eq ""){
@@ -1343,7 +1263,6 @@ if ($res_r==1 && $type != 0) {
         if($ty==0){$h++;}
         if($FORM{'N'} eq $nam){push(@new,$new_); $oya=1; if(!$res_process){$res_process=1;}}
         if($nam eq "$kiji" && $FORM{'N'} eq ""){
-            if($i_mode && $i){$SIZE+=-s "$i_dir/$i";}
             if($sml==2 || $sml==1){if($SeMail !~ /$mail/){$SeMail[$MAIL_TO]=$mail; $MAIL_TO++;}}
 #			if($sml==2 || $sml==1){if($SeMail !~ /$mail/){if($q_mail){$SeMail.=" $mail";}else{$SeMail.=",$mail";}}}
             if(!$res_process){push(@new,$new_);$res_process=1;}
@@ -1351,7 +1270,7 @@ if ($res_r==1 && $type != 0) {
         }
         if($ON){
             if($i && -e "$i_dir/$i" && $LogDel){unlink("$i_dir/$i");}
-            if($klog_s){unshift(@KLOG,$lines[$_]);}else{if($i_mode==0){last;}}
+            if($klog_s){unshift(@KLOG,$lines[$_]);}
         }else{push(@new,$lines[$_]);}
         if($h >= $max-1){$ON=1;}
     }
@@ -1363,13 +1282,6 @@ elsif($oya){unshift(@new,"$namber<><><><><><><><><>$namber<><><><><>\n");}
 open(LOG,">$log") || &er_("Can't write $log","1");
 print LOG @new;
 close(LOG);
-if ($i_mode) {
-    $FORM{'min'} = Forum->cgi->cookie('Cmin');
-    if ($FORM{'min'}) {
-        $FORM{'min'} = 0;
-    }
-    &set_("M");
-}
 if ($klog_s && @KLOG) {
     &log_;
 }
@@ -1385,16 +1297,11 @@ if($H eq "F" && $tpend && $type){$FORM{"namber"}=$type; $space=0; &all2;}
 sub hen_ {
     if ($KLOG) {&er_('oldlogs'); }
     if ($mo eq "") {
-#        if ($FORM{'del'} eq "") {&er_('invid'); }
-#        if ($delkey eq "") {&er_('invpass'); }
-#        $kiji = $FORM{'del'};
         &er_('edit_not_allowed');
     } elsif ($mo == 1) {
         if (Forum->user->group_check('admin') == 0) {
-#        if (Forum->user->validate_password_admin($FORM{'pass'}) == 0) {
             &er_('invpass');
         }
-#        if ($FORM{'pass'} ne "$pass") {&er_('invpass'); }
     }
     open(DB,"$log");
     while ($line=<DB>) {
@@ -1420,9 +1327,7 @@ sub hen_ {
             }
             if ($s && $end_f && (($end_c == 0) ||
                 (Forum->user->group_check('admin') != 0)) &&
-#                (Forum->user->validate_password_admin($FORM{'pass'}) != 0)) &&
                 $t) {
-#            if ($s && $end_f && (($end_c == 0) || ($FORM{'pass'} eq $pass)) && $t) {
                 if ($end) {$C = " checked"; }
                 $end_form = <<"_ENDBOX_";
 $end_ok BOX
@@ -1476,8 +1381,6 @@ $Mbox
 _HTML_
             if ($ua_select) {
                 if (Forum->user->group_check('admin') != 0) {
-#                if (Forum->user->validate_password_admin($FORM{'pass'}) != 0) {
-#                if ($FORM{'pass'} eq "$pass") {
                     if ($userenv) {
                         print "<input type=\"hidden\" value=\"$userenv\">";
                     }
@@ -1551,42 +1454,6 @@ _HTML_
 </td></tr><tr><td colspan="2" align="right"><input type="submit" value=" 編 集 " >
 _HTML_
             print "<input type=\"reset\" value=\"リセット\"></td></tr></table></form></ul><hr width=\"95\%\">";
-            if($i_mode){
-                if($ico){
-                    &size;
-                    print<<"_DEL_";
-・ここからファイル削除できます。<br>
-<table summary="delete" width="90\%">$Pr</table>
-<form action="$cgi_f">$pf
-<input type="hidden" name="mode" value="h_w"><input type="hidden" name="pass" value="$FORM{"pass"}">
-<input type="hidden" name="IMD" value="$namber"><input type="submit" value="ファイルを削除">
-</form><hr width="95\%">
-_DEL_
-                }elsif($s==0 || ($s && $ResUp)){
-                    print<<"_DEL_";
-<ul>
-・ここからファイルアップできます。<br>
-<form action="$cgi_f" method="$met" enctype="multipart/form-data">$pf
-_DEL_
-                    print 'File <input type="file" name="ups" size="60" ' . "\">　<input type=\"submit\" value=\"送信\">";
-                    print '<ul>アップ可能\拡張子=&gt;';
-                    foreach (0..$#exn) {
-                    if($exi[$I] eq "img"){$EX="<strong>$exn[$_]</strong>";}else{$EX="$exn[$_]";}
-                    print"/$EX"; $I++;
-                }
-                print<<"_DEL_";
-<br>
-1) 太字の拡張子は画像として認識されます。<br>
-2) 画像は初期状態で縮小サイズ$H2×$W2ピクセル以下で表\示されます。<br>
-3) 同名ファイルがある、またはファイル名が不適切な場合、<br>
-　　ファイル名が自動変更されます。<br>
-4) アップ可能\ファイルサイズは1回<strong>$max_fs\KB</strong>(1KB=1024Bytes)までです。<br></ul>
-<input type="hidden" name="mode" value="h_w"><input type="hidden" name="pass" value="$FORM{"pass"}">
-<input type="hidden" name="UP" value="$namber"><input type="hidden" name="UPt" value="$t">
-<input type="hidden" name="mo" value="$mo"></form></ul><hr width="95\%">
-_DEL_
-                }
-            }
             last;
         }
     }
@@ -1810,241 +1677,266 @@ sub h_w_ {
     }
 }
 #--------------------------------------------------------------------------------------------------------------------
-# [カウンタ処理]
-# -> カウントアップ処理(con_)
-#
-sub con_ {
-    if (($mode eq "") || ($mode eq "alk")) {
-        if ($locks) {
-            &lock_("$cloc");
-        }
-        open(NO, "$c_f") || &er_("Can't open $c_f", "1");
-        $cnt = <NO>;
-        close(NO);
-        if (($FORM{'mode'} eq "") && ($FORM{'page'} eq "") &&
-            ($ENV{'HTTP_REFERER'} !~ /$cgi_f/)) {
-            $cnt++;
-            open(NO, ">$c_f") || &er_("Can't write $c_f","1");
-            print NO $cnt;
-            close(NO);
-        }
-        if (-e $cloc) {
-            rmdir($cloc);
-        }
-        print "<div class=\"Counter\">$cnt</div><br>\n";
-    }
-}
-#--------------------------------------------------------------------------------------------------------------------
-# [エラー表示]
-# -> エラーの内容を表示する(er_)
-#
-sub er_ {
-    if (-e $lockf && $_[1]==1) {rmdir($lockf); }
-    if (-e $cloc && $_[1]==1) {rmdir($cloc); }
-    if (-e "$i_dir/$file") {unlink("$i_dir/$file"); }
-    if ($FORM{"URL"}) {
-        ($KURL, $Ag) = split(/::/, $FORM{'URL'});
-    }
-    if ($BG eq "") {&hed_("Error"); }
-    $tmplVars{'errmsg'} = $_[0];
-    $obj_template->process('error.tpl', \%tmplVars);
-    exit;
-}
-#--------------------------------------------------------------------------------------------------------------------
-# [過去ログ]
-# -> 過去ログへの書き込み(log_)
-#
-sub log_ {
-    open(NO,"$klog_c") || &er_("Can't open $klog_c");
-    $n = <NO>;
-    close(NO);
-
-    $klog_f = "$klog_d\/$n$klogext";
-    unless(-e $klog_f){ &l_m($klog_f);}
-
-    $klog_size=$klog_l*1024;
-    if(-s $klog_f > $klog_size) {&log_up;}
-
-    open(LOG,">>$klog_f") || &er_("Can't write $klog_f");
-    print LOG @KLOG;
-    close(LOG);
-}
-#--------------------------------------------------------------------------------------------------------------------
-# [カウントアップ]
-# -> 過去ログ番号のカウントアップ(log_up)
-#
-sub log_up {
-    $n++;
-
-    open(NUM,">$klog_c") || &er_("Can't write $klog_c");
-    print NUM "$n";
-    close(NUM);
-
-    $klog_f="$klog_d\/$n$klogext";
-    &l_m($klog_f);
-}
-#--------------------------------------------------------------------------------------------------------------------
-# [ログ生成]
-# -> ログを自動生成します(l_m)
-#
-sub l_m {
-    open(DB,">$_[0]") || &er_("Can't make $_[0]");
-    print DB "";
-    close(DB);
-
-    chmod(0666,"$_[0]");
-}
-#--------------------------------------------------------------------------------------------------------------------
 # [スレッド表示]
 # -> スレッド形式で記事の一覧を表示する(alk_)
 #
 sub alk_ {
-$thread_oya=0;
-if($FORM{'page'} eq ''){$page = 0;}else{$page=$FORM{'page'};}
-@NEW=(); @RES=(); $List=""; $news=""; $On=1; %N=(); %d=(); %n=(); $RS=0; $K=1; $TOya=0;
-open(LOG,"$log") || &er_("Can't open $log");
-while (<LOG>) {
-    ($namber,$date,$name,$email,$d_may,$comment,$url,
-        $space,$end,$type,$del,$ip,$tim) = split(/<>/,$_);
-    if($type){
-        if($On){if(($time_k-$tim)>$new_t*3600){$n{$type}="$hed_i";}else{$n{$type}="$up_i_"; $On=0;}}
-        $tim=sprintf("%011d",$tim); if($date){$R{$type}.="$tim<>$_";} $N{$type}++; $RS++;
-    }else{
-        if($n{$namber} eq ""){if(($time_k-$tim)>$new_t*3600){$n{$namber}="$hed_i";}else{$n{$namber}="$new_i";}}
-        if($tim eq ""){$tim="$TIM";} $tim=sprintf("%011d",$tim);
-        if($Res_T==2){$tim=$N{$namber}; $tim=sprintf("%05d",$tim);}
-        push(@NEW,"$tim<>$_");
+    $thread_oya = 0;
+    if ($FORM{'page'} eq '') {
+        $page = 0;
+    } else {
+        $page = $FORM{'page'};
+    }
+    @NEW = ();
+    @RES = ();
+    $List = "";
+    $news = "";
+    $On = 1;
+    %N = ();
+    %d = ();
+    %n = ();
+    $RS = 0;
+    $K = 1;
+    $TOya = 0;
+    open(LOG, "$log") || &er_("Can't open $log");
+    while (<LOG>) {
+        ($namber, $date, $name, $email, $d_may, $comment, $url,
+            $space, $end, $type, $del, $ip, $tim) = split(/<>/, $_);
+        if ($type) {
+            if ($On) {
+                if (($time_k - $tim) > ($new_t * 3600)) {
+                    $n{$type} = $hed_i;
+                } else {
+                    $n{$type} = $up_i_;
+                    $On = 0;
+                }
+            }
+            $tim = sprintf('%011d', $tim);
+            if ($date) {
+                $R{$type} .= "$tim<>$_";
+            }
+            $N{$type}++;
+            $RS++;
+        } else {
+            if ($n{$namber} eq "") {
+                if (($time_k - $tim) > ($new_t*3600)) {
+                    $n{$namber} = $hed_i;
+                } else {
+                    $n{$namber} = $new_i;
+                }
+            }
+            if ($tim eq "") {
+                $tim = "$TIM";
+            }
+            $tim = sprintf("%011d", $tim);
+            if ($Res_T == 2) {
+                $tim = $N{$namber};
+                $tim = sprintf("%05d", $tim);
+            }
+            push(@NEW, "$tim<>$_");
+            ($Ip, $ico, $Ent, $fimg, $TXT, $SEL, $R) = split(/:/, $ip);
+            ($ICON, $ICO, $font, $hr) = split(/\|/, $TXT);
+            ($txt, $sel, $yobi) = split(/\|\|/, $SEL);
+            if ($txt) {
+                $Txt = "$TXT_T:[$txt]　";
+            } else {
+                $Txt = "";
+            }
+            if ($sel) {
+                $Sel = "$SEL_T:[$sel]　";
+            } else {
+                $Sel="";
+            }
+            if ($d_may eq "") {
+                $d{$namber} = $notitle;
+            } else {
+                $d{$namber} = $d_may;
+            }
+            if ($Txt || $Sel || ($Txt && $Sel)) {
+                if ($TS_Pr == 0) {
+                    $d{$namber} = "$Txt$Sel/" . "$d{$namber}";
+                }
+            }
+            if ($N{$namber} eq "") {
+                $N{$namber} = 0;
+            }
+            if ($Top_t && ($Res_T == 0) && ($Rno < $LiMax)) {
+                $Rno++;
+                $PAH = $alk_su * $K;
+                if (($PAH) < $Rno) {
+                    $PAL = "&amp;page=$PAH";
+                    $K++;
+                }
+                $L_3 = $Rno-1;
+                if ((($page + $alk_su) >= $Rno) && (($page) < $Rno)) {
+                    $List .= "<a href=\"#$TOya\">$n{$namber}$d{$namber}($N{$namber})</a> |\n";
+                    $TOya++;
+                } else {
+                    $List .= "<a href=\"$cgi_f?mode=res&amp;namber=$namber&amp;page=&amp;$pp\">$n{$namber}$d{$namber}($N{$namber})</a> |\n";
+                }
+            }
+            $news = "";
+            $On = 1;
+        }
+        $TIM = $tim;
+    }
+    close(LOG);
+
+    if ($Res_T) {
+        @NEW = sort(@NEW);
+        @NEW = reverse(@NEW);
+        if ($Top_t) {
+            foreach (0..$#NEW) {
+                if ($Rno > $LiMax) {last;}
+                ($T, $namber, $date, $name, $email, $d_may, $comment, $url,
+                    $space, $end, $type, $del, $ip, $tim) = split(/<>/, $NEW[$_]);
+                $Rno++;
+                $PAH = $alk_su * $K;
+                if (($PAH) < $Rno) {
+                    $PAL = "&amp;page=$PAH";
+                    $K++;
+                }
+                $L_3 = $Rno-1;
+                if ((($page + $alk_su) >= $Rno) && (($page) < $Rno)) {
+                    $List .= "<a href=\"#$L_3\">$n{$namber}$d{$namber}($N{$namber})</a> |\n";
+                } else {
+                    $List .= "<a href=\"$cgi_f?mode=res&amp;namber=$namber&amp;page=&amp;$pp\">$n{$namber}$d{$namber}($N{$namber})</a> |\n";
+                }
+            }
+        }
+    }
+
+    $total = @NEW;
+    $NS = $RS + $total;
+    $page_ = int(($total - 1) / $alk_su);
+    $end_data = @NEW - 1;
+    $page_end = $page + ($alk_su - 1);
+    if ($page_end >= $end_data) {
+        $page_end = $end_data;
+    }
+    $Pg = $page + 1;
+    $Pg2 = $page_end + 1;
+    $nl = $page_end + 1;
+    $bl = $page - $alk_su;
+
+    Forum->template->set_vars('Top_t', $Top_t);
+    Forum->template->set_vars('new_t', $new_t);
+    Forum->template->set_vars('new_i', $new_i);
+    Forum->template->set_vars('up_i_', $up_i_);
+    Forum->template->set_vars('Henko', $Henko);
+    Forum->template->set_vars('cou', $cou);
+    Forum->template->set_vars('Pg', $Pg);
+    Forum->template->set_vars('Pg2', $Pg2);
+    Forum->template->set_vars('thread_total', $total);
+    if ($cou) {
+        Forum->template->set_vars('counter', &con_());
+    }
+    Forum->template->set_vars('Res_T', $Res_T);
+    Forum->template->set_vars('cgi_f', $cgi_f);
+    Forum->template->set_vars('pp', $pp);
+    Forum->template->set_vars('alk_su', $alk_su);
+    Forum->template->set_vars('page_', $page_);
+    Forum->template->set_vars('Wf', $Wf);
+    Forum->template->set_vars('af', $page / $alk_su);
+    Forum->template->set_vars('List', $List);
+    Forum->template->set_vars('PAGE', $page / $alk_su);
+    $obj_template->process('alk_thread_disp.tpl', \%tmplVars);
+
+    if ($bl >= 0) {
+        $Bl = "<a href=\"$cgi_f?mode=alk&amp;page=$bl&amp;$pp$Wf\">";
+        $Ble = "</a>";
+    }
+    if ($page_end ne $end_data) {
+        $Nl = "<a href=\"$cgi_f?mode=alk&amp;page=$nl&amp;$pp$Wf\">";
+        $Nle = "</a>";
+    }
+
+    $LinkNo = "";
+    foreach ($page .. $page_end) {
+        ($T, $nam, $date, $name, $email, $d_may, $comment, $url,
+            $sp, $end, $ty, $del, $ip, $tim, $Se) = split(/<>/, $NEW[$_]);
         ($Ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$ip);
         ($ICON,$ICO,$font,$hr)=split(/\|/,$TXT);
         ($txt,$sel,$yobi)=split(/\|\|/,$SEL);
-        if($txt){$Txt="$TXT_T:[$txt]　";}else{$Txt="";}
-        if($sel){$Sel="$SEL_T:[$sel]　";}else{$Sel="";}
-        if($d_may eq ""){$d{$namber}=$notitle;}else{$d{$namber}=$d_may;}
-        if($Txt || $Sel ||($Txt && $Sel)){if($TS_Pr==0){$d{$namber}="$Txt$Sel/"."$d{$namber}";}}
-        if($N{$namber} eq ""){$N{$namber}=0;}
-        if($Top_t && $Res_T==0 && $Rno < $LiMax){
-            $Rno++; $PAH=$alk_su*$K; if(($PAH) < $Rno){$PAL="&amp;page=$PAH"; $K++;} $L_3=$Rno-1;
-            if(($page+$alk_su)>=$Rno && ($page)<$Rno){$List.="<a href=\"#$TOya\">$n{$namber}$d{$namber}($N{$namber})</a> |\n"; $TOya++;}
-            else{$List.="<a href=\"$cgi_f?mode=res&amp;namber=$namber&amp;page=&amp;$pp\">$n{$namber}$d{$namber}($N{$namber})</a> |\n";}
+        &design($thread_oya,$date,$name,$email,$d_may,$comment,$url,$sp,$end,$ty,$del,$Ip,$tim,$ico,
+            $Ent,$fimg,$ICON,$ICO,$font,$hr,$txt,$sel,$yobi,$Se,"","TR");
+        print"<hr><br>\n";
+        if (($thread_oya > 0) && (! $type)) {
+            print"</div>\n</div>\n";
         }
-        $news=""; $On=1;
-    }
-    $TIM=$tim;
-}
-close(LOG);
-
-$PAGE=$page/$alk_su;
-&hed_("All Thread / Page: $PAGE");
-if($Res_T){
-    @NEW=sort(@NEW); @NEW=reverse(@NEW);
-    if($Top_t){
-        foreach (0..$#NEW){
-            if($Rno > $LiMax){last;}
-            ($T,$namber,$date,$name,$email,$d_may,$comment,$url,
-                $space,$end,$type,$del,$ip,$tim) = split(/<>/,$NEW[$_]);
-            $Rno++; $PAH=$alk_su*$K; if(($PAH) < $Rno){$PAL="&amp;page=$PAH"; $K++;} $L_3=$Rno-1;
-            if(($page+$alk_su)>=$Rno && ($page)<$Rno){$List.="<a href=\"#$L_3\">$n{$namber}$d{$namber}($N{$namber})</a> |\n";}
-            else{$List.="<a href=\"$cgi_f?mode=res&amp;namber=$namber&amp;page=&amp;$pp\">$n{$namber}$d{$namber}($N{$namber})</a> |\n";}
+        if ($type) {
+            print"</div>\n";
         }
-    }
-}
-if($Top_t){
-    print "<li>$new_t時間以内に作成されたスレッドは $new_i で表\示されます。</li>\n";
-    print "<li>$new_t時間以内に更新されたスレッドは $up_i_ で表\示されます。</li>\n";
-}
-
-    $obj_template->process('comtop.inc.tpl');
-print"</ul>$Henko<hr>";
-if($cou){&con_;}
-if($i_mode){&minf_("N");}
-$total=@NEW; $NS=$RS+$total;
-$page_=int(($total-1)/$alk_su);
-$end_data=@NEW-1;
-$page_end=$page+($alk_su-1);
-if($page_end >= $end_data){$page_end = $end_data;}
-$Pg=$page+1; $Pg2=$page_end+1;
-$nl=$page_end+1;
-$bl=$page-$alk_su;
-if($bl >= 0){$Bl="<a href=\"$cgi_f?mode=alk&amp;page=$bl&amp;$pp$Wf\">"; $Ble="</a>";}
-if($page_end ne $end_data){$Nl="<a href=\"$cgi_f?mode=alk&amp;page=$nl&amp;$pp$Wf\">"; $Nle="</a>";}
-print"<div class=\"Caption03l\">全 $total スレッド中 $Pg ～ $Pg2 番目を表\示</div>\n";
-
-$Plink="<div class=\"Caption01c\"><strong>全ページ</strong> /\n"; $a=0;
-$a=0;
-for($i=0;$i<=$page_;$i++){
-    $af=$page/$alk_su;
-    if($i != 0){$Plink.=" ";}
-    if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}else{$Plink.="[<a href=\"$cgi_f?mode=alk&amp;page=$a&amp;$pp$Wf\">$i</a>]\n";}
-    $a+=$alk_su;
-}
-$Plink.="</div>\n";
-$Plink.='<hr class="Hidden">';
-if($Res_T==1){$OJ1="<a href=\"$cgi_f?mode=alk&amp;W=W&amp;$pp\">返信最新順</a>\n"; $OJ2="投稿順"; $OJ3="<a href=\"$cgi_f?mode=alk&amp;W=R&amp;$pp\">記事数順</a>\n";}
-elsif($Res_T==2){$OJ1="<a href=\"$cgi_f?mode=alk&amp;W=W&amp;$pp\">返信最新順</a>\n"; $OJ2="<a href=\"$cgi_f?mode=alk&amp;W=T&amp;$pp\">投稿順</a>"; $OJ3="記事数順\n";}
-else{$OJ1="返信最新順"; $OJ2="<a href=\"$cgi_f?mode=alk&amp;W=T&amp;$pp\">投稿順</a>\n"; $OJ3="<a href=\"$cgi_f?mode=alk&amp;W=R&amp;$pp\">記事数順</a>\n";}
-print"<div class=\"Caption01r\">親記事の順番 [ $OJ1 / $OJ2 / $OJ3 ]</div>\n";
-print"$Plink<br>\n";
-if($Top_t){
-    print"<div class=\"ArtList\">\n<div class=\"Caption01List\">\n\n";
-    print"<strong><a name=\"list\">記事リスト</a></strong> ( )内の数字は返信数</div>\n$List\n</div><br>\n";
-}
-$LinkNo="";
-foreach ($page .. $page_end) {
-    ($T,$nam,$date,$name,$email,$d_may,$comment,$url,
-        $sp,$end,$ty,$del,$ip,$tim,$Se) = split(/<>/,$NEW[$_]);
-    ($Ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$ip);
-    ($ICON,$ICO,$font,$hr)=split(/\|/,$TXT);
-    ($txt,$sel,$yobi)=split(/\|\|/,$SEL);
-    &design($thread_oya,$date,$name,$email,$d_may,$comment,$url,$sp,$end,$ty,$del,$Ip,$tim,$ico,
-        $Ent,$fimg,$ICON,$ICO,$font,$hr,$txt,$sel,$yobi,$Se,"","TR");
-    print"<hr><br>\n";
-if(($thread_oya>0)&&(!$type)){print"</div>\n</div>\n";}
-if($type){print"</div>\n";}
-    print"$HTML";
-    @RES=split(/\n/,$R{$nam}); $PNO=0;
-    @RES=sort(@RES);
-    if(@RES){
-        $Rn=$alk_rm; $RC=@RES; $Pg=$RC-$alk_rm+1; if($Pg<=0){$Pg=1;}
-        print"<hr><div class=\"Caption01l\">全返信 $RC 件中 $Pg ～ $RC 番目を表\示</div><br>\n";
-        $RC_=int($RC/$ResHy);
-        $res=0; $Dk=0; $ResNo=$Pg-1; $PgSt=$Pg-1; $PgEd=$RC-1;
-        foreach ($PgSt..$PgEd) {
-            ($T,$rnam,$rd,$rname,$rmail,$rdm,$rcom,$rurl,
-                $rsp,$re,$rtype,$del,$rip,$rtim,$Se)=split(/<>/,$RES[$_]);
-            if($nam eq "$rtype"){
-                $ResNo++;
-                ($Ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$rip);
-                ($ICON,$ICO,$font,$hr)=split(/\|/,$TXT);
-                ($txt,$sel,$yobi)=split(/\|\|/,$SEL);
-                $PNO=int($ResNo/$ResHy)*$ResHy;
-                &design($rnam,$rd,$rname,$rmail,$rdm,$rcom,$rurl,$rsp,$re,$rtype,$del,$Ip,$rtim,$ico,
-                    $Ent,$fimg,$ICON,$ICO,$font,$hr,$txt,$sel,$yobi,$Se,$ResNo,"TR");
-                print"<hr class=\"Hidden\">\n$HTML";
+        print "$HTML";
+        @RES = split(/\n/, $R{$nam});
+        $PNO = 0;
+        @RES = sort(@RES);
+        if (@RES) {
+            $Rn = $alk_rm;
+            $RC = @RES;
+            $Pg = $RC - $alk_rm + 1;
+            if ($Pg <= 0) {
+                $Pg = 1;
             }
-            if($ResNo==$N{$nam}){last;}
-        }
-        if($RC){
-#			if($Top_t){print"<hr><a href=\"#list\">■記事リスト</a> /\n";}
-            print"<hr><div class=\"Caption01r\">返信用スレッド表\示\n";
-            $a=0;
-            for($i=0;$i<=$RC_;$i++){
-                if($i){$St=$i*$ResHy; $En=$St+$ResHy-1; if($RC+1<=$En){$En=$RC;}}
-                else{$En=$ResHy-1; if($RC<$En){$En=$RC;} $St="親";}
-                print"[<a href=\"$cgi_f?mode=res&amp;namber=$nam&amp;rev=$r&amp;page=$a&amp;$pp\">$St ～ $En</a>]\n";
-                $a+=$ResHy;
+            print "<hr><div class=\"Caption01l\">全返信 $RC 件中 $Pg ～ $RC 番目を表\示</div><br>\n";
+            $RC_ = int($RC / $ResHy);
+            $res = 0;
+            $Dk = 0;
+            $ResNo = $Pg - 1;
+            $PgSt = $Pg - 1;
+            $PgEd = $RC - 1;
+            foreach ($PgSt..$PgEd) {
+                ($T,$rnam,$rd,$rname,$rmail,$rdm,$rcom,$rurl,
+                    $rsp,$re,$rtype,$del,$rip,$rtim,$Se)=split(/<>/,$RES[$_]);
+                if ($nam eq "$rtype") {
+                    $ResNo++;
+                    ($Ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$rip);
+                    ($ICON,$ICO,$font,$hr)=split(/\|/,$TXT);
+                    ($txt,$sel,$yobi)=split(/\|\|/,$SEL);
+                    $PNO = int($ResNo / $ResHy) * $ResHy;
+                    &design($rnam,$rd,$rname,$rmail,$rdm,$rcom,$rurl,$rsp,$re,$rtype,$del,$Ip,$rtim,$ico,
+                        $Ent,$fimg,$ICON,$ICO,$font,$hr,$txt,$sel,$yobi,$Se,$ResNo,"TR");
+                    print "<hr class=\"Hidden\">\n$HTML";
+                }
+                if ($ResNo == $N{$nam}) {
+                    last;
+                }
             }
-            if($Dk){print"<br>($Dk件は削除記事)\n";}
-            print "</div>";
+            if ($RC) {
+                print "<hr><div class=\"Caption01r\">返信用スレッド表\示\n";
+                $a = 0;
+                for ($i = 0; $i <= $RC_; $i++) {
+                    if ($i) {
+                        $St = $i * $ResHy;
+                        $En = $St + $ResHy - 1;
+                        if (($RC + 1) <= $En) {
+                            $En = $RC;
+                        }
+                    } else {
+                        $En = $ResHy - 1;
+                        if ($RC < $En) {
+                            $En = $RC;
+                        }
+                        $St = "親";
+                    }
+                    print "[<a href=\"$cgi_f?mode=res&amp;namber=$nam&amp;rev=$r&amp;page=$a&amp;$pp\">$St ～ $En</a>]\n";
+                    $a += $ResHy;
+                }
+                if ($Dk) {
+                    print "<br>($Dk件は削除記事)\n";
+                }
+                print "</div>";
+            }
         }
+        $LinkNo = $nam;
+        print "</div>\n";
+        $thread_oya++;
     }
-    $LinkNo=$nam;
-    print"</div>\n";
-    $thread_oya++;
+    print "<hr>\n";
+    &allfooter("スレッド$alk_su");
+    &foot_;
 }
-print"<hr>\n";
-&allfooter("スレッド$alk_su");
-&foot_;
-}
+
 #--------------------------------------------------------------------------------------------------------------------
 # [画像幅取得]
 # -> ファイルが画像の場合、ファイルを読み込んで幅を取得します。それ以外のアイコン表示もおこないます(size)
@@ -2211,188 +2103,55 @@ if($TB){print"</table>";}
 print "<br><input type=\"submit\" value=\"許可/未許可 ファイル削除\"></form>\n";
 &foot_;
 }
-#--------------------------------------------------------------------------------------------------------------------
-# [表示形式]
-# -> アップファイル表示形式の変更など(minf_)
-#
-sub minf_ {
-    if ($FORM{"min"} eq "") {
-        $FORM{'min'} = Forum->cgi->cookie('Cmin');
-        if ($FORM{'min'}) {
-            $FORM{'min'} = 0;
-        }
-    }
-if($FORM{"min"}==1){$S="";$S2=" selected";$S3="";}
-elsif($FORM{"min"}==2){$S="";$S2="";$S3=" selected";}
-else{$S2="";$S=" selected";$S3="";}
-print"<form action=\"$cgi_f\" method=\"$met\">$pf";
-if($mas_c){print"・表\示許可が出るまでファイルは<img src=\"$i_Url/$no_ent\">で表\示されます。<br>\n";}
-if($_[0]){print"<input type=\"hidden\" name=\"H\" value=\"$_[0]\">";}
-print <<"_KEY_";
-<input type="hidden" name="page" value="$page"><input type="hidden" name="mode" value="cmin">
-・記事中の画像表\示形式<select name="min">
-<option value="0"$S>$W2×$H2以下に縮小
-<option value="1"$S2>原寸大
-<option value="2"$S3>アイコン
-_KEY_
-print <<"_KEY_";
-</select><input type="submit" value="変 更">
-</form>
-_KEY_
-}
-#--------------------------------------------------------------------------------------------------------------------
-# [アップファイル一覧]
-# -> アップされたファイルを一覧で表示します(f_a_)
-#
-sub f_a_ {
-&hed_("All Up File");
-print <<"_ENT_";
-<h2>ファイル一覧</h2>
-<a href="$cgi_f?$pp"> 掲示板に戻る</a>
- アップされたファイルのみの一覧です。
-_ENT_
-@ICO=();
-open(LOG,"$log") || &er_("Can't open $log");
-while (<LOG>) {
-    ($namber,$date,$name,$email,$d_may,$comment,$url,
-        $space,$end,$type,$del,$ip,$tim) = split(/<>/,$_);
-    ($Ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$ip);
-    if($ico){push(@ICO,"$_");}
-}
-close(LOG);
 
-@NEW=(); $FS=0; $KL="";
-$page_=int($#ICO/$Ico_kp);
-if($page_){
-    $KL.='<hr size="1" width="80%">ページ移動 / ';
-    if($FORM{'page'}){$page=$FORM{'page'};}else{$page=0;}
-    $page_end=$page+($Ico_kp-1);
-    if($page_end > $#ICO){$page_end=$#ICO;}
-    for($i=0;$i<=$page_;$i++){
-        $af=$page/$Ico_kp;
-        if($i != 0){$KL.="| ";}
-        if($i eq $af){$KL.="<strong>$i</strong>\n";}else{$KL.="<a href=\"$cgi_f?mode=f_a&amp;page=$a&amp;$pp\">$i</a>\n";}
-        $a+=$Ico_kp;
-    }
-    $KL.='<hr size="1" width="80%">';
-}else{$page=0; $page_end=$#ICO;}
-$i=0; print"$KL";
-foreach ($page..$page_end) {
-    ($nam,$date,$name,$email,$d_may,$comment,$url,
-        $sp,$end,$ty,$del,$ip,$tim,$Se)=split(/<>/,$ICO[$_]);
-    ($Ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$ip);
-    if($i==0){print"<table summary=\"filelist\" width=\"90\%\">\n";}
-    $TB=1;
-    if($i_mode && $ico){$Pr=""; &size;}else{$Pr="";}
-    if($Size==0){next;}
-    $FS=$FS+$Size;
-    if($TOPH==0){$MD="mode=res&amp;namber="; if($ty){$MD.="$ty";}else{$MD.="$nam";}}
-    elsif($TOPH==1){$MD="mode=one&amp;namber=$nam&amp;type=$ty&amp;space=$sp";}
-    elsif($TOPH==2){$MD="mode=al2&amp;namber="; if($ty){$MD.="$ty";}else{$MD.="$nam";}}
-    print"<tr><td align=\"center\"><br><table summary=\"follow\"><tr><td align=\"center\">$Pr</td></tr></table><br>\n";
-    print"<strong>[<a href=\"$cgi_f?$MD&amp;$pp\">返信ページ</a>]</strong><br></td></tr>\n";
-    $i++;
-    if($i==30){print"</table>"; $i=0; $TB=0;}
-}
-if($TB){print"</table>";}
-$FS=int($FS/1024);
-print "<br>合計ファイルサイズ/$FS\KB$KL\n";
-&foot_;
-}
-#--------------------------------------------------------------------------------------------------------------------
-# [内容チェック]
-# -> フォーム内容をチェック(check_)
-#
-sub check_ {
-    my ($envkey, $envvalue);
-    &check_proxy();
-    if ($i_mode && $UP) {
-        $FLAG = 0;
-        foreach (0..$#exn) {
-            if ($file =~ /$exn[$_]$/i) {
-                $FLAG = 1;
-                $TAIL = $exn[$_];
-                $TL = $exi[$_];
-                last;
-            }
-        }
-        if ($FLAG == 0) {&er_('noflag'); }
-        if (-e "$i_dir/$file") {
-            $TIME = time;
-            $file = "$TIME$TAIL";
-            $Henko = "<h3>同名ファイルがあったため、$fileに変更しました</h3>";
-        } elsif ($file =~ /[^\w\-\.]/) {
-            $TIME = time;
-            $file = "$TIME$TAIL";
-            $Henko = "<h3>ファイル名が不適切だったため、$fileに変更しました</h3>";
-        }
-        $MaxSize = $max_fs * 1024;
-        if ($Fsize > $MaxSize) {&er_('upoverflow'); }
-        if (open(OUT, "> $i_dir/$file")) {
-            binmode(OUT);
-#            print OUT substr($Read, $Pos2, $Fsize);
-            print OUT $Read;
-            close(OUT);
-        }
-        chmod(0666, "$i_dir/$file");
-    }
 
-    $tmplVars{'NMAX'} = $NMAX;
-    $tmplVars{'TMAX'} = $TMAX;
-    $tmplVars{'CMAX'} = $CMAX;
-    if ($FORM{'UP'} eq "") {
-        if ($name eq '') {&er_('noname'); }
-        if ($d_may eq '') {&er_('nodmay'); }
-        if ($comment eq '') {&er_('nocomment'); }
-        if ($email && ($email !~ /(.*)\@(.*)\.(.*)/)) {&er_('invalidemail'); }
-        if ($email && ($email !~ /^[\w@\.\-_]+$/)) {&er_('invalidemail'); }
-        if ((length($delkey) > 8) && ($mode ne 'h_w')) {&er_('invaliddelkey'); }
-        if ($NMAX && ($NMAX < length($name))) {&er_('namelength'); }
-        if ($TMAX && ($TMAX < length($d_may))) {&er_('dmaylength'); }
-        if ($CMAX && ($CMAX < length($comment))) {&er_('commentlength'); }
-        if ($TXT_H && $TXT_F && ($txt eq '') &&
-            (($TXT_R == 0) || $TXT_R && ($type == 0))) {&er_('notxtt'); }
-        if ($he_tp && ($delkey eq '') && ($FORM{'pass'} eq ''))
-            {&er_('nodelkey'); }
-        if ($FORM{"pre"}) {$comment = "<pre>$comment</pre>"; }
-        if ($FORM{"dmay"}) {$d_may = $FORM{"dmay"}; }
-        if ($d_may eq "") {$d_may = "$notitle"; }
-        $Ip = $ENV{'REMOTE_ADDR'};
-        if ($ICON ne "") {
-            $ICO = $ico1[$ICON];
-            if ($ICO eq "randam") {
-                srand;
-                $randam = $#ico1;
-                $ICON  = int(rand($randam));
-                $ICO = $ico1[$ICON];
-                if (($ICO eq "") || ($ICO eq "randam") || ($ICO eq "master")) {
-                    foreach (0..$#ico1) {
-                        if (($ico1[$_] ne "randam") && ($ico1[$_] ne "master")) {
-                            $ICO = $ico1[$_];
-                            $ICON = $_;
-                        }
-                    }
-                }
-                $CICO = "randam";
-            } elsif ($ICO eq "master") {
-                $ICO_F = 0;
-                if ($mode eq "h_w") {$delkey = $FORM{'pass'}; }
-                foreach (0..$#mas_p) {
-                    if ($mas_p[$_] eq $delkey) {
-                        $ICO = $mas_i[$_];
-                        $ICO_F = 1;
-                        $ICON = "m$_";
-                        last;
-                    }
-                }
-                if ($ICO_F == 0) {&er_('adminicon'); }
-                $CICO = "master";
-            } else {$CICO = $ICO; }
-        }
-    }
-}
 
 ################################################################################
+
+##------------------------------------------------------------------------------
+# con_ - manage counter (display time count)
+#  vars : 
+#  tmpl : 
+sub con_ {
+    my $cnt;
+    if (($mode eq "") || ($mode eq "alk")) {
+        if ($locks) {
+            &lock_("$cloc");
+        }
+        open(NO, "$c_f") || &er_("Can't open $c_f", "1");
+        $cnt = <NO>;
+        close(NO);
+        if (($FORM{'mode'} eq "") && ($FORM{'page'} eq "") &&
+            ($ENV{'HTTP_REFERER'} !~ /$cgi_f/)) {
+            $cnt++;
+            open(NO, ">$c_f") || &er_("Can't write $c_f","1");
+            print NO $cnt;
+            close(NO);
+        }
+        if (-e $cloc) {
+            rmdir($cloc);
+        }
+    }
+    return $cnt;
+}
+
+##------------------------------------------------------------------------------
+# er_ - display error notification
+#  vars : 
+#  tmpl : 
+sub er_ {
+    my ($errmsg, $unlock) = @_;
+    if ((-e $lockf) && ($unlock == 1)) {rmdir($lockf); }
+    if ((-e $cloc) && ($unlock == 1)) {rmdir($cloc); }
+    if (-e "$i_dir/$file") {unlink("$i_dir/$file"); }
+    if ($FORM{"URL"}) {
+        ($KURL, $Ag) = split(/::/, $FORM{'URL'});
+    }
+    Forum->template->set_vars('BG', $BG);
+    Forum->template->set_vars('errmsg', $errmsg);
+    $obj_template->process('error.tpl', \%tmplVars);
+    exit;
+}
 
 ##------------------------------------------------------------------------------
 # check_proxy - check for proxy
@@ -2673,22 +2432,7 @@ sub forms_ {
         $tmplVars{'com_nodisp'} = 1;
     }
     if ($Res_i && ($mo eq "") && ($FORM{'PV'} eq "")) {$com = ""; }
-    if ($i_mode && ($ResUp || (($ResUp == 0) && ($sp == 0)))) {
-#        foreach (0..$#exn) {
-#            if($exi[$I] eq "img"){$EX="<strong>$exn[$_]</strong>";}else{$EX="$exn[$_]";}
-#            $FI.="/$EX"; $I++;
-#        }
-        if($ResUp && $sp){
-            $SIZE = int($SIZE/1024);
-            $tmplVars{'SIZE'} = $SIZE;
-            $tmplVars{'Rest'} = $max_or - $SIZE;
-        }
-        $tmplVars{'multipart'} = 1;
-        $tmplVars{'H2'} = $H2;
-        $tmplVars{'W2'} = $W2;
-    } else {
-        $tmplVars{'multipart'} = 0;
-    }
+    $tmplVars{'multipart'} = 0;
     $tmplVars{'FORM_PV'} = $FORM{'PV'};
     $tmplVars{'tag'} = $tag;
     $tmplVars{'N_NUM'} = $N_NUM;
@@ -3051,7 +2795,185 @@ sub set_ {
     }
 }
 
+##------------------------------------------------------------------------------
+# l_m - create new file with a specified name
+#  vars : 
+#  tmpl : 
+sub l_m {
+    my ($fname) = @_;
+    open(DB, ">$fname") || &er_("Can't make $fname");
+    print DB "";
+    close(DB);
+    chmod(0666, $fname);
+}
 
+##------------------------------------------------------------------------------
+# log_ - write data to "previous" logs
+#  vars : 
+#  tmpl : 
+sub log_ {
+    open(NO, "$klog_c") || &er_("Can't open $klog_c");
+    my $n = <NO>;
+    close(NO);
+
+    my $klog_f = "$klog_d\/$n$klogext";
+    unless (-e $klog_f) {
+        &l_m($klog_f);
+    } elsif ((-s $klog_f) > ($klog_l * 1024)) {
+        $n++;
+        open(NUM, ">$klog_c") || &er_("Can't write $klog_c");
+        print NUM $n;
+        close(NUM);
+        $klog_f = "$klog_d\/$n$klogext";
+        &l_m($klog_f);
+    }
+
+    open(LOG, ">>$klog_f") || &er_("Can't write $klog_f");
+    print LOG @KLOG;
+    close(LOG);
+}
+
+##------------------------------------------------------------------------------
+# check_ - check and validate form input
+#  vars : 
+#  tmpl : 
+sub check_ {
+    my ($envkey, $envvalue);
+    &check_proxy();
+
+    $tmplVars{'NMAX'} = $NMAX;
+    $tmplVars{'TMAX'} = $TMAX;
+    $tmplVars{'CMAX'} = $CMAX;
+    if ($FORM{'UP'} eq "") {
+        if ($name eq '') {&er_('noname'); }
+        if ($d_may eq '') {&er_('nodmay'); }
+        if ($comment eq '') {&er_('nocomment'); }
+        if ($email && ($email !~ /(.*)\@(.*)\.(.*)/)) {&er_('invalidemail'); }
+        if ($email && ($email !~ /^[\w@\.\-_]+$/)) {&er_('invalidemail'); }
+        if ((length($delkey) > 8) && ($mode ne 'h_w')) {&er_('invaliddelkey'); }
+        if ($NMAX && ($NMAX < length($name))) {&er_('namelength'); }
+        if ($TMAX && ($TMAX < length($d_may))) {&er_('dmaylength'); }
+        if ($CMAX && ($CMAX < length($comment))) {&er_('commentlength'); }
+        if ($TXT_H && $TXT_F && ($txt eq '') &&
+            (($TXT_R == 0) || $TXT_R && ($type == 0))) {&er_('notxtt'); }
+        if ($he_tp && ($delkey eq '') && ($FORM{'pass'} eq ''))
+            {&er_('nodelkey'); }
+        if ($FORM{"pre"}) {$comment = "<pre>$comment</pre>"; }
+        if ($FORM{"dmay"}) {$d_may = $FORM{"dmay"}; }
+        if ($d_may eq "") {$d_may = "$notitle"; }
+        $Ip = $ENV{'REMOTE_ADDR'};
+        if ($ICON ne "") {
+            $ICO = $ico1[$ICON];
+            if ($ICO eq "randam") {
+                srand;
+                $randam = $#ico1;
+                $ICON  = int(rand($randam));
+                $ICO = $ico1[$ICON];
+                if (($ICO eq "") || ($ICO eq "randam") || ($ICO eq "master")) {
+                    foreach (0..$#ico1) {
+                        if (($ico1[$_] ne "randam") && ($ico1[$_] ne "master")) {
+                            $ICO = $ico1[$_];
+                            $ICON = $_;
+                        }
+                    }
+                }
+                $CICO = "randam";
+            } elsif ($ICO eq "master") {
+                $ICO_F = 0;
+                if ($mode eq "h_w") {$delkey = $FORM{'pass'}; }
+                foreach (0..$#mas_p) {
+                    if ($mas_p[$_] eq $delkey) {
+                        $ICO = $mas_i[$_];
+                        $ICO_F = 1;
+                        $ICON = "m$_";
+                        last;
+                    }
+                }
+                if ($ICO_F == 0) {&er_('adminicon'); }
+                $CICO = "master";
+            } else {$CICO = $ICO; }
+        }
+    }
+}
+
+##------------------------------------------------------------------------------
+# n_w_ - display new articles
+#  vars : 
+#  tmpl : 
+sub n_w_ {
+    my @NEW = ();
+    # read new articles from DB, and stack to @NEW
+    open(DB, $log);
+    while (<DB>) {
+        ($nam, $date, $name, $email, $d_may, $comment, $url,
+            $sp, $end, $ty, $del, $ip, $tim, $Se) = split(/<>/, $_);
+        if (($time_k - $tim) <= ($new_t * 3600)) {
+            push(@NEW, "$tim<>$_<>");
+        }
+    }
+    close(DB);
+
+    $total = @NEW;
+    $page_ = int($#NEW / $new_s);
+    if ($FORM{'page'} eq '') {
+        $page = 0;
+    } else {
+        $page = $FORM{'page'};
+    }
+    $end_data = @NEW - 1;
+    $page_end = $page + ($new_s - 1);
+    if ($page_end >= $end_data) {
+        $page_end = $end_data;
+    }
+    $Pg = $page + 1;
+    $Pg2 = $page_end + 1;
+    $nl = $page_end + 1;
+    $bl = $page - $new_s;
+    if ($bl >= 0) {
+        $Bl = "<a href=\"$cgi_f?page=$bl&amp;mode=n_w&amp;$pp\">";
+        $Ble = "</a>";
+    }
+    if ($page_end ne $end_data) {
+        $Nl = "<a href=\"$cgi_f?page=$nl&amp;mode=n_w&amp;$pp\">";
+        $Nle = "</a>";
+    }
+
+    Forum->template->set_vars('new_t', $new_t);
+    Forum->template->set_vars('total', $total);
+    Forum->template->set_vars('Pg', $Pg);
+    Forum->template->set_vars('Bl', $Bl);
+    Forum->template->set_vars('Ble', $Ble);
+    Forum->template->set_vars('af', $page / $new_s);
+    Forum->template->set_vars('page_', $page_);
+    Forum->template->set_vars('new_s', $new_s);
+    Forum->template->set_vars('cgi_f', $cgi_f);
+    Forum->template->set_vars('pp', $pp);
+    Forum->template->set_vars('new_su', $FORM{"s"});
+    Forum->template->set_vars('new_count', $#NEW);
+
+    my @new_articles;
+    if (@NEW) {
+        @NEW = sort @NEW;
+        if ($new_su) {
+            @NEW = reverse(@NEW);
+        }
+        foreach ($page .. $page_end) {
+            my %article;
+            ($Tim, $nam, $date, $name, $email, $d_may, $comment, $url,
+                $sp, $end, $ty, $del, $ip, $tim, $Se) = split(/<>/, $NEW[$_]);
+            ($Ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$ip);
+            ($ICON,$ICO,$font,$hr)=split(/\|/,$TXT);
+            ($txt,$sel,$yobi)=split(/\|\|/,$SEL);
+            &design($nam,$date,$name,$email,$d_may,$comment,$url,$sp,$end,$ty,$del,$Ip,$tim,$ico,
+                $Ent,$fimg,$ICON,$ICO,$font,$hr,$txt,$sel,$yobi,$Se,$ResNo,"N");
+            push(@new_articles, $HTML);
+        }
+    }
+
+    Forum->template->set_vars('new_articles', \@new_articles);
+    $obj_template->process('new_articles.tpl', \%tmplVars);
+    exit;
+}
 
 ################################################################################
 # DELETED SUB ROUTINES
