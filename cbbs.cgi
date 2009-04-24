@@ -2956,7 +2956,7 @@ sub n_w_ {
     my @new_articles;
     if (@NEW) {
         @NEW = sort @NEW;
-        if ($new_su) {
+        if ($new_su eq "0") {
             @NEW = reverse(@NEW);
         }
         foreach ($page .. $page_end) {

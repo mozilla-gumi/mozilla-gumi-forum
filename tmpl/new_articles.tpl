@@ -12,7 +12,7 @@
 [% END %]
 <br />
 [ 
-[% IF new_su %]
+[% IF new_su == 0 %]
     <a href="[% cgi_f %]?mode=n_w&amp;s=1&amp;[% pp %]">V’…‡</a> / ŒÃ‚¢‡
 [% ELSE %]
     V’…‡ / <a href="[% cgi_f %]?mode=n_w&amp;s=0&amp;[% pp %]">ŒÃ‚¢‡</a>
