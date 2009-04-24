@@ -40,7 +40,6 @@ if ($FORM{'KLOG'}) {
     $tmplVars{'KLOG'} = $KLOG;
 }
 $tmplVars{'pp'} = $pp;
-$tmplVars{'pf'} = $pf;
 
 Forum->template->set_vars('mode_id', 'admin');
 Forum->template->set_vars('mode_adm', 'admin');

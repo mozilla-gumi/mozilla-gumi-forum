@@ -6,7 +6,7 @@
 <form action="[% cgi_f %]" method="[% met %]">
 <input type="hidden" name="mode" value="ran">
 [% nf %]
-[% pf %]
+<input type="hidden" name="KLOG" value="[% KLOG %]">
 <table summary="ranklist">
   <tr><td>
     <table summary="list">

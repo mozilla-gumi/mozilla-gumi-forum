@@ -65,7 +65,6 @@ if ($FORM{'KLOG'}) {
     $tmplVars{'KLOG'} = $KLOG;
 }
 $tmplVars{'pp'} = $pp;
-$tmplVars{'pf'} = $pf;
 
 $mode_id = '';
 if ($mode eq "man")      {$mode_id = 'manual'; }
@@ -550,16 +549,6 @@ sub html2_ {
 # -> トピック/スレッド表示の際の引用処理(comin_)
 #
 sub comin_{
-    if ($sp==0) {$re = 1; }
-    elsif ($sp>0) {$re = $sp / 15 + 1; }
-    if ($d_may eq "") {$d_may = $notitle; }
-    if ($d_may =~ /^Re\[/) {
-        $resuji = index("$d_may" , "\:");
-        $d_may =~ s/\:\ //;
-        $d_may = substr($d_may, $resuji);
-    }
-    $ti = "Re[$re]: $d_may";
-    $space = $sp;
     ($com, $com_) = split('\t', $com);
     if ($FORM{'In'} eq "") {
         $com = "■No$namに返信($naさんの記事)<br>$co";
@@ -567,9 +556,7 @@ sub comin_{
         $com =~ s/&gt; &gt; /&gt;&gt;/g;
     }
     $com =~ s/&nbsp;/ /g;
-    $com =~ s/	//g;
     $com =~ s/\t//g;
-    $com =~ s/\	//g;
     $FORM{"type"} = $ty;
     $type = $ty;
     $namber = $nam;
@@ -600,7 +587,21 @@ while (<DB>) {
             push(@TOP,"$time<>$_"); if($end){$En=1;}
         }else{$Dk++;}
         $namb=$nam; $k++; $TitleHed=$d_may;
-        if($mo){if($mo eq $nam){$On=1; $O2=1; &comin_;}}else{if($k==1){$On=1; $O2=1; &comin_;}}
+        if ($mo) {
+            if ($mo eq $nam) {
+                $On = 1;
+                $O2 = 1;
+                &rep_title();
+                &comin_;
+            }
+        } else {
+            if ($k == 1) {
+                $On=1;
+                $O2=1;
+                &rep_title();
+                &comin_;
+            }
+        }
     }else{if($k && $KLOG eq ""){last;}}
 }
 close(DB);
@@ -1262,7 +1263,7 @@ if($UID){
     }
 }
 &set_;
-&cry_;
+$epasswd = Forum->MigUtils->to_hash($FORM{'delkey'});
 if ($pUID) {
     &set_("I", "$pUID");
 }
@@ -1306,7 +1307,11 @@ if ($res_r==1 && $type != 0) {
             if($sml==2 || $sml==1){if($SeMail !~ /$mail/){$SeMail[$MAIL_TO]=$mail; $MAIL_TO++;}}
 #			if($sml==2 || $sml==1){if($SeMail !~ /$mail/){if($q_mail){$SeMail.=" $mail";}else{$SeMail.=",$mail";}}}
             $new_line="$lines[$_]";
-            if($he_tp){&cryma_($de); if($ok eq "n"){&er_('notcreator',"1");}}
+            if ($he_tp) {
+                if (Forum->MigUtils->match_hash($de, $de, $FORM{'delkey'}) == 0) {
+                    &er_('notcreator',"1");
+                }
+            }
             if(($nam eq "$kiji" && $oya==0) && $FORM{'N'} eq ""){push(@r_data,$new_); $oya=1;}
             $resres=1; $res_process=1;
             if($FORM{"AgSg"}==0){push(@new,@r_data); push(@new,$new_line);}
@@ -1318,7 +1323,11 @@ if ($res_r==1 && $type != 0) {
                 push(@r_data,$new_); $oya=1;
             }
             push(@r_data,$lines[$_]);
-            if($he_tp){&cryma_($de); if($ok eq "n"){&er_('notcreator',"1");}}
+            if ($he_tp) {
+                if (Forum->MigUtils->match_hash($de, $de, $FORM{'delkey'}) == 0) {
+                    &er_('notcreator',"1");
+                }
+            }
             $resres=1; $res_process=1;
         }
         if($resres == 0){push(@new,$lines[$_]);}
@@ -1396,13 +1405,13 @@ sub hen_ {
         if($kiji eq "$namber"){
             if($mo eq ""){
                 if($de eq "") { &er_('nopass'); }
-                &cryma_($de);
                 if (Forum->user->group_check('admin') != 0) {
-#                if (Forum->user->validate_password_admin($delkey) != 0) {
                     $ok = 'm';
+                } elsif (Forum->MigUtils->match_hash($de, $de, $FORM{'delkey'}) == 0) {
+                    &er_('invpass');
+                } else {
+                    $ok = 'y';
                 }
-#                if($delkey eq "$pass"){$ok="m";}
-                if($ok eq "n"){ &er_('invpass'); }
                 $hen_l = "$cgi_f?$pp";
                 $Lcom = "";
             } else {
@@ -1585,178 +1594,244 @@ _DEL_
     &foot_;
 }
 #--------------------------------------------------------------------------------------------------------------------
-# [パスワード暗号化]
-# -> パスワードを暗号化する(cry_)
-#
-sub cry_ {
-    $time = time;
-    ($p1, $p2) = unpack("C2", $time);
-    $wk = $time / (60*60*24*7) + $p1 + $p2 - 8;
-    @saltset = ('a'..'z','A'..'Z','0'..'9','.','/');
-    $nsalt = $saltset[$wk % 64] . $saltset[$time % 64];
-    $epasswd = crypt($FORM{'delkey'}, $nsalt);
-}
-#--------------------------------------------------------------------------------------------------------------------
-# [パスワード解読]
-# -> パスワードを暗号化しマッチング(cryma_)
-#
-sub cryma_ {
-    if($de =~ /^\$1\$/){ $crptkey=3; }else{ $crptkey=0; }
-    $ok = "n";
-    if(crypt($FORM{'delkey'}, substr($de,$crptkey,2)) eq $de){$ok = "y";}
-}
-#--------------------------------------------------------------------------------------------------------------------
 # [編集記事置換]
 # -> 編集内容を置き換える(h_w_)
 #
 sub h_w_ {
-    if($KLOG){&er_('oldlogs');}
+    if ($KLOG) {
+        # cannot write to old log files
+        &er_('oldlogs');
+    }
     if ((Forum->user->group_check('admin') == 0) && $mo) {
-#    if ((Forum->user->validate_password_admin($FORM{'pass'}) == 0) && $mo) {
         &er_('invpass');
     }
-#if($FORM{'pass'} ne "$pass" && $mo){&er_('invpass');}
-    ($comment,$com_)= split('\t',$comment);
-if($E_[0] eq "" && $I_[0] eq ""){
-    $delkey=$FORM{'pass'}; &check_;
-    if($tag){
-        $comment=~ s/\&lt\;/</g;
-        $comment=~ s/\&gt\;/>/g;
-        $comment=~ s/\&quot\;/\"/g;
-        $comment=~ s/<>/\&lt\;\&gt\;/g;
-    }
-}
-    $comment=~ s/\t//g;
-if($locks){&lock_("$lockf");}
-if($FORM{"pre"}){$comment="<pre>$comment</pre>";}
-@new=(); $flag=0; $SIZE=0;
-open(DB,"$log");
-while ($line=<DB>) {
-    $line =~ s/\n//g;
-    ($knam,$k,$kname,$kemail,$kd_may,$kcomment,$kurl,
-        $ks,$ke,$kty,$kd,$ki,$kt,$sml) = split(/<>/,$line);
-    if($k eq ""){push (@new,"$line\n"); next;}
-    if($namber eq "$knam") {
-        if($mo eq ""){
-            $de=$kd; $FORM{'delkey'}=$FORM{'pass'};
-            &cryma_($epasswd);
-            if (Forum->user->group_check('admin') != 0) {
-#            if (Forum->user->validate_password_admin($FORM{'pass'}) != 0) {
-                $ok = 'm';
-            }
-#            if($FORM{"pass"} eq $pass){$ok="m";}
-            if($ok eq "n"){ &er_('invpass',"1"); }
-        }
-        if($EStmp){
-            &time_("");
-            $EditCom="$date 編集";
-            if($mo || $ok eq "m"){$EditCom.="(管理者)";}else{$EditCom.="(投稿者)";}
-            if($comment !~ /([0-9][0-9]):([0-9][0-9]):([0-9][0-9]) 編集/){$EditCom.="<br><br>";}else{$EditCom.="<br>";}
-            $comment=$EditCom.$comment."\t".$userenv;
-        }
-        ($KI,$Kico,$E,$Kfi,$KTX,$KS,$KR)=split(/:/,$ki);
-        ($Ktxt,$Ksel,$Kyobi)=split(/\|\|/,$KS);
-        if($o_mail){if($send && $FORM{'pub'}==0){$send=2;}elsif($send==0 && $FORM{'pub'}==0){$send=3;}}
-        $line="$namber<>$k<>$name<>$email<>$d_may<>$comment<>$url<>$ks<>$end<>$kty<>$kd";
-        $line.="<>$KI:$Kico:$E:$Kfi:$ICON|$ICO|$font|$hr|:$txt\|\|$sel\|\|$Kyobi\|\|:$KR:<>$kt<>$send<>";
-        $flag = 1;
-    }elsif(@E_){
-        ($KI,$Kico,$E,$Kfi,$KTX,$KS,$KR)=split(/:/,$ki);
-        $EF=0;
-        foreach $ENT (@E_){if($ENT eq $knam){$EF=1; if($E){$EE=0;}else{$EE=1;} last;}}
-        if($EF){
-            if($mo eq ""){
-                $de=$kd; $FORM{'delkey'}=$FORM{'pass'};
-                &cryma_($epasswd);
-                if($ok eq "n"){ &er_('invpass',"1"); }
-            }
-            $line="$knam<>$k<>$kname<>$kemail<>$kd_may<>$kcomment<>$kurl<>$ks<>$ke<>$kty<>$kd<>$KI:$Kico:$EE:$Kfi:$KTX:$KS:$KR:<>$kt<>$sml<>";
-            $flag=1;
-        }
-    }elsif(@I_){
-        ($KI,$Kico,$E,$Kfi,$KTX,$KS,$KR)=split(/:/,$ki);
-        $EF=0;
-        foreach $ENT (@I_){if($ENT eq $knam){$EF=1;last;}}
-        if($EF){
-            if($mo eq ""){
-                $de=$kd; $FORM{'delkey'}=$FORM{'pass'};
-                &cryma_($epasswd);
-                if($ok eq "n"){ &er_('invpass',"1"); }
-            }
-            if($Kico && -e "$i_dir/$Kico"){unlink("$i_dir/$Kico");}
-            $Kico=""; $E=0; $Kfi="";
- 			$line="$knam<>$k<>$kname<>$kemail<>$kd_may<>$kcomment<>$kurl<>$ks<>$ke<>$kty<>$kd<>$KI:$Kico:$EE:$Kfi:$KTX:$KS:$KR:<>$kt<>$sml<>";
-            $flag=1;
-        }
-    }elsif($FORM{'UP'}){
-        $UPt=$FORM{'UPt'}; $UP=$FORM{'UP'};
-        ($KI,$Kico,$E,$Kfi,$KTX,$KS,$KR)=split(/:/,$ki);
-        if($UPt){if($UPt eq $kty && $Kico){$SIZE+= -s "$i_dir/$Kico";}}
-        else{if($UP eq $kty && $Kico){$SIZE+= -s "$i_dir/$Kico";}}
-        if($UP eq $knam){
-            if($mo eq ""){
-                $de=$kd; $FORM{'delkey'}=$FORM{'pass'};
-                &cryma_($epasswd);
-                if($ok eq "n"){ &er_('invpass',"1"); }
-            }
- 			if($mas_c){$E=0;}else{$E=1;}
-            $SIZE+=-s "$i_dir/$file";
-            $line="$knam<>$k<>$kname<>$kemail<>$kd_may<>$kcomment<>$kurl<>$ks<>$ke<>$kty<>$kd<>$KI:$file:$E:$TL:$KTX:$KS:$KR:<>$kt<>$sml<>";
-            $flag=1;
+    ($comment, $com_) = split('\t', $comment);
+    if (($E_[0] eq "") && ($I_[0] eq "")) {
+        $delkey = $FORM{'pass'};
+        &check_;
+        if ($tag) {
+            $comment =~ s/\&lt\;/</g;
+            $comment =~ s/\&gt\;/>/g;
+            $comment =~ s/\&quot\;/\"/g;
+            $comment =~ s/<>/\&lt\;\&gt\;/g;
         }
     }
-    push(@new,"$line\n");
-}
-close(DB);
-if($SIZE && $max_or < int($SIZE/1024)){&er_('uplimit',"1");}
-if($flag==0){&er_('editinvid',"1");}
-if($flag==1){
-    open (DB,">$log");
-    print DB @new;
+    $comment =~ s/\t//g;
+    if ($locks) {
+        &lock_("$lockf");
+    }
+    if ($FORM{"pre"}) {
+        $comment = '<pre>' . $comment '</pre>';
+    }
+    @new = ();
+    $flag = 0;
+    $SIZE = 0;
+    open(DB, "$log");
+    while ($line = <DB>) {
+        $line =~ s/\n//g;
+        ($knam, $k, $kname, $kemail, $kd_may, $kcomment, $kurl,
+            $ks, $ke, $kty, $kd, $ki, $kt, $sml) = split(/<>/, $line);
+        if ($k eq "") {
+            push(@new, "$line\n");
+            next;
+        }
+        if ($namber eq "$knam") {
+            if ($mo eq "") {
+                $de = $kd;
+                $FORM{'delkey'} = $FORM{'pass'};
+                if (Forum->user->group_check('admin') != 0) {
+                    $ok = 'm';
+                } elsif (Forum->MigUtils->match_hash($epasswd, $de, $FORM{'delkey'}) == 0) {
+                    &er_('invpass', "1");
+                } else {
+                    $ok = 'y';
+                }
+            }
+            if ($EStmp) {
+                &time_("");
+                $EditCom = "$date 編集";
+                if ($mo || ($ok eq "m")) {
+                    $EditCom .= "(管理者)";
+                } else {
+                    $EditCom .= "(投稿者)";
+                }
+                if ($comment !~ /([0-9][0-9]):([0-9][0-9]):([0-9][0-9]) 編集/) {
+                    $EditCom .= "<br><br>";
+                } else {
+                    $EditCom .= "<br>";
+                }
+                $comment = $EditCom . $comment . "\t" . $userenv;
+            }
+            ($KI, $Kico, $E, $Kfi, $KTX, $KS, $KR) = split(/:/, $ki);
+            ($Ktxt, $Ksel, $Kyobi) = split(/\|\|/, $KS);
+            if ($o_mail) {
+                if ($send && ($FORM{'pub'} == 0)) {
+                    $send = 2;
+                } elsif (($send == 0) && ($FORM{'pub'} == 0)) {
+                    $send = 3;
+                }
+            }
+            $line = "$namber<>$k<>$name<>$email<>$d_may<>$comment<>$url<>$ks<>$end<>$kty<>$kd";
+            $line .= "<>$KI:$Kico:$E:$Kfi:$ICON|$ICO|$font|$hr|:$txt\|\|$sel\|\|$Kyobi\|\|:$KR:<>$kt<>$send<>";
+            $flag = 1;
+        } elsif (@E_) {
+            ($KI, $Kico, $E, $Kfi, $KTX, $KS, $KR) = split(/:/, $ki);
+            $EF = 0;
+            foreach $ENT (@E_) {
+                if ($ENT eq $knam) {
+                    $EF = 1;
+                    if ($E) {
+                        $EE = 0;
+                    } else {
+                        $EE = 1;
+                    }
+                    last;
+                }
+            }
+            if ($EF) {
+                if ($mo eq "") {
+                    $de = $kd;
+                    $FORM{'delkey'} = $FORM{'pass'};
+                    if (Forum->MigUtils->match_hash($epasswd, $de, $FORM{'delkey'}) == 0) {
+                        &er_('invpass',"1");
+                    }
+                }
+                $line = "$knam<>$k<>$kname<>$kemail<>$kd_may<>$kcomment<>$kurl<>$ks<>$ke<>$kty<>$kd<>$KI:$Kico:$EE:$Kfi:$KTX:$KS:$KR:<>$kt<>$sml<>";
+                $flag = 1;
+            }
+        } elsif (@I_) {
+            ($KI, $Kico, $E, $Kfi, $KTX, $KS, $KR) = split(/:/, $ki);
+            $EF = 0;
+            foreach $ENT (@I_) {
+                if ($ENT eq $knam) {
+                    $EF = 1;
+                    last;
+                }
+            }
+            if ($EF) {
+                if ($mo eq "") {
+                    $de = $kd;
+                    $FORM{'delkey'} = $FORM{'pass'};
+                    if (Forum->MigUtils->match_hash($epasswd, $de, $FORM{'delkey'}) == 0) {
+                        &er_('invpass',"1");
+                    }
+                }
+                if ($Kico && (-e "$i_dir/$Kico")) {
+                    unlink("$i_dir/$Kico");
+                }
+                $Kico = "";
+                $E = 0;
+                $Kfi = "";
+ 			    $line = "$knam<>$k<>$kname<>$kemail<>$kd_may<>$kcomment<>$kurl<>$ks<>$ke<>$kty<>$kd<>$KI:$Kico:$EE:$Kfi:$KTX:$KS:$KR:<>$kt<>$sml<>";
+                $flag = 1;
+            }
+        } elsif ($FORM{'UP'}) {
+            $UPt = $FORM{'UPt'};
+            $UP = $FORM{'UP'};
+            ($KI, $Kico, $E, $Kfi, $KTX, $KS, $KR) = split(/:/, $ki);
+            if ($UPt) {
+                if (($UPt eq $kty) && $Kico) {
+                    $SIZE += (-s "$i_dir/$Kico";)
+                }
+            } else {
+                if (($UP eq $kty) && $Kico) {
+                    $SIZE += (-s "$i_dir/$Kico";)
+                }
+            }
+            if ($UP eq $knam) {
+                if ($mo eq "") {
+                    $de = $kd;
+                    $FORM{'delkey'} = $FORM{'pass'};
+                    if (Forum->MigUtils->match_hash($epasswd, $de, $FORM{'delkey'}) == 0) {
+                        &er_('invpass',"1");
+                    }
+                }
+ 			    if ($mas_c) {
+                    $E = 0;
+                } else {
+                    $E = 1;
+                }
+                $SIZE += (-s "$i_dir/$file");
+                $line = "$knam<>$k<>$kname<>$kemail<>$kd_may<>$kcomment<>$kurl<>$ks<>$ke<>$kty<>$kd<>$KI:$file:$E:$TL:$KTX:$KS:$KR:<>$kt<>$sml<>";
+                $flag = 1;
+            }
+        }
+        push(@new, "$line\n");
+    }
     close(DB);
-}
-if(-e $lockf){rmdir($lockf);}
-if(@E_ || @I_ || $FORM{'UP'}){
-    if($mo && (@E_ || @I_)){&ent_;}
-    else{
-        if(@I_){$msg="<h3>ファイル削除</h3>"; $FORM{"del"}=$I_[0];}
-        elsif($FORM{'UP'}){$msg="<h3>ファイルアップ完了</h3>$Henko"; if($mo){$kiji=$FORM{'UP'};}else{$FORM{"del"}=$FORM{'UP'};}}
-        $delkey=$FORM{"pass"}; &hen_;
+    if ($SIZE && ($max_or < int($SIZE/1024))) {
+        &er_('uplimit', "1");
     }
-}elsif($mo) {
-    print Forum->cgi->header();
-    Forum->template->set_vars('mode_id', 'admin');
-    Forum->template->set_vars('mode_adm', 'editpost');
-    Forum->template->process('htmlhead.tpl', \%tmplVars);
-    print "<h3>編集完了</h3>";
-    Forum->template->process('htmlfoot.tpl', \%tmplVars);
-    exit;
-}
-else{$msg="<h3>以下のように編集完了</h3>"; $delkey=$FORM{"pass"}; $FORM{"del"}=$namber; &hen_;}
-    if ($conf{'rss'} eq 1) {&RSS; }
+    if ($flag == 0) {
+        &er_('editinvid', "1");
+    }
+    if ($flag == 1) {
+        open(DB, ">$log");
+        print DB @new;
+        close(DB);
+    }
+    if (-e $lockf) {
+        rmdir($lockf);
+    }
+    if (@E_ || @I_ || $FORM{'UP'}) {
+        if ($mo && (@E_ || @I_)) {
+            &ent_;
+        } else {
+            if (@I_) {
+                $msg = "<h3>ファイル削除</h3>";
+                $FORM{"del"} = $I_[0];
+            } elsif ($FORM{'UP'}) {
+                $msg = "<h3>ファイルアップ完了</h3>$Henko";
+                if ($mo) {
+                    $kiji = $FORM{'UP'};
+                } else {
+                    $FORM{"del"} = $FORM{'UP'};
+                }
+            }
+            $delkey = $FORM{"pass"};
+            &hen_;
+        }
+    } elsif ($mo) {
+        print Forum->cgi->header();
+        Forum->template->set_vars('mode_id', 'admin');
+        Forum->template->set_vars('mode_adm', 'editpost');
+        Forum->template->process('htmlhead.tpl', \%tmplVars);
+        print "<h3>編集完了</h3>";
+        Forum->template->process('htmlfoot.tpl', \%tmplVars);
+        exit;
+    } else {
+        $msg = "<h3>以下のように編集完了</h3>";
+        $delkey = $FORM{"pass"};
+        $FORM{"del"} = $namber;
+        &hen_;
+    }
+    if ($conf{'rss'} eq 1) {
+        &RSS;
+    }
 }
 #--------------------------------------------------------------------------------------------------------------------
 # [カウンタ処理]
 # -> カウントアップ処理(con_)
 #
 sub con_ {
-    if($mode eq "" || $mode eq "alk"){
-        if($locks){&lock_("$cloc");}
-        open(NO,"$c_f") || &er_("Can't open $c_f","1");
+    if (($mode eq "") || ($mode eq "alk")) {
+        if ($locks) {
+            &lock_("$cloc");
+        }
+        open(NO, "$c_f") || &er_("Can't open $c_f", "1");
         $cnt = <NO>;
         close(NO);
-        if($FORM{'mode'} eq "" && $FORM{'page'} eq "" && $ENV{'HTTP_REFERER'} !~ /$cgi_f/) {
+        if (($FORM{'mode'} eq "") && ($FORM{'page'} eq "") &&
+            ($ENV{'HTTP_REFERER'} !~ /$cgi_f/)) {
             $cnt++;
-            open(NO,">$c_f") || &er_("Can't write $c_f","1");
+            open(NO, ">$c_f") || &er_("Can't write $c_f","1");
             print NO $cnt;
             close(NO);
         }
-        if(-e $cloc){rmdir($cloc);}
-        while(length($cnt) < $fig){$cnt="0".$cnt;}
-        @cnts = split(//,$cnt);
-        if($m_pas){foreach(0..$#cnts){print"<img src=\"$m_pas/$cnts[$_]\.gif\" width=\"$m_wid\" height=\"$m_hei\">";}}
-        else{print "<div class=\"Counter\">$cnt</div>";}
-        print"<br>\n";
+        if (-e $cloc) {
+            rmdir($cloc);
+        }
+        print "<div class=\"Counter\">$cnt</div><br>\n";
     }
 }
 #--------------------------------------------------------------------------------------------------------------------
@@ -2860,12 +2935,14 @@ sub res_ {
                 if ($mo eq $nam) {
                     $On = 1;
                     $O2 = 1;
+                    &rep_title();
                     &comin_;
                 }
             } else {
                 if ($k == 1) {
                     $On = 1;
                     $O2 = 1;
+                    &rep_title();
                     &comin_;
                 }
             }
@@ -2931,6 +3008,21 @@ sub res_ {
         }
     }
     &foot_;
+}
+
+##------------------------------------------------------------------------------
+# rep_title - modify title on reply
+sub rep_title {
+    $re = $sp / 15 + 1;
+    if ($d_may eq "") {
+        $d_may = $notitle;
+    } elsif ($d_may =~ /^Re\[\d+\]: ?(.*)$/i) {
+        $d_may = $1;
+    } elsif ($d_may =~ /^Re: ?(.*)$/i) {
+        $d_may = $1;
+    }
+    $ti = "Re[$re]: $d_may";
+    $space = $sp;
 }
 
 ##------------------------------------------------------------------------------

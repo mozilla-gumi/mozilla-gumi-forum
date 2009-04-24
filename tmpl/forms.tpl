@@ -12,7 +12,8 @@
 <input type="hidden" name="type" value="[% nams %]">
 <input type="hidden" name="kiji" value="[% namber %]">
 <input type="hidden" name="space" value="[% sp %]">
-[% nf %][% pf %][% Hi %]
+<input type="hidden" name="KLOG" value="[% KLOG %]">
+[% nf %][% Hi %]
 
 [% IF he_tp %]
   <h3>トピックを作成した時のパスワードでのみ返信ができます。

@@ -18,7 +18,8 @@
   [% ELSE %]
     [% IF use_post_edit != 0 %]
       <form action="[% cgi_f %]" method="[% met %]">
-        <input type="hidden" name="del" value="[% namber %]">[% nf %][% pf %]
+        <input type="hidden" name="del" value="[% namber %]">[% nf %]
+        <input type="hidden" name="KLOG" value="[% KLOG %]">
         パスワード <input type="password" name="delkey" size="8">
         <select name="mode">
           <option value="nam">編集
