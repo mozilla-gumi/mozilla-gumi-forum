@@ -13,13 +13,13 @@
 <div class="Caption01c"><strong>全ページ</strong> / 
 [% FOR i IN [ 0 .. page_ ] %]
     [% IF i == af %][<strong>[% i %]</strong>]
-    [% ELSE %][<a href="[% cgi_f %]?mode=n_w&amp;page=[% i * new_s %]&amp;[% pp %]">[% i %]</a>]
+    [% ELSE %][<a href="[% cgi_f %]?mode=n_w&amp;page=[% i * new_s %]&amp;s=[% new_su %]&amp;[% pp %]">[% i %]</a>]
     [% END %]
 [% END %]
 <br />
 [ 
 [% IF new_su == 0 %]
-    <a href="[% cgi_f %]?mode=n_w&amp;s=1&amp;[% pp %]">新着順</a> / 古い順
+    <a href="[% cgi_f %]?mode=n_w&amp;s=1&amp;page=[% Pg %]&amp;[% pp %]">新着順</a> / 古い順
 [% ELSE %]
     新着順 / <a href="[% cgi_f %]?mode=n_w&amp;s=0&amp;[% pp %]">古い順</a>
 [% END %]
