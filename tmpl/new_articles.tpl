@@ -3,7 +3,13 @@
 %]
 
 <h2>[% new_t %]時間以内に投稿された新着記事</h2>
-<div class="Caption03l">新着記事全 [% total %] 件中 [% Pg %] ～ [% Pg2 %] 番目を表示</div>
+<div class="Caption03l">新着記事全 [% total %] 件中 
+[% IF new_su == 0 %]
+    [% new_su - Pg + 1 %] ～ [% new_su - Pg2 + 1 %] 
+[% ELSE %]
+    [% Pg %] ～ [% Pg2 %] 
+[% END %]
+番目を表示</div>
 <div class="Caption01c"><strong>全ページ</strong> / 
 [% FOR i IN [ 0 .. page_ ] %]
     [% IF i == af %][<strong>[% i %]</strong>]
