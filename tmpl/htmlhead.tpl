@@ -44,8 +44,7 @@
 
 <div class="banner">
   <h1>
-    <a href="http://www.mozilla.gr.jp/"><img src="common/logo.png" width="186"
-      height="67" border="0" alt="もじら組纏"></a>
+    <a href="http://www.mozilla.gr.jp/"><img src="common/logo.png" border="0" alt="もじら組纏"></a>
     <a href="./">もじら組フォーラム</a>
   </h1>
 </div>
