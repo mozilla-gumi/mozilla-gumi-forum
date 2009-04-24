@@ -2971,6 +2971,7 @@ sub n_w_ {
     }
 
     Forum->template->set_vars('new_articles', \@new_articles);
+    print Forum->cgi->header();
     $obj_template->process('new_articles.tpl', \%tmplVars);
     exit;
 }
