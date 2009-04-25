@@ -146,14 +146,6 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
     my ($comment, $userenv) = split('\t', $comment_);
     my $email =~ s/@/$atchange/;
 
-    $HTML = "";
-    $commode = '<div class="ArtMain">';
-    if (($mode eq "alk") && ($type)) {
-        $commode = '<div class="ArtChild">';
-    }
-    if ((($mode eq "al2") || ($mode eq "res")) && ($type)) {
-        $commode = '</div><div class="ArtMain">';
-    }
     if ($hr eq "") {$hr = $ttb; }
     if ($d_may eq "") {$d_may = "$notitle"; }
     if ($Icon && $comment =~ /<br>\(携帯\)$/) {$icon = "$Ico_k"; }
@@ -188,7 +180,6 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
         elsif ($TS_Pr == 2) {$comment .= "<br>$Txt<br>$Sel"; }
     }
     if (Forum->user->group_check('admin') != 0) {
-#    if (Forum->user->validate_password_admin($FORM{'pass'}) != 0) {
         $Ent = 1;
         $url = "";
     }
@@ -207,28 +198,11 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
     $agsg = "";
     $UeSt = "";
     $Pre = "";
-    if ($ResNo == 0) {$ResNo = "親"; }
-#--------------------------------------------------------
-    if ($htype eq "T") {
-        $ResNo = "$ResNo階層";
-        $Border = 1;
-        $Twidth = 90;
-        if ($Res_i) {
-            $IN = "<strong><a href=\"$cgi_f?mo=1&amp;mode=one&amp;namber=$namber&amp;type=$type&amp;space=$space&amp;$pp#F\">記事引用</a></strong>";
-        }
-    } elsif ($htype eq "T2") {
-        $ResNo = "$ResNo階層";
-        $Border = 1;
-        $Twidth = 90;
-        $IN = "<strong><a href=\"$cgi_f?mode=one&amp;namber=$nam&amp;type=$ty&amp;space=$sp&amp;$pp\">返信</a></strong>";
-        if ($Res_i) {
-            $IN .= "/<strong><a href=\"$cgi_f?mo=1&amp;mode=one&amp;namber=$nam&amp;type=$ty&amp;space=$sp&amp;$pp\">引用返信</a></strong>\n";
-        }
+
+    if ($htype eq "T2") {
         $VNo = $namber;
-        $OTL = "";
         if ($type > 0) {
             $UeSt .= "$b_ ";
-            $OTL = " <a href=\"#$ty\">親 $type </a> /";
         } else {
             $UeSt .= "親記事　/ ";
         }
@@ -237,17 +211,8 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
         } else {
             $UeSt .= "返信無し\n";
         }
-        if ($OTL) {
-            $IN = "[$OTL]\n" . $IN;
-        }
-        $HTML .= "<br>";
     } elsif ($htype eq "F") {
         $VNo++;
-        $ResNo = "このトピック中 $ResNo 番目の投稿";
-        $Border = 0;
-        $Twidth = 90;
-        $IN = "<a href=\"$cgi_f?mode=al2&amp;mo=$nam&amp;namber=$FORM{'namber'}&amp;space=$sp&amp;rev=$rev&amp;page=$fp&amp;$pp#F\"><strong>引用返信</strong></a>";
-        if ($Res_i) {$IN .= "/<a href=\"$cgi_f?mode=al2&amp;mo=$nam&amp;namber=$FORM{'namber'}&amp;space=$space&amp;rev=$rev&amp;page=$fp&amp;In=1&amp;$pp#F\"><strong>返信</strong></a>";}
         if ($VNo == 1) {
             $sg = $VNo + 1;
             $agsg = "\&nbsp\;\&nbsp\;<a href=\"#$sg\">▼</a><a href=\"#1\">■</a>";
@@ -260,9 +225,6 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
             $agsg="<a href=\"#$ag\">▲<a href=\"#$sg\">▼<a href=\"#1\">■</a>";
         }
     } elsif ($htype eq "N") {
-        $ResNo = "";
-        $Border = 1;
-        $Twidth = 90;
         if ($TOPH == 0) {
             $MD = "mode=res&amp;namber=";
             if ($type) {$MD .= "$type"; }
@@ -275,37 +237,11 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
             else {$MD .= "$namber"; }
             $MD .= "&amp;space=$space";
         }
-        $IN = "<strong><a href=\"$cgi_f?$MD&amp;$pp#F\">返信</a></strong>";
-        if ($Res_i) {
-            $IN .= "/<strong><a href=\"$cgi_f?$MD&amp;mo=$namber&amp;$pp#F\">引用返信</a></strong>\n";
-        }
+        Forum->template->set_vars('MD', $MD);
     } elsif ($htype eq "P") {
-        $ResNo = "";
-        $Border = 1;
-        $Twidth = 90;
         if ($hanyo eq "randam") {$icon = "アイコン<br>ランダム"; }
-    } elsif ($htype eq "TR") {
-        if ($ResNo eq "親") {
-            $ResNo = "親記事";
-            $Twidth = 100;
-        } else {
-            $ResNo = "このスレッド中 $ResNo 番目の返信";
-            $Twidth = 90;
-        }
-        $Border = 0;
-        $IN = "<a href=\"$cgi_f?mode=res&amp;namber=$nam&amp;type=$type&amp;space=$space&amp;mo=$namber&amp;page=$PNO&amp;$pp#F\"><strong>引用返信</strong></a>";
-        if ($Res_i) {
-            $IN .= "/<a href=\"$cgi_f?mode=res&amp;namber=$nam&amp;type=$type&amp;space=$space&amp;mo=$namber&amp;page=$PNO&amp;In=1&amp;$pp#F\"><strong>返信</strong></a>";
-        }
     } elsif ($htype eq "TRES") {
-        $Border = 0;
-        $Twidth = 90;
         $VNo++;
-        if ($ResNo eq "親") {
-            $ResNo = "親記事";
-        } else {
-            $ResNo = "このスレッド中 $ResNo 番目の返信";
-        }
         if ($VNo == 1) {
             $sg = $VNo + 1;
             $agsg = "\&nbsp\;\&nbsp\;<a href=\"#$sg\">▼</a><a href=\"#1\">■</a>";
@@ -317,13 +253,8 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
             $sg = $VNo + 1;
             $agsg = "<a href=\"#$ag\">▲<a href=\"#$sg\">▼<a href=\"#1\">■</a>";
         }
-        $IN = "<a href=\"$cgi_f?mode=res&amp;mo=$nam&amp;namber=$FORM{'namber'}&amp;space=$sp&amp;page=$page&amp;$pp#F\"><strong>引用返信</strong></a>";
-        if ($Res_i) {
-            $IN .= "/<a href=\"$cgi_f?mode=res&amp;mo=$nam&amp;namber=$FORM{'namber'}&amp;space=$sp&amp;page=$page&amp;In=1&amp;$pp#F\"><strong>返信</strong></a>"
-        }
     }
 
-    $tmplVars{'commode'} = $commode;
     $tmplVars{'namber'} = $namber;
     $tmplVars{'d_may'} = $d_may;
     $tmplVars{'resno'} = $ResNo;
@@ -340,11 +271,21 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
     $tmplVars{'nam'} = $nam;
     $tmplVars{'font'} = $font;
     $tmplVars{'userenv'} = $userenv;
+    Forum->template->set_vars('htype', $htype);
+    Forum->template->set_vars('Res_i', $Res_i);
+    Forum->template->set_vars('cgi_f', $cgi_f);
+    Forum->template->set_vars('type', $type);
+    Forum->template->set_vars('space', $space);
+    Forum->template->set_vars('pp', $pp);
+    Forum->template->set_vars('ty', $ty);
+    Forum->template->set_vars('sp', $sp);
+    Forum->template->set_vars('rev', $rev);
+    Forum->template->set_vars('fp', $fp);
+    Forum->template->set_vars('PNO', $PNO);
     if ($KLOG) {$tmplVars{'klog_def'} = 1; } else {$tmplVars{'klog_def'} = 0; }
     if ($type) {$tmplVars{'type_def'} = 1; } else {$tmplVars{'type_def'} = 0; }
-    $HTML_2 = "";
-    $obj_template->process('articledesign.tpl', \%tmplVars, \$HTML_2);
-    $HTML .= $HTML_2;
+    $obj_template->process('articledesign.tpl', \%tmplVars, \$HTML);
+    return $HTML;
 }
 #--------------------------------------------------------------------------------------------------------------------
 # [トピック一覧表示]
