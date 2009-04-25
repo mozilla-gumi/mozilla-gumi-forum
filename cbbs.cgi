@@ -284,6 +284,7 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
     Forum->template->set_vars('PNO', $PNO);
     if ($KLOG) {$tmplVars{'klog_def'} = 1; } else {$tmplVars{'klog_def'} = 0; }
     if ($type) {$tmplVars{'type_def'} = 1; } else {$tmplVars{'type_def'} = 0; }
+    $HTML = '';
     $obj_template->process('articledesign.tpl', \%tmplVars, \$HTML);
     return $HTML;
 }
