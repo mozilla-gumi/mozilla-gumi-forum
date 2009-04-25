@@ -209,8 +209,6 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
     Forum->template->set_vars('o_mail', $o_mail);
     Forum->template->set_vars('Se', $Se);
     Forum->template->set_vars('notitle', $notitle);
-    Forum->template->set_vars('', $);
-    Forum->template->set_vars('', $);
     if ($KLOG) {$tmplVars{'klog_def'} = 1; } else {$tmplVars{'klog_def'} = 0; }
     if ($type) {$tmplVars{'type_def'} = 1; } else {$tmplVars{'type_def'} = 0; }
     $HTML = '';
