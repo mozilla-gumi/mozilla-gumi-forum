@@ -94,9 +94,9 @@ sub foot_ {
 sub srch_ {
 if($FORM{"PAGE"}){$klog_h=$FORM{"PAGE"};}else{$klog_h=$klog_h[0];}
 if($logs && $logs=~ /$klogext$/){
-	$logn=$logs; $C="";
-	$logn=~ s/$klogext//g; $logn=~ s/\.//g; $logn=~ s/txt//; $logn=~ s/\///g;
-	$nowlog="<hr><div class=\"Caption03l\">過去ログ$logn を検索</div>";
+    $logn=$logs; $C="";
+    $logn=~ s/$klogext//g; $logn=~ s/\.//g; $logn=~ s/txt//; $logn=~ s/\///g;
+    $nowlog="<hr><div class=\"Caption03l\">過去ログ$logn を検索</div>";
 }elsif($logs && ($logs eq "$log" || $logs eq 'recent')){$nowlog="<hr><div class=\"Caption03l\">現在のログを検索</div>";
 }elsif($logs && $logs eq "all"){$nowlog="<hr><div class=\"Caption03l\">全過去ログを検索</div>";}
 if($FORM{"ALL"}){$nowlog="<hr><div class=\"Caption03l\">No.$word の関連記事表\示</div>"; $KNS=" checked";}
@@ -120,20 +120,20 @@ $klog_msg</li>
 <tr><td class="justify"><strong>検索範囲</strong></td><td><select name="logs"><option value="$log">(現在のログ)
 _STOP_
 if($klog_s && -e $SL){
-	if($klog_a){
-		$C=""; if($logs eq "all"){$C=" selected";}
-		print"<option value=\"all\"$C>(全過去ログ)";
-	}
-	open(NO,"$klog_c");
-	$n = <NO>;
-	close(NO);
-	$br=0;
-	for ($i=0;$i<$n;$i++) {
-		$l=$i+1; $C="";
-		if($l==$logn){$C=" selected";}
-		print "<option value=\"$l\"$C>(過去ログ$l)\n"; 
-		$br++;
-	}
+    if($klog_a){
+        $C=""; if($logs eq "all"){$C=" selected";}
+        print"<option value=\"all\"$C>(全過去ログ)";
+    }
+    open(NO,"$klog_c");
+    $n = <NO>;
+    close(NO);
+    $br=0;
+    for ($i=0;$i<$n;$i++) {
+        $l=$i+1; $C="";
+        if($l==$logn){$C=" selected";}
+        print "<option value=\"$l\"$C>(過去ログ$l)\n"; 
+        $br++;
+    }
 }
 if($FORM{"KYO"}){$CB=" checked";}
 if($FORM{"bigmin"}){$CB2=" checked"; $BM=0;}else{$BM=1;}
@@ -154,186 +154,186 @@ print <<"_SS_";
 </td></tr></table></form>$nowlog
 _SS_
 if($word ne "") {
-	$word =~ s/　/ /g;
-	$word =~ s/\t/ /g;
-	@key_ws= split(/ /,$word);
-	if($logs eq "all"){
-		$Stert=0; if($FORM{'N'}){($N,$S)=split(/\,/,$FORM{'N'}); $Stert=$N;} $End=$n-1;
-		if($klog_a==0){&er_("全過去ログ検索は使用不可");}}
-	else{$Stert=0; $End=0;}
-	@new=(); $Next=0;
-	foreach ($Stert..$End) {
-		if($logs eq "all"){$I=$_+1; $IT="$I$klogext"; $Log="$klog_d\/$IT"; $notopened="過去ログ$I";}
-		elsif($logs eq 'recent'){$Log=$log; $notopened="現行ログ";}
-		elsif($logs eq $log){$Log=$log; $notopened="現行ログ";}
-		else{$Log="$klog_d\/$logs$klogext"; $notopened="ログ$logs";}
-		open(DB,$Log) || &er_("Can't open $Log");
-		while ($Line=<DB>) {
-			$hit = 0;
-			if($FORM{"ALL"}){
-				($nam,$date,$name,$email,$d_may,$comment,
-					$url,$font,$ico,$type,$del,$ip) = split(/<>/,$Line);
-				if($word==$nam || $word==$type){$hit=1;}
-			}else{
-				foreach $key_w (@key_ws){
-					if($key_w =~ /[\x80-\xff]/){$jflag = 1;}else{$jflag = 0;}
-					$key_w=~ s/^&$/&amp\;/g;
-					$key_w=~ s/^<$/\&lt\;/g;
-					$key_w=~ s/^>$/\&gt\;/g;
-					$key_w=~ s/^\"$/\&quot\;/g;
-					if ($jflag) {
-						if(index($Line, $key_w) >= 0){$hit=1;}else{$hit=0;}
-					} else {
-						if($BM){if($Line =~ /$key_w/i){$hit=1;}else{$hit=0;}}
-						else{if($Line =~ /$key_w/){$hit=1;}else{$hit=0;}}
-					}
-					if($hit){if($andor eq "or"){last;}}else{if($andor eq "and"){$hit=0; last;}}
-				}
-			}
-			if($hit){push(@new,"$IT<>$Line");}
-			if($#new+1 >= 200 && $logs eq "all"){$Next=$I+1;}
-		}
-		close(DB);
-		if($Next){last;}
-	}
+    $word =~ s/　/ /g;
+    $word =~ s/\t/ /g;
+    @key_ws= split(/ /,$word);
+    if($logs eq "all"){
+        $Stert=0; if($FORM{'N'}){($N,$S)=split(/\,/,$FORM{'N'}); $Stert=$N;} $End=$n-1;
+        if($klog_a==0){&er_("全過去ログ検索は使用不可");}}
+    else{$Stert=0; $End=0;}
+    @new=(); $Next=0;
+    foreach ($Stert..$End) {
+        if($logs eq "all"){$I=$_+1; $IT="$I$klogext"; $Log="$klog_d\/$IT"; $notopened="過去ログ$I";}
+        elsif($logs eq 'recent'){$Log=$log; $notopened="現行ログ";}
+        elsif($logs eq $log){$Log=$log; $notopened="現行ログ";}
+        else{$Log="$klog_d\/$logs$klogext"; $notopened="ログ$logs";}
+        open(DB,$Log) || &er_("Can't open $Log");
+        while ($Line=<DB>) {
+            $hit = 0;
+            if($FORM{"ALL"}){
+                ($nam,$date,$name,$email,$d_may,$comment,
+                    $url,$font,$ico,$type,$del,$ip) = split(/<>/,$Line);
+                if($word==$nam || $word==$type){$hit=1;}
+            }else{
+                foreach $key_w (@key_ws){
+                    if($key_w =~ /[\x80-\xff]/){$jflag = 1;}else{$jflag = 0;}
+                    $key_w=~ s/^&$/&amp\;/g;
+                    $key_w=~ s/^<$/\&lt\;/g;
+                    $key_w=~ s/^>$/\&gt\;/g;
+                    $key_w=~ s/^\"$/\&quot\;/g;
+                    if ($jflag) {
+                        if(index($Line, $key_w) >= 0){$hit=1;}else{$hit=0;}
+                    } else {
+                        if($BM){if($Line =~ /$key_w/i){$hit=1;}else{$hit=0;}}
+                        else{if($Line =~ /$key_w/){$hit=1;}else{$hit=0;}}
+                    }
+                    if($hit){if($andor eq "or"){last;}}else{if($andor eq "and"){$hit=0; last;}}
+                }
+            }
+            if($hit){push(@new,"$IT<>$Line");}
+            if($#new+1 >= 200 && $logs eq "all"){$Next=$I+1;}
+        }
+        close(DB);
+        if($Next){last;}
+    }
 }
 $count=@new;
 if($logs eq "$log"){@new=reverse(@new);}
 if($count > 0){
-	$word=~ s/([^0-9A-Za-z_])/"%".unpack("H2",$1)/ge;
-	$word=~ tr/ /+/;
-	$total=@new;
-	$page_=int(($total-1)/$klog_h);
-	if($FORM{'page'} eq ""){$page=0;}else{$page=$FORM{'page'};}
+    $word=~ s/([^0-9A-Za-z_])/"%".unpack("H2",$1)/ge;
+    $word=~ tr/ /+/;
+    $total=@new;
+    $page_=int(($total-1)/$klog_h);
+    if($FORM{'page'} eq ""){$page=0;}else{$page=$FORM{'page'};}
 
-	$end_data=@new-1;
-	$page_end=$page+($klog_h-1);
-	if($page_end >= $end_data){$page_end=$end_data;}
-	$Pg=$page+1; $Pg2=$page_end+1;
-	print"<div class=\"Caption03l\">$count 件中 $Pg ～ $Pg2 件目を表\示</div>";
-	if($Next || $N){
-		$NLog="<div class=\"Caption01c\">ヒット件数が多いので";
-		if($N){$N++; $NLog.="過去ログ$N"; $fromto="過去ログ$N";}else{$NLog.="過去ログ1"; $fromto="過去ログ1";}
-		if($I>1 && $I>$N){$NLog.="～$I "; $fromto.="～$I ";}
-		$NLog.="の検索結果"; $fromto .="の";
-		if($n>$I){
-			$NLog.=" / <strong><a href=\"$srch?mode=srch&amp;logs=$logs&amp;$pp&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h&amp;N=$I,$Stert\">";
-			$NLog.="過去ログ$Nextからさらに検索→</a></strong>\n";
-		}
-	}
-	print"$NLog\n</div>\n";
-	$nl=$page_end + 1;
-	$bl=$page - $klog_h;
-	if($bl >= 0){
-		$Bl ="<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$bl&amp;$pp&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">";
-		$Ble="</a>";
-	}
-	if($page_end ne $end_data){
-		$Nl ="<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$nl&amp;$pp&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">";
-		$Nle="</a>";
-	}
+    $end_data=@new-1;
+    $page_end=$page+($klog_h-1);
+    if($page_end >= $end_data){$page_end=$end_data;}
+    $Pg=$page+1; $Pg2=$page_end+1;
+    print"<div class=\"Caption03l\">$count 件中 $Pg ～ $Pg2 件目を表\示</div>";
+    if($Next || $N){
+        $NLog="<div class=\"Caption01c\">ヒット件数が多いので";
+        if($N){$N++; $NLog.="過去ログ$N"; $fromto="過去ログ$N";}else{$NLog.="過去ログ1"; $fromto="過去ログ1";}
+        if($I>1 && $I>$N){$NLog.="～$I "; $fromto.="～$I ";}
+        $NLog.="の検索結果"; $fromto .="の";
+        if($n>$I){
+            $NLog.=" / <strong><a href=\"$srch?mode=srch&amp;logs=$logs&amp;$pp&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h&amp;N=$I,$Stert\">";
+            $NLog.="過去ログ$Nextからさらに検索→</a></strong>\n";
+        }
+    }
+    print"$NLog\n</div>\n";
+    $nl=$page_end + 1;
+    $bl=$page - $klog_h;
+    if($bl >= 0){
+        $Bl ="<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$bl&amp;$pp&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">";
+        $Ble="</a>";
+    }
+    if($page_end ne $end_data){
+        $Nl ="<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$nl&amp;$pp&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">";
+        $Nle="</a>";
+    }
 $Plink="<div class=\"Caption01c\"><strong>$fromto全ページ</strong> /\n"; $a=0;
-	$a=0;
-	for($i=0;$i<=$page_;$i++){
-		$af=$page/$klog_h;
-		if($i != 0){$Plink.=" ";}
-		if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}
-		else{
-			$Plink.="[<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$a&amp;$pp";
-			$Plink.="&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">$i</a>]\n";
-		}
-		$a+=$klog_h;
-	}
-	$Plink.="$Nl$Nle\n</div>";
-	print <<"_KT_";
+    $a=0;
+    for($i=0;$i<=$page_;$i++){
+        $af=$page/$klog_h;
+        if($i != 0){$Plink.=" ";}
+        if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}
+        else{
+            $Plink.="[<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$a&amp;$pp";
+            $Plink.="&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">$i</a>]\n";
+        }
+        $a+=$klog_h;
+    }
+    $Plink.="$Nl$Nle\n</div>";
+    print <<"_KT_";
 $Plink
 <form action="$srch" method="$Met"><input type="hidden" name="mode" value="del">
 <input type="hidden" name="logs" value="$logs">$pf
 _KT_
-	foreach ($page .. $page_end) {
-		($IT,$nam,$date,$name,$email,$d_may,$comment,$url,
-			$sp,$e,$type,$del,$ip,$tim,$Se) = split(/<>/,$new[$_]);
-		($Ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$ip);
-		($ICON,$ICO,$font,$hr)=split(/\|/,$TXT);
-		($txt,$sel,$yobi)=split(/\|\|/,$SEL);
-		if($date eq ""){next;}
-		$Pr="";
-		if($ico){
-			if($Ent==0 && $fimg){$fimg=$no_ent;}
-			if(-s "$i_dir/$ico"){$Size= -s "$i_dir/$ico";}else{$Size=0;}
-			$KB=int($Size/1024); if($KB==0){$KB=1;}
-			if($Size){
-				if($Size && $fimg ne $no_ent){$Alt=" alt=\"$ico/$KB\KB\"";}else{$Alt="";}
-				if($fimg eq $no_ent){$A=0;}
-				elsif($fimg eq "img"){
-					$Pr.="<a href=\"$i_Url/$ico\"$TGT><img src='$i_Url/$i_ico' border=0$Alt>";
-					$A=1;
-				}else{$Pr.="<a href=\"$i_Url/$ico\"$TGT>";$A=1;}
-				if($img_h eq "" && $fimg ne img){$Pr.="<img src=\"$i_Url/$fimg\" border=0$Alt>";}
-				elsif($img_h ne "" && $fimg ne img){$Pr.="<img src=\"$i_Url/$fimg\" height=$img_h width=$img_w border=0$Alt>";}
-				$AEND="";
-				if($A){$AEND="$ico</a>/";}
-				$Pr="$Pr"."<br>$AEND $KB\KB\n";
-			}
-		}
-		if($hr eq ""){$hr=$ttb;}
-		if($type > 0){$t_com="記事No.$type への返信\n"; $KK="$type";}else{$t_com="親記事\n"; $KK="$nam";}
-		if($d_may eq ""){$d_may="$notitle";}
-		if($email && $Se < 2){$name ="$name <a href=\"mailto:$email\">$AMark</a>";}
-		if($url){
-			if($URLIM){
-				if($UI_Wi){$UIWH=" width=\"$UI_Wi\" height=\"$UI_He\">";}
-				$i_or_t="<img src=\"$URLIM\"$UIWH>";
-			}else{$i_or_t="http://$url";}
-			$url="<a href=\"http://$url\"$TGT>$i_or_t</a>";
-		}
-		if($Icon && $comment=~/<br>\(携帯\)$/){$ICO="$Ico_k";}
-		if($ICO ne ""){
-			if($IconHei){$WH=" height=\"$IconHei\" width=\"$IconWid\"";}
-			$ICO="<img src=\"$IconDir\/$ICO\"$WH>";
-		}
-		if($txt){$Txt="$TXT_T:[$txt]　";}else{$Txt="";}
-		if($sel){$Sel="$SEL_T:[$sel]　";}else{$Sel="";}
-		if($yobi){$yobi="[ID:$yobi]";}
-		if($Txt || $Sel ||($Txt && $Sel)){
-			if($TS_Pr==0){$d_may="$Txt$Sel/"."$d_may";}
-			elsif($TS_Pr==1){$comment="$Txt<br>$Sel<br>"."$comment";}
-			elsif($TS_Pr==2){$comment.="<br>$Txt<br>$Sel";}
-		}
-		if($comment=~ /^<pre>/){$comment=~ s/<br>/\n/g;}
-		$comment="<!--C-->$comment";
-		if($IT ne "" && $logs eq "all"){
-			$IT=~s/$klogext//; $IT=~s/^\n//; $IT=~s/\.txt$//; $PLL="過去ログ$ITより /"; $IT="&KLOG=$IT";
-		}else{$IT="";}
-		if ($FORM{"KYO"}) {
-			if ($comment =~ /<\/pre>/) {
+    foreach ($page .. $page_end) {
+        ($IT,$nam,$date,$name,$email,$d_may,$comment,$url,
+            $sp,$e,$type,$del,$ip,$tim,$Se) = split(/<>/,$new[$_]);
+        ($Ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$ip);
+        ($ICON,$ICO,$font,$hr)=split(/\|/,$TXT);
+        ($txt,$sel,$yobi)=split(/\|\|/,$SEL);
+        if($date eq ""){next;}
+        $Pr="";
+        if($ico){
+            if($Ent==0 && $fimg){$fimg=$no_ent;}
+            if(-s "$i_dir/$ico"){$Size= -s "$i_dir/$ico";}else{$Size=0;}
+            $KB=int($Size/1024); if($KB==0){$KB=1;}
+            if($Size){
+                if($Size && $fimg ne $no_ent){$Alt=" alt=\"$ico/$KB\KB\"";}else{$Alt="";}
+                if($fimg eq $no_ent){$A=0;}
+                elsif($fimg eq "img"){
+                    $Pr.="<a href=\"$i_Url/$ico\"$TGT><img src='$i_Url/$i_ico' border=0$Alt>";
+                    $A=1;
+                }else{$Pr.="<a href=\"$i_Url/$ico\"$TGT>";$A=1;}
+                if($img_h eq "" && $fimg ne img){$Pr.="<img src=\"$i_Url/$fimg\" border=0$Alt>";}
+                elsif($img_h ne "" && $fimg ne img){$Pr.="<img src=\"$i_Url/$fimg\" height=$img_h width=$img_w border=0$Alt>";}
+                $AEND="";
+                if($A){$AEND="$ico</a>/";}
+                $Pr="$Pr"."<br>$AEND $KB\KB\n";
+            }
+        }
+        if($hr eq ""){$hr=$ttb;}
+        if($type > 0){$t_com="記事No.$type への返信\n"; $KK="$type";}else{$t_com="親記事\n"; $KK="$nam";}
+        if($d_may eq ""){$d_may="$notitle";}
+        if($email && $Se < 2){$name ="$name <a href=\"mailto:$email\">$AMark</a>";}
+        if($url){
+            if($URLIM){
+                if($UI_Wi){$UIWH=" width=\"$UI_Wi\" height=\"$UI_He\">";}
+                $i_or_t="<img src=\"$URLIM\"$UIWH>";
+            }else{$i_or_t="http://$url";}
+            $url="<a href=\"http://$url\"$TGT>$i_or_t</a>";
+        }
+        if($Icon && $comment=~/<br>\(携帯\)$/){$ICO="$Ico_k";}
+        if($ICO ne ""){
+            if($IconHei){$WH=" height=\"$IconHei\" width=\"$IconWid\"";}
+            $ICO="<img src=\"$IconDir\/$ICO\"$WH>";
+        }
+        if($txt){$Txt="$TXT_T:[$txt]　";}else{$Txt="";}
+        if($sel){$Sel="$SEL_T:[$sel]　";}else{$Sel="";}
+        if($yobi){$yobi="[ID:$yobi]";}
+        if($Txt || $Sel ||($Txt && $Sel)){
+            if($TS_Pr==0){$d_may="$Txt$Sel/"."$d_may";}
+            elsif($TS_Pr==1){$comment="$Txt<br>$Sel<br>"."$comment";}
+            elsif($TS_Pr==2){$comment.="<br>$Txt<br>$Sel";}
+        }
+        if($comment=~ /^<pre>/){$comment=~ s/<br>/\n/g;}
+        $comment="<!--C-->$comment";
+        if($IT ne "" && $logs eq "all"){
+            $IT=~s/$klogext//; $IT=~s/^\n//; $IT=~s/\.txt$//; $PLL="過去ログ$ITより /"; $IT="&KLOG=$IT";
+        }else{$IT="";}
+        if ($FORM{"KYO"}) {
+            if ($comment =~ /<\/pre>/) {
                 $comment =~ s/(>|\n)((&gt;|＞|>)[^\n]*)/$1<font color=$res_f>$2<\/font>/g;
             } else {
                 $comment =~ s/>((&gt;|＞|>)[^<]*)/><font color=$res_f>$1<\/font>/g;
             }
             Encode::from_to($comment, 'euc-jp', 'sjis');
-			foreach $KEY (@key_ws) {
+            foreach $KEY (@key_ws) {
                 Encode::from_to($KEY, 'euc-jp', 'sjis');
-				$comment =~ s/$KEY/<b STYLE="background-color:$Kyo_f\;">$KEY<\/b>/g;
-				if ($BM) {
+                $comment =~ s/$KEY/<b STYLE="background-color:$Kyo_f\;">$KEY<\/b>/g;
+                if ($BM) {
                     $comment =~ s/($KEY)/<b STYLE="background-color:$Kyo_f\;">$1<\/b>/ig;
                 } else {
                     $comment =~ s/$KEY/<b STYLE="background-color:$Kyo_f\;">$KEY<\/b>/g;
                 }
-			}
+            }
             Encode::from_to($comment, 'sjis', 'euc-jp');
-		} else {
+        } else {
             &auto_($comment);
         }
-		if($o_mail){$Smsg="[メール転送/";if($Se==2 || $Se==1){$Smsg.="ON]\n";}else{$Smsg.="OFF]\n";}}
-		if($e){$e=" END /";}
-		if($logs eq $log){
-			if($TOPH==0){$MD="mode=res&amp;namber="; if($type){$MD.="$type";}else{$MD.="$nam";}}
-			elsif($TOPH==1){$MD="mode=one&amp;namber=$nam&amp;type=$type&amp;space=$sp";}
-			elsif($TOPH==2){$MD="mode=al2&amp;namber="; if($type){$MD.="$type";}else{$MD.="$nam";}}
-			$L=" <a href=\"$cgi_f?$MD&amp;$pp\">トピック表\示と返信</a> /";
-		}
-		print <<"_HITCOM_";
+        if($o_mail){$Smsg="[メール転送/";if($Se==2 || $Se==1){$Smsg.="ON]\n";}else{$Smsg.="OFF]\n";}}
+        if($e){$e=" END /";}
+        if($logs eq $log){
+            if($TOPH==0){$MD="mode=res&amp;namber="; if($type){$MD.="$type";}else{$MD.="$nam";}}
+            elsif($TOPH==1){$MD="mode=one&amp;namber=$nam&amp;type=$type&amp;space=$sp";}
+            elsif($TOPH==2){$MD="mode=al2&amp;namber="; if($type){$MD.="$type";}else{$MD.="$nam";}}
+            $L=" <a href=\"$cgi_f?$MD&amp;$pp\">トピック表\示と返信</a> /";
+        }
+        print <<"_HITCOM_";
 <div class="ArtMain">
 <div class="ArtHead">
 <a name="$namber"><strong>$d_may</strong></a><br>
@@ -353,17 +353,17 @@ _HITCOM_
 
 
 
-	}
-	print qq!<hr class="Hidden"><div class="Caption01r">\n!;
-	if($Bl){print"[ $Bl前の$klog_h件$Ble ]\n";}
-	if($Nl){if($Bl){print" | ";} print"[ $Nl次の$klog_h件$Nle ]\n";}
+    }
+    print qq!<hr class="Hidden"><div class="Caption01r">\n!;
+    if($Bl){print"[ $Bl前の$klog_h件$Ble ]\n";}
+    if($Nl){if($Bl){print" | ";} print"[ $Nl次の$klog_h件$Nle ]\n";}
 print "</div><hr>$Plink\n$NLog";
-	if($kanrimode){
-	print <<"_KF_";
+    if($kanrimode){
+    print <<"_KF_";
 <div align=right>パスワード/<input type=password name=pas size=4>
 <input type=submit value="管理者削除用"></form></div>
 _KF_
-	}
+    }
 }elsif($count == 0 && $word){print qq!<div class="Caption03l">該当する記事はありませんでした。</div>!;}
 &foot_;
 }
@@ -376,9 +376,9 @@ sub log_ {
     Forum->template->set_vars('mode_id', 'oldlog');
     &hed_("Past Log");
 if($logs){
-	$logn=$logs;
-	$logn=~ s/$klogext//g; $logn=~ s/\.//; $logn=~ s/txt//; $logn=~ s/\///;
-	$nowlog="<h3>過去ログ$logn を表\示</h3>";
+    $logn=$logs;
+    $logn=~ s/$klogext//g; $logn=~ s/\.//; $logn=~ s/txt//; $logn=~ s/\///;
+    $nowlog="<h3>過去ログ$logn を表\示</h3>";
 }
 if($FORM{"KLOG_H"}){$klog_h[0]=$FORM{"KLOG_H"};}
 print <<"_LTOP_";
@@ -391,14 +391,14 @@ print <<"_LTOP_";
 <div class="Caption01List"><strong>表\示ログ</strong></div>
 _LTOP_
 if(-e $SL){
-	open(NO,"$klog_c");
-	$n = <NO>;
-	close(NO);
-	$br=0;
-	for ($i=1;$i<=$n;$i++) {
-		print"<a href=\"$cgi_f?KLOG=$i&amp;$pp\"$TGT>過去ログ$i</a>\n";
-		$br++; if($br==5){print"<br>";$br=0;}
-	}
+    open(NO,"$klog_c");
+    $n = <NO>;
+    close(NO);
+    $br=0;
+    for ($i=1;$i<=$n;$i++) {
+        print"<a href=\"$cgi_f?KLOG=$i&amp;$pp\"$TGT>過去ログ$i</a>\n";
+        $br++; if($br==5){print"<br>";$br=0;}
+    }
 }else{print"現在表\示できる過去ログはありません。\n";}
 print"</div><hr width=\"85\%\">";
 &foot_;
@@ -417,13 +417,13 @@ open(DB,"$logs") || &er_("Can't open $logs");
 close(DB);
 @CAS = ();
 foreach $mens (@mens) {
-	$castam=0;
-	$mens =~ s/\n//g;
-	($nam,$date,$name,$email,$d_may,$comment,$url,
-		$sp,$e,$type,$del,$ip) = split(/<>/,$mens);
-	foreach $word (@d_) {if($word eq "$nam"){$mens=""; $castam=1;}}
-	if($mens eq ""){ $n=""; }else{ $n="\n"; }
-	push (@CAS,"$mens$n");
+    $castam=0;
+    $mens =~ s/\n//g;
+    ($nam,$date,$name,$email,$d_may,$comment,$url,
+        $sp,$e,$type,$del,$ip) = split(/<>/,$mens);
+    foreach $word (@d_) {if($word eq "$nam"){$mens=""; $castam=1;}}
+    if($mens eq ""){ $n=""; }else{ $n="\n"; }
+    push (@CAS,"$mens$n");
 }
 open (DB,">$logs");
 print DB @CAS;
