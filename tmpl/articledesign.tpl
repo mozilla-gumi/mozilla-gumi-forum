@@ -1,3 +1,12 @@
+[% MD = BLOCK %][% IF htype == "N" -%]
+[%- IF TOPH == 0 -%]
+  mode=res&amp;namber=[% IF type %][% type %][% ELSE %][% namber %][% END %]
+[%- ELSIF TOPH == 1 -%]
+  mode=one&amp;namber=[% namber %]&amp;type=[% type %]&amp;space=[% space %]
+[%- ELSIF TOPH == 2 -%]
+  mode=al2&amp;namber=[% IF type %][% type %][% ELSE %][% namber %][% END %]&amp;space=[% space %]
+[%- END %][%- END %]
+
 [% IF htype == "T2" %]<br>[% END %]
 [% IF (mode == "alk") && (type) %]
   <div class="ArtChild">
@@ -7,13 +16,16 @@
   <div class="ArtMain">
 [% END %]
 <div class="ArtHead">
-<a name="[% namber %]"><strong>[% d_may %]</strong></a><br>
-<span class="ArtId">(#[% namber %]) 
-[% IF (htype == "T") || (htype == "T2") %] [% IF resno == 0 %]親[% ELSE %][% resno %][% END %]階層
-[% ELSIF htype == "F" %] このトピック[% IF resno == 0 %]の親[% ELSE %]中[% resno %]番目の[% END %]投稿
-[% ELSIF (htype == "TR") || (htype == "TRES") %] [% IF resno == 0 %]親記事[% ELSE %]このスレッド中[% resno %]番目の返信[% END %]
-[% END %]
-</span>
+  <a name="[% namber %]">
+    <strong>[% IF d_may == "" %][% notitle %][% ELSE %][% d_may %][% END %]</strong>
+  </a>
+  <br>
+  <span class="ArtId">(#[% namber %]) 
+    [% IF (htype == "T") || (htype == "T2") %] [% IF resno == 0 %]親[% ELSE %][% resno %][% END %]階層
+    [% ELSIF htype == "F" %] このトピック[% IF resno == 0 %]の親[% ELSE %]中[% resno %]番目の[% END %]投稿
+    [% ELSIF (htype == "TR") || (htype == "TRES") %] [% IF resno == 0 %]親記事[% ELSE %]このスレッド中[% resno %]番目の返信[% END %]
+    [% END %]
+  </span>
 </div>
 <div class="postinfo">
 <span class="name">[% name %] [% r %]</span>の投稿 :[% date %] [% url %]</div>
@@ -22,9 +34,9 @@
 [% comment FILTER auto %]
 </div>
 <div class="Caption01r">[% end %]<br>
-[% Pr %]
 [% IF klog_def == 0 %]
-  [% smsg %] / [% INCLUDE reply_block %]
+  [% IF o_mail %][メール転送/[% IF ((Se == 2) || (Se == 1)) %]ON[% ELSE %]OFF[% END %]]
+  / [% INCLUDE reply_block %]
   [% IF (mode == "al2") || (mode == "res") %]
     チェック-<input type="radio" value="[% nam %]" name="del">
   [% ELSIF use_post_edit != 0 %]

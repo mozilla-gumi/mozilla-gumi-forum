@@ -93,11 +93,11 @@ Forum->template->set_vars('mode_id', $mode_id);
 # ---[サブルーチンの読み込み/表示確定]-------------------------------------------------------------------------------
 if ($mode eq "cmin") {&set_("M");}
 if (($conf{'rss'} eq 1) && ($mode eq 'RSS')) {&RSS; }
-if ($mode eq "ent") {&ent_;}
-if ($mode eq "man") {&man_;}
-if ($mode eq "n_w") {&n_w_;}
+if ($mode eq "ent") {&ent_;} # EXIT (foot_)
+if ($mode eq "man") {&man_;} # EXIT
+if ($mode eq "n_w") {&n_w_;} # EXIT (foot_)
 if ($mode eq "wri") {&wri_;}
-if ($mode eq "nam") {&hen_;} # edit post
+if ($mode eq "nam") {&hen_;} # edit post / EXIT (foot_)
 if ($mode eq "h_w") {&h_w_;}
 if ($mode eq "new") {&new_;}
 if ($mode eq "all") {&all_;}
@@ -131,6 +131,7 @@ elsif ($H eq "N") {&alk_;}
 if ($TOPH == 1) {&html_; }
 elsif ($TOPH==2) {&html2_;}
 else {&alk_; }
+
 exit;
 
 #--------------------------------------------------------------------------------------------------------------------
@@ -142,17 +143,9 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
         $end, $type, $delkey, $ip, $tim, $ico, $Ent, $fimg, $mini, 
         $icon, $font, $hr, $txt, $sel, $yobi, $Se, $ResNo, $htype, 
         $hanyo) = @_;
-    @_ = ();
     my ($comment, $userenv) = split('\t', $comment_);
     my $email =~ s/@/$atchange/;
 
-    if ($hr eq "") {$hr = $ttb; }
-    if ($d_may eq "") {$d_may = "$notitle"; }
-    if ($Icon && $comment =~ /<br>\(携帯\)$/) {$icon = "$Ico_k"; }
-    if ($icon ne "") {
-        if ($IconHei) {$WH = " height=\"$IconHei\" width=\"$IconWid\""; }
-        $icon = "<img src=\"$IconDir\/$icon\"$WH>";
-    }
     if ((! $name) || ($name eq ' ') || ($name eq '　')) {$name = $noname; }
     if ($txt) {$Txt = "$TXT_T:[$txt]　"; }
     else {$Txt = ""; }
@@ -186,91 +179,22 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
     if (($mas_c == 2) && ($Ent == 0)) {
         $comment = "コメント表\示:未許可";
     }
-    if ($o_mail) {
-        $Smsg = "[メール転送/";
-        if (($Se == 2) || ($Se == 1)) {
-            $Smsg .= "ON]\n";
-        } else {
-            $Smsg .= "OFF]\n";
-        }
-    }
     $Pr = "";
-    $agsg = "";
-    $UeSt = "";
-    $Pre = "";
 
-    if ($htype eq "T2") {
-        $VNo = $namber;
-        if ($type > 0) {
-            $UeSt .= "$b_ ";
-        } else {
-            $UeSt .= "親記事　/ ";
-        }
-        if ($n_) {
-            $UeSt .= "$n_ </a>\n";
-        } else {
-            $UeSt .= "返信無し\n";
-        }
-    } elsif ($htype eq "F") {
-        $VNo++;
-        if ($VNo == 1) {
-            $sg = $VNo + 1;
-            $agsg = "\&nbsp\;\&nbsp\;<a href=\"#$sg\">▼</a><a href=\"#1\">■</a>";
-        } elsif ($VNo >= $topic) {
-            $ag = $VNo - 1;
-            $agsg = "<a href=\"#$ag\">▲</a>　<a href=\"#1\">■</a>";
-        } else {
-            $ag = $VNo - 1;
-            $sg = $VNo + 1;
-            $agsg="<a href=\"#$ag\">▲<a href=\"#$sg\">▼<a href=\"#1\">■</a>";
-        }
-    } elsif ($htype eq "N") {
-        if ($TOPH == 0) {
-            $MD = "mode=res&amp;namber=";
-            if ($type) {$MD .= "$type"; }
-            else {$MD .= "$namber"; }
-        } elsif ($TOPH == 1) {
-            $MD = "mode=one&amp;namber=$namber&amp;type=$type&amp;space=$space";
-        } elsif ($TOPH == 2) {
-            $MD = "mode=al2&amp;namber=";
-            if ($type) {$MD .= "$type"; }
-            else {$MD .= "$namber"; }
-            $MD .= "&amp;space=$space";
-        }
-        Forum->template->set_vars('MD', $MD);
-    } elsif ($htype eq "P") {
-        if ($hanyo eq "randam") {$icon = "アイコン<br>ランダム"; }
-    } elsif ($htype eq "TRES") {
-        $VNo++;
-        if ($VNo == 1) {
-            $sg = $VNo + 1;
-            $agsg = "\&nbsp\;\&nbsp\;<a href=\"#$sg\">▼</a><a href=\"#1\">■</a>";
-        } elsif ($VNo >= $topic) {
-            $ag = $VNo - 1;
-            $agsg = "<a href=\"#$ag\">▲</a>　<a href=\"#1\">■</a>";
-        } else {
-            $ag = $VNo - 1;
-            $sg = $VNo + 1;
-            $agsg = "<a href=\"#$ag\">▲<a href=\"#$sg\">▼<a href=\"#1\">■</a>";
-        }
-    }
-
-    $tmplVars{'namber'} = $namber;
-    $tmplVars{'d_may'} = $d_may;
-    $tmplVars{'resno'} = $ResNo;
-    $tmplVars{'name'} = $name;
-    $tmplVars{'r'} = $R;
-    $tmplVars{'date'} = $date;
-    $tmplVars{'url'} = $url;
-    $tmplVars{'comment'} = $comment;
-    $tmplVars{'end'} = $end;
-    $tmplVars{'pr'} = $Pr;
-    $tmplVars{'mode'} = $mode;
-    $tmplVars{'smsg'} = $Smsg;
-    $tmplVars{'in'} = $IN;
-    $tmplVars{'nam'} = $nam;
-    $tmplVars{'font'} = $font;
-    $tmplVars{'userenv'} = $userenv;
+    Forum->template->set_vars('namber', $namber);
+    Forum->template->set_vars('d_may', $d_may);
+    Forum->template->set_vars('resno', $ResNo);
+    Forum->template->set_vars('name', $name);
+    Forum->template->set_vars('r', $R);
+    Forum->template->set_vars('date', $date);
+    Forum->template->set_vars('url', $url);
+    Forum->template->set_vars('comment', $comment);
+    Forum->template->set_vars('end', $end);
+    Forum->template->set_vars('mode', $mode);
+    Forum->template->set_vars('in', $IN);
+    Forum->template->set_vars('nam', $nam);
+    Forum->template->set_vars('font', $font);
+    Forum->template->set_vars('userenv', $userenv);
     Forum->template->set_vars('htype', $htype);
     Forum->template->set_vars('Res_i', $Res_i);
     Forum->template->set_vars('cgi_f', $cgi_f);
@@ -282,6 +206,11 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
     Forum->template->set_vars('rev', $rev);
     Forum->template->set_vars('fp', $fp);
     Forum->template->set_vars('PNO', $PNO);
+    Forum->template->set_vars('o_mail', $o_mail);
+    Forum->template->set_vars('Se', $Se);
+    Forum->template->set_vars('notitle', $notitle);
+    Forum->template->set_vars('', $);
+    Forum->template->set_vars('', $);
     if ($KLOG) {$tmplVars{'klog_def'} = 1; } else {$tmplVars{'klog_def'} = 0; }
     if ($type) {$tmplVars{'type_def'} = 1; } else {$tmplVars{'type_def'} = 0; }
     $HTML = '';
@@ -1761,6 +1690,7 @@ sub alk_ {
     $nl = $page_end + 1;
     $bl = $page - $alk_su;
 
+    print Forum->cgi->header();
     Forum->template->set_vars('Top_t', $Top_t);
     Forum->template->set_vars('new_t', $new_t);
     Forum->template->set_vars('new_i', $new_i);
@@ -2091,6 +2021,7 @@ sub er_ {
     }
     Forum->template->set_vars('BG', $BG);
     Forum->template->set_vars('errmsg', $errmsg);
+    print Forum->cgi->header();
     $obj_template->process('error.tpl', \%tmplVars);
     exit;
 }

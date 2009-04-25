@@ -353,6 +353,4 @@ sub smile_decode{
 $ua_select=1;
 
 
-
-
 1;
