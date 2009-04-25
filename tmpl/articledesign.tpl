@@ -5,7 +5,7 @@
   mode=one&amp;namber=[% namber %]&amp;type=[% type %]&amp;space=[% space %]
 [%- ELSIF TOPH == 2 -%]
   mode=al2&amp;namber=[% IF type %][% type %][% ELSE %][% namber %][% END %]&amp;space=[% space %]
-[%- END %][%- END %]
+[%- END %][%- END %][% END %]
 
 [% IF htype == "T2" %]<br>[% END %]
 [% IF (mode == "alk") && (type) %]
@@ -35,7 +35,7 @@
 </div>
 <div class="Caption01r">[% end %]<br>
 [% IF klog_def == 0 %]
-  [% IF o_mail %][メール転送/[% IF ((Se == 2) || (Se == 1)) %]ON[% ELSE %]OFF[% END %]]
+  [% IF o_mail %][メール転送/[% IF ((Se == 2) || (Se == 1)) %]ON[% ELSE %]OFF[% END %]][% END %]
   / [% INCLUDE reply_block %]
   [% IF (mode == "al2") || (mode == "res") %]
     チェック-<input type="radio" value="[% nam %]" name="del">
