@@ -311,9 +311,9 @@ _KT_
             } else {
                 $comment =~ s/>((&gt;|„|>)[^<]*)/><font color=$res_f>$1<\/font>/g;
             }
-            Encode::from_to($comment, 'euc-jp', 'sjis');
+            Encode::from_to($comment, 'sjis', 'euc-jp');
             foreach $KEY (@key_ws) {
-                Encode::from_to($KEY, 'euc-jp', 'sjis');
+                Encode::from_to($KEY, 'sjis', 'euc-jp');
                 $comment =~ s/$KEY/<b STYLE="background-color:$Kyo_f\;">$KEY<\/b>/g;
                 if ($BM) {
                     $comment =~ s/($KEY)/<b STYLE="background-color:$Kyo_f\;">$1<\/b>/ig;
@@ -321,7 +321,7 @@ _KT_
                     $comment =~ s/$KEY/<b STYLE="background-color:$Kyo_f\;">$KEY<\/b>/g;
                 }
             }
-            Encode::from_to($comment, 'sjis', 'euc-jp');
+            Encode::from_to($comment, 'euc-jp', 'sjis');
         } else {
             &auto_($comment);
         }
