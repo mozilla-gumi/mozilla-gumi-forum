@@ -22,18 +22,14 @@ if ($mode eq "log") {
     &log_;
 } elsif ($mode eq "del") {
     &del_;
-} elsif ($mode eq "dl") {
-    &dl_;
 } else {
     &srch_;
 }
 
 exit;
 
-#--------------------------------------------------------------------------------------------------------------------
-# [フォームコード]
-# -> フォーム入力内容を解釈する(d_code_)
-#
+##---
+# d_code_ - decode CGI input / WILL BE REMOVED IN FUTURE
 sub d_code_ {
     my %params;
     my ($name, $value);
@@ -56,14 +52,15 @@ sub d_code_ {
         $FORM{$name} = $value;
         if ($name eq 'del') { push(@d_,$value); }
     }
-    $word= $FORM{'word'};
-    $andor=$FORM{'andor'};
-    $mode= $FORM{'mode'};
-    $logs =$FORM{'logs'};
-    $FORM{'N'}=~ s/([^0-9,])*?//g;
-    my $neq=$FORM{'N'};
+    $word = $FORM{'word'};
+    $andor = $FORM{'andor'};
+    $mode = $FORM{'mode'};
+    $logs = $FORM{'logs'};
+    $FORM{'N'} =~ s/([^0-9,])*?//g;
+    my $neq = $FORM{'N'};
     $Neq = '';
-    $Neq = "&amp;N=$neq" if($neq);
+    $Neq = "&amp;
+    N = $neq" if ($neq);
     undef $neq;
 }
 #--------------------------------------------------------------------------------------------------------------------
@@ -71,18 +68,41 @@ sub d_code_ {
 # -> 検索フォームの表示と、検索結果の表示をおこなう(srch_)
 #
 sub srch_ {
-if($FORM{"PAGE"}){$klog_h=$FORM{"PAGE"};}else{$klog_h=$klog_h[0];}
-if($logs && $logs=~ /$klogext$/){
-    $logn=$logs; $C="";
-    $logn=~ s/$klogext//g; $logn=~ s/\.//g; $logn=~ s/txt//; $logn=~ s/\///g;
-    $nowlog="<hr><div class=\"Caption03l\">過去ログ$logn を検索</div>";
-}elsif($logs && ($logs eq "$log" || $logs eq 'recent')){$nowlog="<hr><div class=\"Caption03l\">現在のログを検索</div>";
-}elsif($logs && $logs eq "all"){$nowlog="<hr><div class=\"Caption03l\">全過去ログを検索</div>";}
-if($FORM{"ALL"}){$nowlog="<hr><div class=\"Caption03l\">No.$word の関連記事表\示</div>"; $KNS=" checked";}
-&hed_("Search:$word");
-if($klog_s){$klog_msg="(*過去ログは表\示されません)</li>\n<li>過去ログから探す場合は検索範囲から過去ログを選択。";}
-if($andor eq "or"){$OC=" selected";}else{$OC="";}
-print <<"_STOP_";
+    print Forum->cgi->header();
+    if ($FORM{"PAGE"}) {
+        $klog_h = $FORM{"PAGE"};
+    } else {
+        $klog_h = $klog_h[0];
+    }
+    if ($logs && ($logs=~ /$klogext$/)) {
+        $logn = $logs;
+        $C = "";
+        $logn =~ s/$klogext//g;
+        $logn =~ s/\.//g;
+        $logn =~ s/txt//;
+        $logn =~ s/\///g;
+        $nowlog = "<hr><div class=\"Caption03l\">過去ログ$logn を検索</div>";
+    } elsif ($logs && (($logs eq $log) || ($logs eq 'recent'))) {
+        $nowlog = "<hr><div class=\"Caption03l\">現在のログを検索</div>";
+    } elsif ($logs && ($logs eq "all")) {
+        $nowlog = "<hr><div class=\"Caption03l\">全過去ログを検索</div>";
+    }
+    if ($FORM{"ALL"}) {
+        $nowlog = "<hr><div class=\"Caption03l\">No.$word の関連記事表\示</div>";
+        $KNS = " checked";
+    }
+
+    &hed_("Search:$word");
+    if ($klog_s) {
+        $klog_msg = "(*過去ログは表\示されません)</li>\n<li>過去ログから探す場合は検索範囲から過去ログを選択。";
+    }
+    if ($andor eq "or") {
+        $OC = " selected";
+    } else {
+        $OC="";
+    }
+
+    print <<"_STOP_";
 <h2>ログ内検索</h2>
 <ul>
 <li>キーワードを複数指定する場合は 半角スペース で区切ってください。</li>
@@ -98,25 +118,39 @@ $klog_msg</li>
 <td><select name="andor"><option value="and">(AND)<option value="or"$OC>(OR)</select></td></tr>
 <tr><td class="justify"><strong>検索範囲</strong></td><td><select name="logs"><option value="$log">(現在のログ)
 _STOP_
-if($klog_s && -e $SL){
-    if($klog_a){
-        $C=""; if($logs eq "all"){$C=" selected";}
-        print"<option value=\"all\"$C>(全過去ログ)";
+
+    if ($klog_s && (-e $SL)) {
+        if ($klog_a) {
+            $C = "";
+            if ($logs eq "all") {
+                $C = " selected";
+            }
+            print "<option value=\"all\"$C>(全過去ログ)";
+        }
+        open(NO,"$klog_c");
+        $n = <NO>;
+        close(NO);
+        $br = 0;
+        for ($i = 0; $i < $n; $i++) {
+            $l = $i + 1;
+            $C = "";
+            if ($l == $logn) {
+                $C = " selected";
+            }
+            print "<option value=\"$l\"$C>(過去ログ$l)\n"; 
+            $br++;
+        }
     }
-    open(NO,"$klog_c");
-    $n = <NO>;
-    close(NO);
-    $br=0;
-    for ($i=0;$i<$n;$i++) {
-        $l=$i+1; $C="";
-        if($l==$logn){$C=" selected";}
-        print "<option value=\"$l\"$C>(過去ログ$l)\n"; 
-        $br++;
+    if ($FORM{"KYO"}) {
+        $CB = " checked";
     }
-}
-if($FORM{"KYO"}){$CB=" checked";}
-if($FORM{"bigmin"}){$CB2=" checked"; $BM=0;}else{$BM=1;}
-print <<"_SS_";
+    if ($FORM{"bigmin"}) {
+        $CB2 = " checked";
+        $BM = 0;
+    } else {
+        $BM = 1;
+    }
+    print <<"_SS_";
 </select></td>
 <td class="justify"><strong>強調表\示</strong></td><td><input type="checkbox" name="KYO" value="1"$CB>ON
 (自動リンクOFF)</td></tr>
@@ -132,109 +166,111 @@ print <<"_SS_";
 <input type="reset" value="リセット">
 </td></tr></table></form>$nowlog
 _SS_
-if($word ne "") {
-    $word =~ s/　/ /g;
-    $word =~ s/\t/ /g;
-    @key_ws= split(/ /,$word);
-    if($logs eq "all"){
-        $Stert=0; if($FORM{'N'}){($N,$S)=split(/\,/,$FORM{'N'}); $Stert=$N;} $End=$n-1;
-        if ($klog_a==0) {
-            Forum->error->throw_error_user('not_able_to_search_all');
-        }
-    } else {
-        $Stert = 0;
-        $End = 0;
-    }
-    @new=(); $Next=0;
-    foreach ($Stert..$End) {
-        if($logs eq "all"){$I=$_+1; $IT="$I$klogext"; $Log="$klog_d\/$IT"; $notopened="過去ログ$I";}
-        elsif($logs eq 'recent'){$Log=$log; $notopened="現行ログ";}
-        elsif($logs eq $log){$Log=$log; $notopened="現行ログ";}
-        else{$Log="$klog_d\/$logs$klogext"; $notopened="ログ$logs";}
-        Forum->template->set_vars('file', $Log);
-        open(DB,$Log) || Forum->error->throw_error_user('cannot_open_logfile');
-        while ($Line=<DB>) {
-            $hit = 0;
-            if($FORM{"ALL"}){
-                ($nam,$date,$name,$email,$d_may,$comment,
-                    $url,$font,$ico,$type,$del,$ip) = split(/<>/,$Line);
-                if($word==$nam || $word==$type){$hit=1;}
-            }else{
-                foreach $key_w (@key_ws){
-                    if($key_w =~ /[\x80-\xff]/){$jflag = 1;}else{$jflag = 0;}
-                    $key_w=~ s/^&$/&amp\;/g;
-                    $key_w=~ s/^<$/\&lt\;/g;
-                    $key_w=~ s/^>$/\&gt\;/g;
-                    $key_w=~ s/^\"$/\&quot\;/g;
-                    if ($jflag) {
-                        if(index($Line, $key_w) >= 0){$hit=1;}else{$hit=0;}
-                    } else {
-                        if($BM){if($Line =~ /$key_w/i){$hit=1;}else{$hit=0;}}
-                        else{if($Line =~ /$key_w/){$hit=1;}else{$hit=0;}}
-                    }
-                    if($hit){if($andor eq "or"){last;}}else{if($andor eq "and"){$hit=0; last;}}
-                }
-            }
-            if($hit){push(@new,"$IT<>$Line");}
-            if($#new+1 >= 200 && $logs eq "all"){$Next=$I+1;}
-        }
-        close(DB);
-        if($Next){last;}
-    }
-}
-$count=@new;
-if($logs eq "$log"){@new=reverse(@new);}
-if($count > 0){
-    $word=~ s/([^0-9A-Za-z_])/"%".unpack("H2",$1)/ge;
-    $word=~ tr/ /+/;
-    $total=@new;
-    $page_=int(($total-1)/$klog_h);
-    if($FORM{'page'} eq ""){$page=0;}else{$page=$FORM{'page'};}
 
-    $end_data=@new-1;
-    $page_end=$page+($klog_h-1);
-    if($page_end >= $end_data){$page_end=$end_data;}
-    $Pg=$page+1; $Pg2=$page_end+1;
-    print"<div class=\"Caption03l\">$count 件中 $Pg ～ $Pg2 件目を表\示</div>";
-    if($Next || $N){
-        $NLog="<div class=\"Caption01c\">ヒット件数が多いので";
-        if($N){$N++; $NLog.="過去ログ$N"; $fromto="過去ログ$N";}else{$NLog.="過去ログ1"; $fromto="過去ログ1";}
-        if($I>1 && $I>$N){$NLog.="～$I "; $fromto.="～$I ";}
-        $NLog.="の検索結果"; $fromto .="の";
-        if($n>$I){
-            $NLog.=" / <strong><a href=\"$srch?mode=srch&amp;logs=$logs&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h&amp;N=$I,$Stert\">";
-            $NLog.="過去ログ$Nextからさらに検索→</a></strong>\n";
+    if ($word ne "") {
+        $word =~ s/　/ /g;
+        $word =~ s/\t/ /g;
+        @key_ws= split(/ /,$word);
+        if($logs eq "all"){
+            $Stert=0; if($FORM{'N'}){($N,$S)=split(/\,/,$FORM{'N'}); $Stert=$N;} $End=$n-1;
+            if ($klog_a==0) {
+                Forum->error->throw_error_user('not_able_to_search_all');
+            }
+        } else {
+            $Stert = 0;
+            $End = 0;
+        }
+        @new=(); $Next=0;
+        foreach ($Stert..$End) {
+            if($logs eq "all"){$I=$_+1; $IT="$I$klogext"; $Log="$klog_d\/$IT"; $notopened="過去ログ$I";}
+            elsif($logs eq 'recent'){$Log=$log; $notopened="現行ログ";}
+            elsif($logs eq $log){$Log=$log; $notopened="現行ログ";}
+            else{$Log="$klog_d\/$logs$klogext"; $notopened="ログ$logs";}
+            Forum->template->set_vars('file', $Log);
+            open(DB,$Log) || Forum->error->throw_error_user('cannot_open_logfile');
+            while ($Line=<DB>) {
+                $hit = 0;
+                if($FORM{"ALL"}){
+                    ($nam,$date,$name,$email,$d_may,$comment,
+                        $url,$font,$ico,$type,$del,$ip) = split(/<>/,$Line);
+                    if($word==$nam || $word==$type){$hit=1;}
+                }else{
+                    foreach $key_w (@key_ws){
+                        if($key_w =~ /[\x80-\xff]/){$jflag = 1;}else{$jflag = 0;}
+                        $key_w=~ s/^&$/&amp\;/g;
+                        $key_w=~ s/^<$/\&lt\;/g;
+                        $key_w=~ s/^>$/\&gt\;/g;
+                        $key_w=~ s/^\"$/\&quot\;/g;
+                        if ($jflag) {
+                            if(index($Line, $key_w) >= 0){$hit=1;}else{$hit=0;}
+                        } else {
+                            if($BM){if($Line =~ /$key_w/i){$hit=1;}else{$hit=0;}}
+                            else{if($Line =~ /$key_w/){$hit=1;}else{$hit=0;}}
+                        }
+                        if($hit){if($andor eq "or"){last;}}else{if($andor eq "and"){$hit=0; last;}}
+                    }
+                }
+                if($hit){push(@new,"$IT<>$Line");}
+                if($#new+1 >= 200 && $logs eq "all"){$Next=$I+1;}
+            }
+            close(DB);
+            if($Next){last;}
         }
     }
-    print"$NLog\n</div>\n";
-    $nl=$page_end + 1;
-    $bl=$page - $klog_h;
-    if($bl >= 0){
-        $Bl ="<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$bl&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">";
-        $Ble="</a>";
-    }
-    if($page_end ne $end_data){
-        $Nl ="<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$nl&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">";
-        $Nle="</a>";
-    }
-$Plink="<div class=\"Caption01c\"><strong>$fromto全ページ</strong> /\n"; $a=0;
-    $a=0;
-    for($i=0;$i<=$page_;$i++){
-        $af=$page/$klog_h;
-        if($i != 0){$Plink.=" ";}
-        if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}
-        else{
-            $Plink.="[<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$a";
-            $Plink.="&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">$i</a>]\n";
+    $count=@new;
+    if($logs eq "$log"){@new=reverse(@new);}
+    if($count > 0){
+        $word=~ s/([^0-9A-Za-z_])/"%".unpack("H2",$1)/ge;
+        $word=~ tr/ /+/;
+        $total=@new;
+        $page_=int(($total-1)/$klog_h);
+        if($FORM{'page'} eq ""){$page=0;}else{$page=$FORM{'page'};}
+
+        $end_data=@new-1;
+        $page_end=$page+($klog_h-1);
+        if($page_end >= $end_data){$page_end=$end_data;}
+        $Pg=$page+1; $Pg2=$page_end+1;
+        print"<div class=\"Caption03l\">$count 件中 $Pg ～ $Pg2 件目を表\示</div>";
+        if($Next || $N){
+            $NLog="<div class=\"Caption01c\">ヒット件数が多いので";
+            if($N){$N++; $NLog.="過去ログ$N"; $fromto="過去ログ$N";}else{$NLog.="過去ログ1"; $fromto="過去ログ1";}
+            if($I>1 && $I>$N){$NLog.="～$I "; $fromto.="～$I ";}
+            $NLog.="の検索結果"; $fromto .="の";
+            if($n>$I){
+                $NLog.=" / <strong><a href=\"$srch?mode=srch&amp;logs=$logs&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h&amp;N=$I,$Stert\">";
+                $NLog.="過去ログ$Nextからさらに検索→</a></strong>\n";
+            }
         }
-        $a+=$klog_h;
-    }
-    $Plink.="$Nl$Nle\n</div>";
-    print <<"_KT_";
+        print"$NLog\n</div>\n";
+        $nl=$page_end + 1;
+        $bl=$page - $klog_h;
+        if($bl >= 0){
+            $Bl ="<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$bl&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">";
+            $Ble="</a>";
+        }
+        if($page_end ne $end_data){
+            $Nl ="<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$nl&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">";
+            $Nle="</a>";
+        }
+        $Plink="<div class=\"Caption01c\"><strong>$fromto全ページ</strong> /\n"; $a=0;
+        $a=0;
+        for($i=0;$i<=$page_;$i++){
+            $af=$page/$klog_h;
+            if($i != 0){$Plink.=" ";}
+            if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}
+            else{
+                $Plink.="[<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$a";
+                $Plink.="&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">$i</a>]\n";
+            }
+            $a+=$klog_h;
+        }
+        $Plink.="$Nl$Nle\n</div>";
+        print <<"_KT_";
 $Plink
 <form action="$srch" method="$Met"><input type="hidden" name="mode" value="del">
 <input type="hidden" name="logs" value="$logs">
 _KT_
+
     foreach ($page .. $page_end) {
         ($IT,$nam,$date,$name,$email,$d_may,$comment,$url,
             $sp,$e,$type,$del,$ip,$tim,$Se) = split(/<>/,$new[$_]);
@@ -353,37 +389,6 @@ _KF_
     Forum->template->process('htmlfoot.tpl', \%tmplVars);
 }
 #--------------------------------------------------------------------------------------------------------------------
-# [過去ログ削除]
-# -> 過去ログ内のいらない記事を削除(del_)
-#
-sub del_ {
-    if (Forum->user->validate_password_admin($FORM{'pas'}) != 1) {
-        Forum->error->throw_error_user('invalidpass');
-    }
-    if ($logs eq $log) {
-        Forum->error->throw_error_user('cannot_open_curfile');
-    }
-    $logs = "$klog_d/$logs";
-    Forum->template->set_vars('file', $logs);
-    open(DB,$logs) || Forum->error->throw_error_user('cannot_open_logfile');
-@mens = <DB>;
-close(DB);
-@CAS = ();
-foreach $mens (@mens) {
-    $castam=0;
-    $mens =~ s/\n//g;
-    ($nam,$date,$name,$email,$d_may,$comment,$url,
-        $sp,$e,$type,$del,$ip) = split(/<>/,$mens);
-    foreach $word (@d_) {if($word eq "$nam"){$mens=""; $castam=1;}}
-    if($mens eq ""){ $n=""; }else{ $n="\n"; }
-    push (@CAS,"$mens$n");
-}
-open (DB,">$logs");
-print DB @CAS;
-close(DB);
-&log_;
-}
-#--------------------------------------------------------------------------------------------------------------------
 # [URLをリンク等]
 # -> コメント内、リンク・文字色など処理(auto_)
 #
@@ -423,4 +428,43 @@ sub log_ {
     print Forum->cgi->header();
     Forum->template->process('oldlog_list.tmpl', \%tmplVars);
     exit;
+}
+
+##---
+# del_ - delete routine for old logs
+sub del_ {
+    if (Forum->user->validate_password_admin($FORM{'pas'}) != 1) {
+        Forum->error->throw_error_user('invalidpass');
+    }
+    if ($logs eq $log) {
+        Forum->error->throw_error_user('cannot_open_curfile');
+    }
+    $logs = "$klog_d/$logs";
+    Forum->template->set_vars('file', $logs);
+    open(DB,$logs) || Forum->error->throw_error_user('cannot_open_logfile');
+    @mens = <DB>;
+    close(DB);
+    @CAS = ();
+    foreach $mens (@mens) {
+        $castam = 0;
+        $mens =~ s/\n//g;
+        ($nam, $date, $name, $email, $d_may, $comment, $url,
+            $sp, $e, $type, $del, $ip) = split(/<>/, $mens);
+        foreach $word (@d_) {
+            if ($word eq "$nam") {
+                $mens = "";
+                $castam = 1;
+            }
+        }
+        if ($mens eq "") {
+            $n = "";
+        } else {
+            $n = "\n";
+        }
+        push (@CAS, "$mens$n");
+    }
+    open (DB, ">$logs");
+    print DB @CAS;
+    close(DB);
+    &log_();
 }
