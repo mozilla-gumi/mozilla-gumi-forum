@@ -2,40 +2,32 @@
 
 require './common.pl';
 
-#------------------------------------------
-$ver="Child Search v8.92";# (ツリー式掲示板)
-#------------------------------------------
-# Copyright(C) りゅういち
-# E-Mail:ryu@cj-c.com
-# W W W :http://www.cj-c.com/
-#------------------------------------------
-
-$set[0] = "./set.cgi";
-
-# ---[設定ここまで]--------------------------------------------------------------------------------------------------
 &d_code_;
+
 Forum->template->set_vars('mode_id', 'search');
 
+$set[0] = "./set.cgi";
 $SetUpFile = $set[0];
 require $SetUpFile;
 
-
-$ag=$ENV{'HTTP_USER_AGENT'};
+$ag = $ENV{'HTTP_USER_AGENT'};
 if ($logs) {
     unless (($logs eq "$log" || $logs=~ /^[\d]+$/ || $logs eq "all" || $logs eq "recent")) {
         Forum->error->throw_error_user('invalidfile');
     }
 }
-$SL="$klog_d\/1$klogext";
+$SL = "$klog_d\/1$klogext";
 
-$pf = "";
-$pp = "";
+if ($mode eq "log") {
+    &log_;
+} elsif ($mode eq "del") {
+    &del_;
+} elsif ($mode eq "dl") {
+    &dl_;
+} else {
+    &srch_;
+}
 
-# ---[サブルーチンの読み込み/表示確定]-------------------------------------------------------------------------------
-if($mode eq "log"){&log_;}
-elsif($mode eq "del"){&del_;}
-elsif($mode eq "dl"){&dl_;}
-else {&srch_;}
 exit;
 
 #--------------------------------------------------------------------------------------------------------------------
@@ -99,7 +91,7 @@ print <<"_STOP_";
 $klog_msg</li>
 </ul>
 <hr class="Hidden">
-<form action="$srch" method="$Met">$pf<input type="hidden" name="no" value="0">
+<form action="$srch" method="$Met"><input type="hidden" name="no" value="0">
 <table class="Submittion"><tr>
 <td class="justify"><strong>キーワード</strong></td><td><input type="text" name="word" size="32" value="$word"></td>
 <td class="justify"><strong>検索条件</strong></td>
@@ -210,7 +202,7 @@ if($count > 0){
         if($I>1 && $I>$N){$NLog.="～$I "; $fromto.="～$I ";}
         $NLog.="の検索結果"; $fromto .="の";
         if($n>$I){
-            $NLog.=" / <strong><a href=\"$srch?mode=srch&amp;logs=$logs&amp;$pp&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h&amp;N=$I,$Stert\">";
+            $NLog.=" / <strong><a href=\"$srch?mode=srch&amp;logs=$logs&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h&amp;N=$I,$Stert\">";
             $NLog.="過去ログ$Nextからさらに検索→</a></strong>\n";
         }
     }
@@ -218,11 +210,11 @@ if($count > 0){
     $nl=$page_end + 1;
     $bl=$page - $klog_h;
     if($bl >= 0){
-        $Bl ="<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$bl&amp;$pp&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">";
+        $Bl ="<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$bl&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">";
         $Ble="</a>";
     }
     if($page_end ne $end_data){
-        $Nl ="<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$nl&amp;$pp&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">";
+        $Nl ="<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$nl&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">";
         $Nle="</a>";
     }
 $Plink="<div class=\"Caption01c\"><strong>$fromto全ページ</strong> /\n"; $a=0;
@@ -232,7 +224,7 @@ $Plink="<div class=\"Caption01c\"><strong>$fromto全ページ</strong> /\n"; $a=0;
         if($i != 0){$Plink.=" ";}
         if($i eq $af){$Plink.="[<strong>$i</strong>]\n";}
         else{
-            $Plink.="[<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$a&amp;$pp";
+            $Plink.="[<a href=\"$srch?mode=srch&amp;logs=$logs&amp;page=$a";
             $Plink.="&amp;word=$word&amp;andor=$andor&amp;KYO=$FORM{'KYO'}&amp;PAGE=$klog_h$Neq\">$i</a>]\n";
         }
         $a+=$klog_h;
@@ -241,7 +233,7 @@ $Plink="<div class=\"Caption01c\"><strong>$fromto全ページ</strong> /\n"; $a=0;
     print <<"_KT_";
 $Plink
 <form action="$srch" method="$Met"><input type="hidden" name="mode" value="del">
-<input type="hidden" name="logs" value="$logs">$pf
+<input type="hidden" name="logs" value="$logs">
 _KT_
     foreach ($page .. $page_end) {
         ($IT,$nam,$date,$name,$email,$d_may,$comment,$url,
@@ -324,7 +316,7 @@ _KT_
             if($TOPH==0){$MD="mode=res&amp;namber="; if($type){$MD.="$type";}else{$MD.="$nam";}}
             elsif($TOPH==1){$MD="mode=one&amp;namber=$nam&amp;type=$type&amp;space=$sp";}
             elsif($TOPH==2){$MD="mode=al2&amp;namber="; if($type){$MD.="$type";}else{$MD.="$nam";}}
-            $L=" <a href=\"$cgi_f?$MD&amp;$pp\">トピック表\示と返信</a> /";
+            $L=" <a href=\"$cgi_f?$MD\">トピック表\示と返信</a> /";
         }
         print <<"_HITCOM_";
 <div class="ArtMain">
@@ -340,7 +332,7 @@ $url</div>
 $Pr
 $Smsg
 $t_com /$e$L$PLL
-<a href="$cgi_f?mode=al2&amp;namber=$KK&amp;$pp$IT"$TGT>関連記事表\示</a>
+<a href="$cgi_f?mode=al2&amp;namber=$KK&amp;$IT"$TGT>関連記事表\示</a>
 チェック/<input type="checkbox" name="del" value="$nam"></div></div><br>
 _HITCOM_
 
@@ -399,7 +391,7 @@ sub auto_ {
 if($_[0]=~/<\/pre>/){$_[0]=~ s/(>|\n)((&gt;|＞|>)[^\n]*)/$1$2/g;}
 else{$_[0]=~ s/>((&gt;|＞|>)[^<]*)/><span class="Quoted">$1<\/span>/g;}
 $_[0]=~ s/([^=^\"]|^)((http|ftp|https)\:[\w\.\~\-\/\?\&\+\=\:\@\%\;\#\,\|]+)/$1<a href="$2"$TGT>$2<\/a>/g;
-$_[0]=~ s/([^\w^\.^\~^\-^\/^\?^\&^\+^\=^\:^\%^\;^\#^\,^\|]+)(No|NO|no|No.|NO.|no.|&gt;&gt;|＞＞|>>)([0-9\,\-]+)/$1<a href=\"$cgi_f?mode=red&amp;namber=$3&amp;$pp\"$TGT>$2$3<\/a>/g;
+$_[0]=~ s/([^\w^\.^\~^\-^\/^\?^\&^\+^\=^\:^\%^\;^\#^\,^\|]+)(No|NO|no|No.|NO.|no.|&gt;&gt;|＞＞|>>)([0-9\,\-]+)/$1<a href=\"$cgi_f?mode=red&amp;namber=$3\"$TGT>$2$3<\/a>/g;
 {$_[0]=~ s/&gt;([^<]*)/<span class="Quoted">&gt;$1<\/span>/g;}
 }
 
@@ -417,6 +409,7 @@ sub hed_ {
 ##---
 # log_ - output old log list
 sub log_ {
+    my $n;
     Forum->template->set_vars('mode_id', 'oldlog');
     if (-e $SL) {
         open(NO, $klog_c);
@@ -427,7 +420,6 @@ sub log_ {
         Forum->error->throw_error_user('no_avail_oldlog');
     }
     Forum->template->set_vars('srch', $srch);
-    Forum->template->set_vars('pp', $pp);
     Forum->template->process('oldlog_list.tpl', \%tmplVars);
     exit;
 }
