@@ -116,6 +116,7 @@ sub srch_ {
             open(DB, $Log) || Forum->error->throw_error_user('cannot_open_logfile');
             while ($Line = <DB>) {
                 my $whole_hit = 0;
+                if ($andor eq 'and') {$whole_hit = 1; }
                 foreach $key_w (@key_ws) {
                     $key_w =~ s/^&$/&amp\;/g;
                     $key_w =~ s/^<$/\&lt\;/g;
@@ -134,7 +135,7 @@ sub srch_ {
                     if ($c_hit) {
                         if ($andor eq "or") {$whole_hit = 1; last; }
                     } else {
-                        if ($andor eq "and") {last; }
+                        if ($andor eq "and") {$whole_hit = 0; last; }
                     }
                 }
                 if ($whole_hit) {
