@@ -69,103 +69,37 @@ sub d_code_ {
 #
 sub srch_ {
     print Forum->cgi->header();
+
+    $klog_h = $klog_h[0];
     if ($FORM{"PAGE"}) {
         $klog_h = $FORM{"PAGE"};
-    } else {
-        $klog_h = $klog_h[0];
     }
-    if ($logs && ($logs=~ /$klogext$/)) {
-        $logn = $logs;
-        $C = "";
-        $logn =~ s/$klogext//g;
-        $logn =~ s/\.//g;
-        $logn =~ s/txt//;
-        $logn =~ s/\///g;
-        $nowlog = "<hr><div class=\"Caption03l\">過去ログ$logn を検索</div>";
-    } elsif ($logs && (($logs eq $log) || ($logs eq 'recent'))) {
-        $nowlog = "<hr><div class=\"Caption03l\">現在のログを検索</div>";
-    } elsif ($logs && ($logs eq "all")) {
-        $nowlog = "<hr><div class=\"Caption03l\">全過去ログを検索</div>";
-    }
-    if ($FORM{"ALL"}) {
-        $nowlog = "<hr><div class=\"Caption03l\">No.$word の関連記事表\示</div>";
-        $KNS = " checked";
-    }
-
-    &hed_("Search:$word");
-    if ($klog_s) {
-        $klog_msg = "(*過去ログは表\示されません)</li>\n<li>過去ログから探す場合は検索範囲から過去ログを選択。";
-    }
-    if ($andor eq "or") {
-        $OC = " selected";
-    } else {
-        $OC="";
-    }
-
-    print <<"_STOP_";
-<h2>ログ内検索</h2>
-<ul>
-<li>キーワードを複数指定する場合は 半角スペース で区切ってください。</li>
-<li>検索条件は、(AND)=[A かつ B] (OR)=[A または B] となっています。</li>
-<li>[返信]をクリックすると返信ページへ移動します。
-$klog_msg</li>
-</ul>
-<hr class="Hidden">
-<form action="$srch" method="$Met"><input type="hidden" name="no" value="0">
-<table class="Submittion"><tr>
-<td class="justify"><strong>キーワード</strong></td><td><input type="text" name="word" size="32" value="$word"></td>
-<td class="justify"><strong>検索条件</strong></td>
-<td><select name="andor"><option value="and">(AND)<option value="or"$OC>(OR)</select></td></tr>
-<tr><td class="justify"><strong>検索範囲</strong></td><td><select name="logs"><option value="$log">(現在のログ)
-_STOP_
-
+    my $logcount = 0;
     if ($klog_s && (-e $SL)) {
-        if ($klog_a) {
-            $C = "";
-            if ($logs eq "all") {
-                $C = " selected";
-            }
-            print "<option value=\"all\"$C>(全過去ログ)";
-        }
-        open(NO,"$klog_c");
-        $n = <NO>;
+        open(NO, $klog_c);
+        $logcount = <NO>;
         close(NO);
-        $br = 0;
-        for ($i = 0; $i < $n; $i++) {
-            $l = $i + 1;
-            $C = "";
-            if ($l == $logn) {
-                $C = " selected";
-            }
-            print "<option value=\"$l\"$C>(過去ログ$l)\n"; 
-            $br++;
-        }
-    }
-    if ($FORM{"KYO"}) {
-        $CB = " checked";
     }
     if ($FORM{"bigmin"}) {
-        $CB2 = " checked";
         $BM = 0;
     } else {
         $BM = 1;
     }
-    print <<"_SS_";
-</select></td>
-<td class="justify"><strong>強調表\示</strong></td><td><input type="checkbox" name="KYO" value="1"$CB>ON
-(自動リンクOFF)</td></tr>
-<tr><td class="justify"><strong>結果表\示件数</strong></td><td><select name="PAGE">
-_SS_
-foreach $KH (@klog_h){$S=""; if($klog_h==$KH){$S=" selected";} print"<option value=$KH$S>$KH件\n";}
-print <<"_SS_";
-</select></td>
-<td class="justify"><strong>記事No検索</strong></td><td><input type="checkbox" name="ALL" value="1"$KNS>ON</td></tr>
-<tr><td colspan="2"><input type="checkbox" name="bigmin" value="1"$CB2>大文字と小文字を区別する</td>
-<td colspan="2" align="right">
-<input type="submit" value=" 検 索 ">
-<input type="reset" value="リセット">
-</td></tr></table></form>$nowlog
-_SS_
+    Forum->template->set_vars('logcount', $logcount);
+    Forum->template->set_vars('andor', $andor);
+    Forum->template->set_vars('srch', $srch);
+    Forum->template->set_vars('word', $word);
+    Forum->template->set_vars('klog_s', $klog_s);
+    Forum->template->set_vars('log', $log);
+    Forum->template->set_vars('logs', $logs);
+    Forum->template->set_vars('FORM-KYO', $FORM{'KYO'});
+    Forum->template->set_vars('klog_h', \@klog_h);
+    Forum->template->set_vars('KH', $KH);
+    Forum->template->set_vars('FORM-ALL', $FORM{'ALL'});
+    Forum->template->set_vars('BM', $BM);
+    Forum->template->process('search_result.tmpl', \%tmplVars);
+
+
 
     if ($word ne "") {
         $word =~ s/　/ /g;

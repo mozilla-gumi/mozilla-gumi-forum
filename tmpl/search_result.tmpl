@@ -1,0 +1,71 @@
+[% PROCESS htmlhead.tpl
+   htmltitle = "$word での検索結果"
+%]
+
+<h2>ログ内検索</h2>
+<ul>
+  <li>キーワードを複数指定する場合は 半角スペース で区切ってください。</li>
+  <li>検索条件は、(AND)=[A かつ B] (OR)=[A または B] となっています。</li>
+  <li>[返信]をクリックすると返信ページへ移動します。
+    [% IF klog_s %]
+      <li>過去ログには返信リンクは表示されません。(返信できません)</li>
+    [% END %]</li>
+  <li>過去ログから探す場合は検索範囲から過去ログを選択してください。</li>
+</ul>
+
+<hr class="Hidden">
+
+<form action="[% srch %]" method="POST">
+  <input type="hidden" name="no" value="0">
+  <table class="Submittion">
+    <tr>
+      <td class="justify"><strong>キーワード</strong></td>
+      <td><input type="text" name="word" size="32" value="[% word %]"></td>
+      <td class="justify"><strong>検索条件</strong></td>
+      <td><select name="andor">
+        <option value="and" [% IF andor == "and" %]selected="selected"[% END %]>(AND)</option>
+        <option value="or" [% IF andor == "or" %]selected="selected"[% END %]>(OR)</option>
+        </select></td>
+    </tr>
+    <tr>
+      <td class="justify"><strong>検索範囲</strong></td>
+      <td><select name="logs">
+        <option value="[% log %]">現在のログ</option>
+        [% IF logcount > 0 %]
+          <option value="all" [% IF logs == "all" %]selected="selected"[% END %]>全過去ログ</option>
+          [% FOREACH i IN [0 .. logcount] %]
+            <option value="[% i %]">過去ログ [% i %]</option>
+          [% END %]
+        [% END %]
+      </select></td>
+      <td class="justify"><strong>強調表示</strong></td>
+      <td><input type="checkbox" name="KYO" value="1" [% IF FORM-KYO %]checked="checked"[% END %]>ON (自動リンクOFF)</td>
+    </tr>
+    <tr>
+      <td class="justify"><strong>結果表示件数</strong></td>
+      <td><select name="PAGE">
+        [% FOREACH i IN klog_h %]
+          <option value="[% i %]" [% IF i == KH %]selected="selected"[% END %]>[% i %]件</option>
+        [% END %]
+      </select></td>
+      <td class="justify"><strong>記事No検索</strong></td>
+      <td><input type="checkbox" name="ALL" value="1" [% IF FORM-ALL %]checked="checked"[% END %]>ON</td>
+    </tr>
+    <tr>
+      <td colspan="2"><input type="checkbox" name="bigmin" value="1" [% IF BM == 0 %]checked="checked"[% END %]>大文字と小文字を区別する</td>
+      <td colspan="2" align="right">
+        <input type="submit" value=" 検 索 ">
+        <input type="reset" value="リセット">
+      </td>
+    </tr>
+  </table>
+</form>
+<hr>
+[% IF (logs == log) || (logs == "recent") %]
+  <div class="Caption03l">現在のログを検索</div>
+[% ELSIF logs == "all" %]
+  <div class="Caption03l">全過去ログを検索</div>
+[% ELSE %]
+  <div class="Caption03l">過去ログ[% logs %]を検索</div>
+[% END %]
+
