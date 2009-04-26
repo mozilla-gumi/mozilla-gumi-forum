@@ -81,8 +81,8 @@ sub d_code_ {
 sub hed_ {
     my ($title) = @_;
     print Forum->cgi->header();
-    Forum->template->process('htmlhead.tpl', \%tmplVars);
     Forum->template->set_vars('htmltitle', $title);
+    Forum->template->process('htmlhead.tpl', \%tmplVars);
     if ($KLOG) {print "<br>(Œ»İ ‰ß‹ƒƒO$KLOG ‚ğ•\\¦’†)"; }
 }
 
