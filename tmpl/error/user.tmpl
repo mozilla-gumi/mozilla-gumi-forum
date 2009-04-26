@@ -57,6 +57,8 @@
 [% ELSIF error == 'namelength' %]
   名前は半角[% NMAX %]字以内でお願いします。
   ブラウザの［戻る］ボタンを使ってもう一度入力してください
+[% ELSIF error == 'no_avail_oldlog' %]
+  表示可能な過去ログがありません。
 [% ELSIF error == 'nocomment' %]
   内容が未入力です。ブラウザの［戻る］ボタンを使ってもう一度入力してください
 [% ELSIF error == 'nodmay' %]

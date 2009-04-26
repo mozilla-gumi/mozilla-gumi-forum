@@ -75,18 +75,6 @@ sub d_code_ {
     undef $neq;
 }
 #--------------------------------------------------------------------------------------------------------------------
-# [ヘッダ表示]
-# -> HTMLヘッダを出力する(hed_)
-#
-sub hed_ {
-    my ($title) = @_;
-    print Forum->cgi->header();
-    Forum->template->set_vars('htmltitle', $title);
-    Forum->template->process('htmlhead.tpl', \%tmplVars);
-    if ($KLOG) {print "<br>(現在 過去ログ$KLOG を表\示中)"; }
-}
-
-#--------------------------------------------------------------------------------------------------------------------
 # [検索機能&表示]
 # -> 検索フォームの表示と、検索結果の表示をおこなう(srch_)
 #
@@ -373,42 +361,6 @@ _KF_
     Forum->template->process('htmlfoot.tpl', \%tmplVars);
 }
 #--------------------------------------------------------------------------------------------------------------------
-# [過去ログリンク表示]
-# -> 過去ログを表示するリンク表示(log_)
-#
-
-sub log_ {
-    Forum->template->set_vars('mode_id', 'oldlog');
-    &hed_("Past Log");
-if($logs){
-    $logn=$logs;
-    $logn=~ s/$klogext//g; $logn=~ s/\.//; $logn=~ s/txt//; $logn=~ s/\///;
-    $nowlog="<h3>過去ログ$logn を表\示</h3>";
-}
-if($FORM{"KLOG_H"}){$klog_h[0]=$FORM{"KLOG_H"};}
-print <<"_LTOP_";
-<h2>過去ログ表\示</h2>
-<ul>
-<li>過去ログの検索は <a href="$srch?$pp">検索</a> より行えます。
-<li>過去ログの表\示はトピック表\示となります。
-</ul>
-<div class="ArtList">
-<div class="Caption01List"><strong>表\示ログ</strong></div>
-_LTOP_
-if(-e $SL){
-    open(NO,"$klog_c");
-    $n = <NO>;
-    close(NO);
-    $br=0;
-    for ($i=1;$i<=$n;$i++) {
-        print"<a href=\"$cgi_f?KLOG=$i&amp;$pp\"$TGT>過去ログ$i</a>\n";
-        $br++; if($br==5){print"<br>";$br=0;}
-    }
-}else{print"現在表\示できる過去ログはありません。\n";}
-print"</div><hr width=\"85\%\">";
-    Forum->template->process('htmlfoot.tpl', \%tmplVars);
-}
-#--------------------------------------------------------------------------------------------------------------------
 # [過去ログ削除]
 # -> 過去ログ内のいらない記事を削除(del_)
 #
@@ -452,4 +404,30 @@ $_[0]=~ s/([^\w^\.^\~^\-^\/^\?^\&^\+^\=^\:^\%^\;^\#^\,^\|]+)(No|NO|no|No.|NO.|no
 }
 
 
-exit;
+##---
+# hed_ - output HTML header (w/ HTTP header)
+sub hed_ {
+    my ($title) = @_;
+    print Forum->cgi->header();
+    Forum->template->set_vars('htmltitle', $title);
+    Forum->template->set_vars('KLOG', $KLOG);
+    Forum->template->process('htmlhead.tpl', \%tmplVars);
+}
+
+##---
+# log_ - output old log list
+sub log_ {
+    Forum->template->set_vars('mode_id', 'oldlog');
+    if (-e $SL) {
+        open(NO, $klog_c);
+        $n = <NO>;
+        close(NO);
+        Forum->template->set_vars('logcount', $n);
+    } else {
+        Forum->error->throw_error_user('no_avail_oldlog');
+    }
+    Forum->template->set_vars('srch', $srch);
+    Forum->template->set_vars('pp', $pp);
+    Forum->template->process('oldlog_list.tpl', \%tmplVars);
+    exit;
+}

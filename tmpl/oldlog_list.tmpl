@@ -1,0 +1,20 @@
+[% PROCESS htmlhead.tpl
+   htmltitle = "過去ログ一覧"
+%]
+
+<h2>過去ログ表示</h2>
+<ul>
+  <li>過去ログの検索は <a href="[% srch %]?[% pp %]">検索</a> より行えます。</li>
+  <li>過去ログの表示はトピック表示となります。</li>
+</ul>
+<div class="ArtList">
+  <div class="Caption01List"><strong>表示ログ</strong></div>
+  [% FOREACH i IN [ 1 .. $logcount ] %]
+    <a href="[% cgi_f %]?KLOG=[% i %]&amp;[% pp %]">過去ログ[% i %]</a>
+    [% IF (i % 5) == 0 %]<br />[% END %]
+  [% END %]
+</div>
+
+<hr width="85%">
+
+[% PROCESS htmlfoot.tpl %]

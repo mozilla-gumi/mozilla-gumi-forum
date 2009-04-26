@@ -54,7 +54,7 @@
 [% IF kiji_exist == 2 %]
   <h2>指定された記事は削除されたか過去ログへ流れたため、<br>現行ログ内には存在しませんでした。</h2>
 [% END %]
-[% IF is_set(KLOG) %]
-  <h2>過去ログ表示</h2><br><div class="Caption03l">過去ログ1 を表示</div>
+[% IF KLOG %]
+  <h2>過去ログ表示</h2><br><div class="Caption03l">過去ログ [% KLOG %] を表示</div>
 [% END %]
 
