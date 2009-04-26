@@ -420,6 +420,7 @@ sub log_ {
         Forum->error->throw_error_user('no_avail_oldlog');
     }
     Forum->template->set_vars('srch', $srch);
+    print Forum->cgi->header();
     Forum->template->process('oldlog_list.tpl', \%tmplVars);
     exit;
 }
