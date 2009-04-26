@@ -34,7 +34,7 @@
         [% IF logcount > 0 %]
           <option value="all" [% IF logs == "all" %]selected="selected"[% END %]>全過去ログ</option>
           [% FOREACH i IN [1 .. logcount] %]
-            <option value="[% i %]">過去ログ [% i %]</option>
+            <option value="[% i %]" [% IF logs == i %]selected="selected"[% END %]>過去ログ [% i %]</option>
           [% END %]
         [% END %]
       </select></td>
@@ -82,7 +82,7 @@
         [% END %]
         のみの検索結果
         [% IF logcount > I %] / <strong>
-          <a href="[% srch %]?mode=srch&amp;logs=[% logs %]&amp;word=[% word %]&amp;andor=[% andor %]&amp;KYO=[% FORM_KYO %]&amp;PAGE=[% klog_h %]&amp;N=[% I %],[% Stert %]">
+          <a href="[% srch %]?mode=srch&amp;logs=[% logs %]&amp;word=[% word %]&amp;andor=[% andor %]&amp;KYO=[% FORM_KYO %]&amp;PAGE=[% KH %]&amp;N=[% I %],[% Stert %]">
           過去ログ[% Next %]からさらに検索</a></strong>
         [% END %]
       </div>
@@ -153,18 +153,18 @@
 
 [% BLOCK page_links %]
   <div class="Caption01c">
-    [% IF (page - klog_h) >= 0 %]
-      [<a href="[% srch %]?mode=srch&amp;logs=[% logs %]&amp;page=[% page - klog_h %]&amp;word=[% word %]&amp;andor=[% andor %]&amp;KYO=[% FORM_KYO %]&amp;PAGE=[% klog_h %][% Neq %]">前の[% klog_h %]件</a>]
+    [% IF (page - KH) >= 0 %]
+      [<a href="[% srch %]?mode=srch&amp;logs=[% logs %]&amp;page=[% page - KH %]&amp;word=[% word %]&amp;andor=[% andor %]&amp;KYO=[% FORM_KYO %]&amp;PAGE=[% KH %][% Neq %]">前の[% KH %]件</a>] /
     [% END %]
     [% FOREACH i IN [0 .. page_count] %]
-      [% IF (i * klog_h) == page %]
+      [% IF (i * KH) == page %]
         [<strong>[% I + 1 %]</strong>]
       [% ELSE %]
-        [<a href="[% srch %]?mode=srch&amp;logs=[% logs %]&amp;page=[% i * klog_h %]&amp;word=[% word %]&amp;andor=[% andor %]&amp;KYO=[% FORM_KYO %]&amp;PAGE=[% klog_h %][% Neq %]">[% i + 1 %]</a>]
+        [<a href="[% srch %]?mode=srch&amp;logs=[% logs %]&amp;page=[% i * KH %]&amp;word=[% word %]&amp;andor=[% andor %]&amp;KYO=[% FORM_KYO %]&amp;PAGE=[% KH %][% Neq %]">[% i + 1 %]</a>]
       [% END %]
     [% END %]
     [% IF page_end != count - 2 %]
-      [<a href="[% srch %]?mode=srch&amp;logs=[% logs %]&amp;page=[% page_end + 1 %]&amp;word=[% word %]&amp;andor=[% andor %]&amp;KYO=[% FORM_KYO %]&amp;PAGE=[% klog_h %][% Neq %]">後の[% klog_h %]件</a>]
+      / [<a href="[% srch %]?mode=srch&amp;logs=[% logs %]&amp;page=[% page_end + 1 %]&amp;word=[% word %]&amp;andor=[% andor %]&amp;KYO=[% FORM_KYO %]&amp;PAGE=[% KH %][% Neq %]">後の[% KH %]件</a>]
     [% END %]
   </div>
 [% END %]
