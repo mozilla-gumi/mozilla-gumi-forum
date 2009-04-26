@@ -21,7 +21,11 @@ require $SetUpFile;
 
 
 $ag=$ENV{'HTTP_USER_AGENT'};
-if($logs){unless(($logs eq "$log" || $logs=~ /^[\d]+$/ || $logs eq "all" || $logs eq "recent")){&er_("そのファイルは閲覧できません!");}}
+if ($logs) {
+    unless (($logs eq "$log" || $logs=~ /^[\d]+$/ || $logs eq "all" || $logs eq "recent")) {
+        Forum->error->throw_error_user('invalidfile');
+    }
+}
 $SL="$klog_d\/1$klogext";
 
 $pf = "";
@@ -75,18 +79,13 @@ sub d_code_ {
 # -> HTMLヘッダを出力する(hed_)
 #
 sub hed_ {
+    my ($title) = @_;
     print Forum->cgi->header();
     Forum->template->process('htmlhead.tpl', \%tmplVars);
+    Forum->template->set_vars('htmltitle', $title);
     if ($KLOG) {print "<br>(現在 過去ログ$KLOG を表\示中)"; }
 }
 
-#--------------------------------------------------------------------------------------------------------------------
-# [フッタ表示]
-# -> HTMLフッタを出力する(foot_)
-#
-sub foot_ {
-    Forum->template->process('htmlfoot.tpl', \%tmplVars);
-}
 #--------------------------------------------------------------------------------------------------------------------
 # [検索機能&表示]
 # -> 検索フォームの表示と、検索結果の表示をおこなう(srch_)
@@ -159,15 +158,21 @@ if($word ne "") {
     @key_ws= split(/ /,$word);
     if($logs eq "all"){
         $Stert=0; if($FORM{'N'}){($N,$S)=split(/\,/,$FORM{'N'}); $Stert=$N;} $End=$n-1;
-        if($klog_a==0){&er_("全過去ログ検索は使用不可");}}
-    else{$Stert=0; $End=0;}
+        if ($klog_a==0) {
+            Forum->error->throw_error_user('not_able_to_search_all');
+        }
+    } else {
+        $Stert = 0;
+        $End = 0;
+    }
     @new=(); $Next=0;
     foreach ($Stert..$End) {
         if($logs eq "all"){$I=$_+1; $IT="$I$klogext"; $Log="$klog_d\/$IT"; $notopened="過去ログ$I";}
         elsif($logs eq 'recent'){$Log=$log; $notopened="現行ログ";}
         elsif($logs eq $log){$Log=$log; $notopened="現行ログ";}
         else{$Log="$klog_d\/$logs$klogext"; $notopened="ログ$logs";}
-        open(DB,$Log) || &er_("Can't open $Log");
+        Forum->template->set_vars('file', $Log);
+        open(DB,$Log) || Forum->error->throw_error_user('cannot_open_logfile');
         while ($Line=<DB>) {
             $hit = 0;
             if($FORM{"ALL"}){
@@ -365,7 +370,7 @@ print "</div><hr>$Plink\n$NLog";
 _KF_
     }
 }elsif($count == 0 && $word){print qq!<div class="Caption03l">該当する記事はありませんでした。</div>!;}
-&foot_;
+    Forum->template->process('htmlfoot.tpl', \%tmplVars);
 }
 #--------------------------------------------------------------------------------------------------------------------
 # [過去ログリンク表示]
@@ -401,18 +406,22 @@ if(-e $SL){
     }
 }else{print"現在表\示できる過去ログはありません。\n";}
 print"</div><hr width=\"85\%\">";
-&foot_;
+    Forum->template->process('htmlfoot.tpl', \%tmplVars);
 }
 #--------------------------------------------------------------------------------------------------------------------
 # [過去ログ削除]
 # -> 過去ログ内のいらない記事を削除(del_)
 #
 sub del_ {
-if(Forum->user->validate_password_admin($FORM{'pas'}) != 1){ &er_("パスワードが違います!"); }
-#if($FORM{'pas'} ne "$pass"){ &er_("パスワードが違います!"); }
-if($logs eq $log){&er_("現在ログは<a href='$cgi_f?$pp'>$cgi_f</a>管理モードより削除下さい。");}
-$logs="$klog_d/$logs";
-open(DB,"$logs") || &er_("Can't open $logs");
+    if (Forum->user->validate_password_admin($FORM{'pas'}) != 1) {
+        Forum->error->throw_error_user('invalidpass');
+    }
+    if ($logs eq $log) {
+        Forum->error->throw_error_user('cannot_open_curfile');
+    }
+    $logs = "$klog_d/$logs";
+    Forum->template->set_vars('file', $logs);
+    open(DB,$logs) || Forum->error->throw_error_user('cannot_open_logfile');
 @mens = <DB>;
 close(DB);
 @CAS = ();
@@ -441,12 +450,6 @@ $_[0]=~ s/([^=^\"]|^)((http|ftp|https)\:[\w\.\~\-\/\?\&\+\=\:\@\%\;\#\,\|]+)/$1<
 $_[0]=~ s/([^\w^\.^\~^\-^\/^\?^\&^\+^\=^\:^\%^\;^\#^\,^\|]+)(No|NO|no|No.|NO.|no.|&gt;&gt;|＞＞|>>)([0-9\,\-]+)/$1<a href=\"$cgi_f?mode=red&amp;namber=$3&amp;$pp\"$TGT>$2$3<\/a>/g;
 {$_[0]=~ s/&gt;([^<]*)/<span class="Quoted">&gt;$1<\/span>/g;}
 }
-#--------------------------------------------------------------------------------------------------------------------
-# [エラー表示]
-# -> エラーの内容を表示する(er_)
-#
-sub er_ {
-&hed_("Error");
-print"<div class=\"ErrMsg\">ERROR-$_[0]</div>\n";
-&foot_;
-}
+
+
+exit;
