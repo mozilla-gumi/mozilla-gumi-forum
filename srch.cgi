@@ -421,6 +421,6 @@ sub log_ {
     }
     Forum->template->set_vars('srch', $srch);
     print Forum->cgi->header();
-    Forum->template->process('oldlog_list.tpl', \%tmplVars);
+    Forum->template->process('oldlog_list.tmpl', \%tmplVars);
     exit;
 }
