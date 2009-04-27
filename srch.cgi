@@ -240,6 +240,7 @@ sub srch_ {
     Forum->template->set_vars('TXT_T', $TXT_T);
     Forum->template->set_vars('SEL_T', $SEL_T);
 
+    Forum->template->set_vars('BM', $BM);
     Forum->template->set_vars('logcount', $logcount);
     Forum->template->set_vars('count', $count);
     Forum->template->set_vars('page_count', $page_);

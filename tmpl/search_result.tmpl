@@ -117,7 +117,7 @@
             [% IF article.sel %][% SEL_T %]:[[% article.sel %]]<br />[% END %]
           [% END %]
           [% IF FORM_KYO %]
-            [% article.comment FILTER auto FILTER color_text($wordlist) %]
+            [% article.comment FILTER auto FILTER color_text($wordlist, $BM) %]
           [% ELSE %]
             [% article.comment FILTER auto %]
           [% END %]

@@ -11,6 +11,7 @@ package Forum::Util;
 use strict;
 
 use Template;
+use Encode;
 
 @Forum::Util::EXPORT = qw(
     filter_none
@@ -116,19 +117,20 @@ sub filter_orig_auto {
 
 # XXX - must be fixed when changed to UTF-8
 sub filter_color_text {
-    my ($var, $text) = @_;
+    my ($var, $text, $mode) = @_;
     my @words = split(/ /, $text);
-    Encode::from_to($comment, 'sjis', 'euc-jp');
+    my $KEY;
+    Encode::from_to($var, 'sjis', 'euc-jp');
     foreach $KEY (@words) {
         Encode::from_to($KEY, 'sjis', 'euc-jp');
-        $comment =~ s/$KEY/<b class="search-word">$KEY<\/b>/g;
-        if ($BM) {
-            $comment =~ s/($KEY)/<b class="search-word">$1<\/b>/ig;
+        $var =~ s/$KEY/<b class="search-word">$KEY<\/b>/g;
+        if ($mode) {
+            $var =~ s/($KEY)/<b class="search-word">$1<\/b>/ig;
         } else {
-            $comment =~ s/$KEY/<b class="search-word">$KEY<\/b>/g;
+            $var =~ s/$KEY/<b class="search-word">$KEY<\/b>/g;
         }
     }
-    Encode::from_to($comment, 'euc-jp', 'sjis');
+    Encode::from_to($var, 'euc-jp', 'sjis');
     return $var;
 }
 
