@@ -116,7 +116,7 @@ sub srch_ {
             while ($Line = <DB>) {
                 my $whole_hit = 0;
                 my @lcnt = split(/<>/, $Line);
-                my ($com, $env) = split(/\t/, $lcnt[6]);
+                my ($com, $env) = split(/\t/, $lcnt[5]);
                 if ($andor eq 'and') {$whole_hit = 1; }
                 foreach $key_w (@key_ws) {
                     $key_w =~ s/^&$/&amp\;/g;
