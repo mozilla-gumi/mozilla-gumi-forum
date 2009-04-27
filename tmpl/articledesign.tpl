@@ -9,7 +9,7 @@
 
 [% email.replace('@', atchange) %]
 [% IF (name == ' ') || (name == 'Å@') %][% name = '' %][% END %]
-[% comment_arr = comment_.split("\t") %]
+[% comment_arr = comment_.split("\t").hash(1) %]
 [% comment = comment_arr.1 %]
 [% userenv = comment_arr.2 %]
 

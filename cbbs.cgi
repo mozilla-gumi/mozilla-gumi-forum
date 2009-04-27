@@ -144,8 +144,6 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
         $icon, $font, $hr, $txt, $sel, $yobi, $Se, $ResNo, $htype, 
         $hanyo) = @_;
 
-    my ($comment, $userenv) = split('\t', $comment_);
-
     $Pr = "";
 
     Forum->template->set_vars('namber', $namber);
@@ -153,7 +151,7 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
     Forum->template->set_vars('name', $name);
     Forum->template->set_vars('email', $email);
     Forum->template->set_vars('d_may', $d_may);
-    # comment_
+    Forum->template->set_vars('comment_', $comment_);
     Forum->template->set_vars('url', $url);
     Forum->template->set_vars('space', $space);
     Forum->template->set_vars('end', $end);
@@ -175,9 +173,6 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
     Forum->template->set_vars('resno', $ResNo);
     Forum->template->set_vars('htype', $htype);
     # hanyo
-
-    Forum->template->set_vars('comment', $comment);
-    Forum->template->set_vars('userenv', $userenv);
 
     Forum->template->set_vars('atchange', $atchange);
     Forum->template->set_vars('r', $R);

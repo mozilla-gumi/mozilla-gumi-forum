@@ -128,7 +128,7 @@
         </div>
         <div class="Caption01r">[% article.end %]<br>
           [% article.Pr %]
-          [% IF o_mail != 0 %][メール転送/[% IF Se > 0 %]On[% ELSE %]OFF[% END %]][% END %]
+          [% IF o_mail != 0 %][メール転送/[% IF article.Se > 0 %]On[% ELSE %]OFF[% END %]][% END %]
           [% IF article.type > 0 %]記事No.[% article.type %]への返信[% ELSE %]親記事[% END %] /
           [% IF article.e %] END /[% END %]
           [% IF logs == log %]
