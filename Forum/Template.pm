@@ -53,6 +53,14 @@ sub new {
             url_quote  => \&Forum::Util::filter_url_quote,
             auto       => \&Forum::Util::filter_orig_auto,
             color_text => \&Forum::Util::filter_color_text,
+            color_text => [
+                sub {
+                    my ($text, $words, $mode) = @_;
+                    return sub {
+                        my ($vars) = shift;
+                        Forum::Util::filter_color_text($vars, $words, $mode);
+                    };
+                }, 1 ],
         },
         CONSTANTS => _load_constants(),
         VARIABLES => {
