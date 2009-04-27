@@ -14,9 +14,9 @@
 <br />
 [ 
 [% IF new_su == 0 %]
-    <a href="[% cgi_f %]?mode=n_w&amp;s=1&amp;page=[% Pg %]&amp;[% pp %]">新着順</a> / 古い順
+    <a href="[% cgi_f %]?mode=n_w&amp;s=1&amp;page=[% Pg - 1 %]&amp;[% pp %]">新着順</a> / 古い順
 [% ELSE %]
-    新着順 / <a href="[% cgi_f %]?mode=n_w&amp;s=0&amp;page=[% Pg %]&amp;[% pp %]">古い順</a>
+    新着順 / <a href="[% cgi_f %]?mode=n_w&amp;s=0&amp;page=[% Pg - 1 %]&amp;[% pp %]">古い順</a>
 [% END %]
  ]
 <br>

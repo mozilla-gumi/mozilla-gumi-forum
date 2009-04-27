@@ -20,7 +20,7 @@
   <table class="Submittion">
     <tr>
       <td class="justify"><strong>キーワード</strong></td>
-      <td><input type="text" name="word" size="32" value="[% word %]"></td>
+      <td><input type="text" name="word" size="32" value="[% wordlist %]"></td>
       <td class="justify"><strong>検索条件</strong></td>
       <td><select name="andor">
         <option value="and" [% IF andor == "and" %]selected="selected"[% END %]>(AND)</option>
@@ -76,13 +76,13 @@
     [% IF Next || N %]
       <div class="Caption01c">ヒット件数が多いので
         [% IF N %]
-          過去ログ[% N + 1 %] [% IF I > N + 1 %]～[% I %][% END %]
+          過去ログ[% N + 1 %] [% IF Next > N + 1 %]～[% Next %][% END %]
         [% ELSE %]
-          過去ログ1 [% IF I > 1 %]～[% I %][% END %]
+          過去ログ1 [% IF Next > 1 %]～[% Next %][% END %]
         [% END %]
         のみの検索結果
-        [% IF logcount > I %] / <strong>
-          <a href="[% srch %]?mode=srch&amp;logs=[% logs %]&amp;word=[% word %]&amp;andor=[% andor %]&amp;KYO=[% FORM_KYO %]&amp;PAGE=[% KH %]&amp;N=[% I %],[% Stert %]">
+        [% IF logcount > Next %] / <strong>
+          <a href="[% srch %]?mode=srch&amp;logs=[% logs %]&amp;word=[% word %]&amp;andor=[% andor %]&amp;KYO=[% FORM_KYO %]&amp;PAGE=[% KH %]&amp;N=[% Next %],[% Stert %]">
           過去ログ[% Next %]からさらに検索</a></strong>
         [% END %]
       </div>
@@ -163,7 +163,7 @@
     [% END %]
     [% FOREACH i IN [0 .. page_count] %]
       [% IF (i * KH) == page %]
-        [<strong>[% I + 1 %]</strong>]
+        [<strong>[% i + 1 %]</strong>]
       [% ELSE %]
         [<a href="[% srch %]?mode=srch&amp;logs=[% logs %]&amp;page=[% i * KH %]&amp;word=[% word %]&amp;andor=[% andor %]&amp;KYO=[% FORM_KYO %]&amp;PAGE=[% KH %][% Neq %]">[% i + 1 %]</a>]
       [% END %]
