@@ -52,6 +52,7 @@ sub new {
             text       => \&Forum::Util::filter_text,
             url_quote  => \&Forum::Util::filter_url_quote,
             auto       => \&Forum::Util::filter_orig_auto,
+            color_text => \&Forum::Util::filter_color_text,
         },
         CONSTANTS => _load_constants(),
         VARIABLES => {

@@ -91,11 +91,12 @@
     [% FOREACH article IN articles %]
       <div class="ArtMain">
         <div class="ArtHead">
-          <a name="[% article.namber %]">
+          <a name="[% article.nam %]">
             <strong>
               [% IF TS_Pr == 0 %]
                 [% IF article.txt %][% TXT_T %]:[[% article.txt %]]　[% END %]
-                [% IF article.sel %][% SEL_T %]:[[% article.sel %]]　/[% END %]
+                [% IF article.sel %][% SEL_T %]:[[% article.sel %]]　[% END %]
+                /
               [% END %]
               [% IF article.d_may %][% article.d_may %][% ELSE %][% notitle %][% END %]
             </strong>
@@ -107,14 +108,19 @@
           <span class="name">[% article.name %] [% article.R %]</span>
           の投稿 :[% article.date %]
           <br>
-          [% article.url %]
+          [% IF article.url %]<a href="http://[% article.url %]" target="_blank">http://[% article.url %]</a>[% END %]
         </div>
         <div class="ArtComment">
+          [% IF article.userenv %](環境: [% article.userenv %])<br>[% END %]
           [% IF TS_Pr == 1 %]
             [% IF article.txt %][% TXT_T %]:[[% article.txt %]]<br />[% END %]
             [% IF article.sel %][% SEL_T %]:[[% article.sel %]]<br />[% END %]
           [% END %]
-          [% article.comment %]
+          [% IF FORM_KYO %]
+            [% article.comment FILTER auto FILTER color_text($wordlist) %]
+          [% ELSE %]
+            [% article.comment FILTER auto %]
+          [% END %]
           [% IF TS_Pr == 2 %]
             [% IF article.txt %]<br />[% TXT_T %]:[[% article.txt %]][% END %]
             [% IF article.sel %]<br />[% SEL_T %]:[[% article.sel %]][% END %]
@@ -136,7 +142,6 @@
               [%- END -%]">トピック表示と返信</a> /
           [% END %]
           [% IF logs == "all" %]過去ログ[% article.IT %]より /[% END %]
-          [% article.PLL %]
           <a href="[% cgi_f %]?mode=al2&amp;namber=[% IF article.type > 0 %][% article.type %][% ELSE %][% article.nam %][% END %]&amp;KLOG=[% article.IT %]">関連記事表示</a>
         </div>
       </div>

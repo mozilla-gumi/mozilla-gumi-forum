@@ -143,63 +143,53 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
         $end, $type, $delkey, $ip, $tim, $ico, $Ent, $fimg, $mini, 
         $icon, $font, $hr, $txt, $sel, $yobi, $Se, $ResNo, $htype, 
         $hanyo) = @_;
-    my ($comment, $userenv) = split('\t', $comment_);
-    my $email =~ s/@/$atchange/;
 
-    if ((! $name) || ($name eq ' ') || ($name eq '　')) {$name = $noname; }
-    if ($txt) {$Txt = "$TXT_T:[$txt]　"; }
-    else {$Txt = ""; }
-    if ($sel) {$Sel = "$SEL_T:[$sel]　"; }
-    else {$Sel = ""; }
-    if ($yobi) {$yobi = "[ID:$yobi]"; }
-    if ($end) {$end = "$end_ok"; }
-    if ($email && ($Se < 2)) {
-        $email = "<a href=\"mailto:$SPAM$email\">$AMark</a>";
-    } else {
-        $email = "";
-    }
-    if ($url) {
-        if ($URLIM) {
-            if ($UI_Wi) {$UIWH = " width=\"$UI_Wi\" height=\"$UI_He\""; }
-            $i_or_t = "<img src=\"$URLIM\" border=\"0\"$UIWH>";
-        } else {
-            $i_or_t = "http://$url";
-        }
-        $url="<br><a href=\"http://$url\"$TGT>$i_or_t</a>";
-    }
-    if ($Txt || $Sel || ($Txt && $Sel)) {
-        if ($TS_Pr == 0) {$d_may = "$Txt$Sel/" . "$d_may"; }
-        elsif ($TS_Pr == 1) {$comment = "$Txt<br>$Sel<br>" . "$comment"; }
-        elsif ($TS_Pr == 2) {$comment .= "<br>$Txt<br>$Sel"; }
-    }
-    if (Forum->user->group_check('admin') != 0) {
-        $Ent = 1;
-        $url = "";
-    }
-    if (($mas_c == 2) && ($Ent == 0)) {
-        $comment = "コメント表\示:未許可";
-    }
+    my ($comment, $userenv) = split('\t', $comment_);
+
+    # check code for user-inputs
+    $email =~ s/@/$atchange/;
+    if (($name eq ' ') || ($name eq '　')) {$name = ''; }
+
     $Pr = "";
 
     Forum->template->set_vars('namber', $namber);
-    Forum->template->set_vars('d_may', $d_may);
-    Forum->template->set_vars('resno', $ResNo);
-    Forum->template->set_vars('name', $name);
-    Forum->template->set_vars('r', $R);
     Forum->template->set_vars('date', $date);
+    Forum->template->set_vars('name', $name);
+    # email
+    Forum->template->set_vars('d_may', $d_may);
+    # comment_
     Forum->template->set_vars('url', $url);
-    Forum->template->set_vars('comment', $comment);
+    Forum->template->set_vars('space', $space);
     Forum->template->set_vars('end', $end);
+    Forum->template->set_vars('type', $type);
+    # delkey
+    # ip
+    # tim
+    # ico
+    Forum->template->set_vars('Ent', $Ent);
+    # fimg
+    # mini
+    # icon
+    # hr
+    Forum->template->set_vars('font', $font);
+    Forum->template->set_vars('txt', $txt);
+    Forum->template->set_vars('sel', $sel);
+    # yobi
+    Forum->template->set_vars('Se', $Se);
+    Forum->template->set_vars('resno', $ResNo);
+    Forum->template->set_vars('htype', $htype);
+    # hanyo
+
+    Forum->template->set_vars('comment', $comment);
+    Forum->template->set_vars('userenv', $userenv);
+
+    Forum->template->set_vars('r', $R);
+    Forum->template->set_vars('end_ok', $end_ok);
     Forum->template->set_vars('mode', $mode);
     Forum->template->set_vars('in', $IN);
     Forum->template->set_vars('nam', $nam);
-    Forum->template->set_vars('font', $font);
-    Forum->template->set_vars('userenv', $userenv);
-    Forum->template->set_vars('htype', $htype);
     Forum->template->set_vars('Res_i', $Res_i);
     Forum->template->set_vars('cgi_f', $cgi_f);
-    Forum->template->set_vars('type', $type);
-    Forum->template->set_vars('space', $space);
     Forum->template->set_vars('pp', $pp);
     Forum->template->set_vars('ty', $ty);
     Forum->template->set_vars('sp', $sp);
@@ -207,10 +197,12 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
     Forum->template->set_vars('fp', $fp);
     Forum->template->set_vars('PNO', $PNO);
     Forum->template->set_vars('o_mail', $o_mail);
-    Forum->template->set_vars('Se', $Se);
     Forum->template->set_vars('notitle', $notitle);
-#    Forum->template->set_vars('', $);
-#    Forum->template->set_vars('', $);
+    Forum->template->set_vars('mas_c', $mas_c);
+    Forum->template->set_vars('TXT_T', $TXT_T);
+    Forum->template->set_vars('SEL_T', $SEL_T);
+    Forum->template->set_vars('TS_Pr', $TS_Pr);
+    Forum->template->set_vars('noname', $noname);
     if ($KLOG) {$tmplVars{'klog_def'} = 1; } else {$tmplVars{'klog_def'} = 0; }
     if ($type) {$tmplVars{'type_def'} = 1; } else {$tmplVars{'type_def'} = 0; }
     $HTML = '';

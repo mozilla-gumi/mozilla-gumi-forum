@@ -17,7 +17,14 @@
 [% END %]
 <div class="ArtHead">
   <a name="[% namber %]">
-    <strong>[% IF d_may == "" %][% notitle %][% ELSE %][% d_may %][% END %]</strong>
+    <strong>
+      [% IF TS_Pr == 0 %]
+        [% IF txt %][% TXT_T %]:[[% txt %]]　[% END -%]
+        [% IF sel %][% SEL_T %]:[[% sel %]]　[% END -%]
+        /
+      [% END %]
+      [% IF d_may == "" %][% notitle %][% ELSE %][% d_may %][% END %]
+    </strong>
   </a>
   <br>
   <span class="ArtId">(#[% namber %]) 
@@ -28,12 +35,27 @@
   </span>
 </div>
 <div class="postinfo">
-<span class="name">[% name %] [% r %]</span>の投稿 :[% date %] [% url %]</div>
+  <span class="name">[% IF name %][% name %][% ELSE %][% noname %][% END %] [% r %]</span>の投稿 :
+  [% date %]
+  [% IF url %]<br><a href="http://[% url %]" target="_blank">http://[% url %]</a>[% END %]
+</div>
 <div class="ArtComment">
 [% IF userenv %](環境: [% userenv %])<br>[% END %]
-[% comment FILTER auto %]
+[% IF (mas_c == 2) && (in_group('admin') == 0) && (Ent == 0) %]
+  コメント表示:未許可
+[% ELSE %]
+  [% IF TS_Pr == 0 %]
+    [% IF txt %][% TXT_T %]:[[% txt %]]<br />[% END %]
+    [% IF sel %][% SEL_T %]:[[% sel %]]<br />[% END %]
+  [% END %]
+  [% comment FILTER auto %]
+  [% IF TS_Pr == 0 %]
+    [% IF txt %]<br />[% TXT_T %]:[[% txt %]][% END %]
+    [% IF sel %]<br />[% SEL_T %]:[[% sel %]][% END %]
+  [% END %]
+[% END %]
 </div>
-<div class="Caption01r">[% end %]<br>
+<div class="Caption01r">[% IF end %][% end_ok %][% END %]<br>
 [% IF klog_def == 0 %]
   [% IF o_mail %][メール転送/[% IF ((Se == 2) || (Se == 1)) %]ON[% ELSE %]OFF[% END %]][% END %]
   / [% INCLUDE reply_block %]

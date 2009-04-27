@@ -441,4 +441,8 @@ div.menu a:hover:active
   border-style: inset;
 }
 
+b.search-word
+{
+  background-color: #F9FF06;
+}
 

@@ -63,10 +63,9 @@ sub d_code_ {
     Forum->template->set_vars('Neq', $Neq);
     undef $neq;
 }
-#--------------------------------------------------------------------------------------------------------------------
-# [検索機能&表示]
-# -> 検索フォームの表示と、検索結果の表示をおこなう(srch_)
-#
+
+##---
+# srch_ - output search results
 sub srch_ {
     print Forum->cgi->header();
 
@@ -169,7 +168,7 @@ sub srch_ {
 
         foreach ($page .. $page_end) {
             my %article;
-            ($IT, $nam, $date, $name, $email, $d_may, $comment, $url,
+            ($IT, $nam, $date, $name, $email, $d_may, $comment_, $url,
                 $sp, $e, $type, $del, $ip, $tim, $Se) = split(/<>/, $new[$_]);
             ($Ip, $ico, $Ent, $fimg, $TXT, $SEL, $R) = split(/:/, $ip);
             ($ICON, $ICO, $font, $hr) = split(/\|/, $TXT);
@@ -210,50 +209,17 @@ sub srch_ {
                     $Pr .= "<br>$AEND $KB\KB\n";
                 }
             }
-            if ($hr eq "") {$hr = $ttb; }
-            if ($email && ($Se < 2)) {
-                $name = "$name <a href=\"mailto:$email\">$AMark</a>";
-            }
-            if ($url) {
-                if ($URLIM) {
-                    if ($UI_Wi) {
-                        $UIWH = " width=\"$UI_Wi\" height=\"$UI_He\">";
-                    }
-                    $i_or_t = "<img src=\"$URLIM\"$UIWH>";
-                } else {
-                    $i_or_t = "http://$url";
-                }
-                $url = "<a href=\"http://$url\"$TGT>$i_or_t</a>";
-            }
-            if ($Icon && ($comment =~ /<br>\(携帯\)$/)) {$ICO = "$Ico_k"; }
-            if ($ICO ne "") {
-                if ($IconHei) {
-                    $WH = " height=\"$IconHei\" width=\"$IconWid\"";
-                }
-                $ICO = "<img src=\"$IconDir\/$ICO\"$WH>";
-            }
-            if ($comment =~ /^<pre>/) {$comment =~ s/<br>/\n/g; }
-            if ($FORM{"KYO"}) {
-                if ($comment =~ /<\/pre>/) {
-                    $comment =~ s/(>|\n)((&gt;|＞|>)[^\n]*)/$1<font color=$res_f>$2<\/font>/g;
-                } else {
-                    $comment =~ s/>((&gt;|＞|>)[^<]*)/><font color=$res_f>$1<\/font>/g;
-                }
-                Encode::from_to($comment, 'sjis', 'euc-jp');
-                foreach $KEY (@key_ws) {
-                    Encode::from_to($KEY, 'sjis', 'euc-jp');
-                    $comment =~ s/$KEY/<b STYLE="background-color:$Kyo_f\;">$KEY<\/b>/g;
-                    if ($BM) {
-                        $comment =~ s/($KEY)/<b STYLE="background-color:$Kyo_f\;">$1<\/b>/ig;
-                    } else {
-                        $comment =~ s/$KEY/<b STYLE="background-color:$Kyo_f\;">$KEY<\/b>/g;
-                    }
-                }
-                Encode::from_to($comment, 'euc-jp', 'sjis');
-            } else {
-                &auto_($comment);
-            }
+            my ($comment, $userenv) = split(/\t/, $comment_);
 
+            $article{'userenv'} = $userenv;
+            $article{'ResNo'} = $ResNo;
+            $article{'date'} = $date;
+            $article{'end'} = $end;
+            $article{'Pr'} = $Pr;
+            $article{'d_may'} = $d_may;
+            $article{'R'} = $R;
+            $article{'name'} = $name;
+            $article{'url'} = $url;
             $article{'comment'} = $comment;
             $article{'txt'} = $txt;
             $article{'sel'} = $sel;
@@ -282,6 +248,7 @@ sub srch_ {
     Forum->template->set_vars('andor', $andor);
     Forum->template->set_vars('srch', $srch);
     Forum->template->set_vars('word', $word);
+    Forum->template->set_vars('wordlist', join(' ', @key_ws));
     Forum->template->set_vars('klog_s', $klog_s);
     Forum->template->set_vars('log', $log);
     Forum->template->set_vars('logs', $logs);
@@ -292,17 +259,6 @@ sub srch_ {
     Forum->template->set_vars('Next', $Next);
     Forum->template->set_vars('articles', \@articles);
     Forum->template->process('search_result.tmpl', \%tmplVars);
-}
-#--------------------------------------------------------------------------------------------------------------------
-# [URLをリンク等]
-# -> コメント内、リンク・文字色など処理(auto_)
-#
-sub auto_ {
-if($_[0]=~/<\/pre>/){$_[0]=~ s/(>|\n)((&gt;|＞|>)[^\n]*)/$1$2/g;}
-else{$_[0]=~ s/>((&gt;|＞|>)[^<]*)/><span class="Quoted">$1<\/span>/g;}
-$_[0]=~ s/([^=^\"]|^)((http|ftp|https)\:[\w\.\~\-\/\?\&\+\=\:\@\%\;\#\,\|]+)/$1<a href="$2"$TGT>$2<\/a>/g;
-$_[0]=~ s/([^\w^\.^\~^\-^\/^\?^\&^\+^\=^\:^\%^\;^\#^\,^\|]+)(No|NO|no|No.|NO.|no.|&gt;&gt;|＞＞|>>)([0-9\,\-]+)/$1<a href=\"$cgi_f?mode=red&amp;namber=$3\"$TGT>$2$3<\/a>/g;
-{$_[0]=~ s/&gt;([^<]*)/<span class="Quoted">&gt;$1<\/span>/g;}
 }
 
 
