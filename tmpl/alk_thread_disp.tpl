@@ -1,5 +1,5 @@
 [% PROCESS htmlhead.tpl
-   htmltitle = "スレッド表示 / $PAGE ページ"
+   htmltitle = "スレッド表\示 / $PAGE ページ"
 %]
 
 [% IF Top_t %]

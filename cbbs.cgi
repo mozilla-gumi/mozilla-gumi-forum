@@ -2079,7 +2079,6 @@ sub man_ {
 sub new_ {
     if (($topok == 0) &&
         (Forum->user->group_check('admin') == 0)) {
-#        (Forum->user->validate_password_admin($FORM{'pass'}) == 0)) {
         &er_('newpasserr');
     }
     &get_uid();
@@ -2622,7 +2621,6 @@ sub res_ {
 ##------------------------------------------------------------------------------
 # rep_title - modify title on reply
 sub rep_title {
-    $re = $sp / 15 + 1;
     if ($d_may eq "") {
         $d_may = $notitle;
     } elsif ($d_may =~ /^Re\[\d+\]: ?(.*)$/i) {
@@ -2630,7 +2628,7 @@ sub rep_title {
     } elsif ($d_may =~ /^Re: ?(.*)$/i) {
         $d_may = $1;
     }
-    $ti = "Re[$re]: $d_may";
+    $ti = "Re: $d_may";
     $space = $sp;
 }
 
