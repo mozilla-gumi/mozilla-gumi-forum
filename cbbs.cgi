@@ -146,16 +146,12 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
 
     my ($comment, $userenv) = split('\t', $comment_);
 
-    # check code for user-inputs
-    $email =~ s/@/$atchange/;
-    if (($name eq ' ') || ($name eq '@')) {$name = ''; }
-
     $Pr = "";
 
     Forum->template->set_vars('namber', $namber);
     Forum->template->set_vars('date', $date);
     Forum->template->set_vars('name', $name);
-    # email
+    Forum->template->set_vars('email', $email);
     Forum->template->set_vars('d_may', $d_may);
     # comment_
     Forum->template->set_vars('url', $url);
@@ -183,6 +179,7 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
     Forum->template->set_vars('comment', $comment);
     Forum->template->set_vars('userenv', $userenv);
 
+    Forum->template->set_vars('atchange', $atchange);
     Forum->template->set_vars('r', $R);
     Forum->template->set_vars('end_ok', $end_ok);
     Forum->template->set_vars('mode', $mode);

@@ -7,6 +7,12 @@
   mode=al2&amp;namber=[% IF type %][% type %][% ELSE %][% namber %][% END %]&amp;space=[% space %]
 [%- END %][%- END %][% END %]
 
+[% email.replace('@', atchange) %]
+[% IF (name == ' ') || (name == 'Å@') %][% name = '' %][% END %]
+[% comment_arr = comment_.split("\t") %]
+[% comment = comment_arr.1 %]
+[% userenv = comment_arr.2 %]
+
 [% IF htype == "T2" %]<br>[% END %]
 [% IF (mode == "alk") && (type) %]
   <div class="ArtChild">
