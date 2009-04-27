@@ -115,6 +115,8 @@ sub srch_ {
             open(DB, $Log) || Forum->error->throw_error_user('cannot_open_logfile');
             while ($Line = <DB>) {
                 my $whole_hit = 0;
+                my @lcnt = split(/<>/, $Line);
+                my ($com, $env) = split(/\t/, $lcnt[6]);
                 if ($andor eq 'and') {$whole_hit = 1; }
                 foreach $key_w (@key_ws) {
                     $key_w =~ s/^&$/&amp\;/g;
@@ -123,12 +125,12 @@ sub srch_ {
                     $key_w =~ s/^\"$/\&quot\;/g;
                     my $c_hit = 0;
                     if ($key_w =~ /[\x80-\xff]/) {      # not us-ascii
-                        if (index($Line, $key_w) >= 0) {$c_hit = 1; }
+                        if (index($com, $key_w) >= 0) {$c_hit = 1; }
                     } else {
                         if ($BM) {
-                            if ($Line =~ /$key_w/i) {$c_hit = 1; }
+                            if ($com =~ /$key_w/i) {$c_hit = 1; }
                         } else {
-                            if ($Line =~ /$key_w/) {$c_hit = 1; }
+                            if ($com =~ /$key_w/) {$c_hit = 1; }
                         }
                     }
                     if ($c_hit) {
@@ -173,6 +175,7 @@ sub srch_ {
             ($Ip, $ico, $Ent, $fimg, $TXT, $SEL, $R) = split(/:/, $ip);
             ($ICON, $ICO, $font, $hr) = split(/\|/, $TXT);
             ($txt, $sel, $yobi) = split(/\|\|/, $SEL);
+            my ($comment, $userenv) = split(/\t/, $comment_);
             if ($date eq "") {next; }
             if ($ico) {
                 if (($Ent == 0) && $fimg) {
@@ -209,7 +212,6 @@ sub srch_ {
                     $Pr .= "<br>$AEND $KB\KB\n";
                 }
             }
-            my ($comment, $userenv) = split(/\t/, $comment_);
 
             $article{'userenv'} = $userenv;
             $article{'ResNo'} = $ResNo;
