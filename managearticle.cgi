@@ -19,8 +19,6 @@ my ($Bl, $Ble, $Nl, $Nle);
 
 &d_code_;
 
-my $ag=$ENV{'HTTP_USER_AGENT'};
-
 $pf="";
 $pp="";
 

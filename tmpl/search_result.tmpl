@@ -20,7 +20,7 @@
   <table class="Submittion">
     <tr>
       <td class="justify"><strong>キーワード</strong></td>
-      <td><input type="text" name="word" size="32" value="[% wordlist %]"></td>
+      <td><input type="text" name="word" size="32" value="[% wordlist FILTER text %]"></td>
       <td class="justify"><strong>検索条件</strong></td>
       <td><select name="andor">
         <option value="and" [% IF andor == "and" %]selected="selected"[% END %]>(AND)</option>
@@ -82,7 +82,7 @@
         [% END %]
         のみの検索結果
         [% IF logcount > Next %] / <strong>
-          <a href="[% srch %]?mode=srch&amp;logs=[% logs %]&amp;word=[% word %]&amp;andor=[% andor %]&amp;KYO=[% FORM_KYO %]&amp;PAGE=[% KH %]&amp;N=[% Next %],[% Stert %]">
+          <a href="[% srch %]?mode=srch&amp;logs=[% logs %]&amp;word=[% word FILTER html %]&amp;andor=[% andor %]&amp;KYO=[% FORM_KYO %]&amp;PAGE=[% KH %]&amp;N=[% Next %],[% Stert %]">
           過去ログ[% Next + 1 %]からさらに検索</a></strong>
         [% END %]
       </div>

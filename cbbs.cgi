@@ -4,6 +4,7 @@ require './common.pl';
 
 use Forum::Captcha;
 use Forum::CGI;
+use Forum::MigUtils;
 
 my @set;
 $set[0]="./set.cgi";
@@ -45,8 +46,6 @@ $SetUpFile = $set[0];
 require $SetUpFile;
 
 # ---[フォームスタイルシート設定]------------------------------------------------------------------------------------
-$ag=$ENV{'HTTP_USER_AGENT'};
-
 $pf="";
 $pp="";
 
@@ -64,7 +63,16 @@ if ($FORM{'KLOG'}) {
     $pf = "<input type=\"hidden\" name=\"KLOG\" value=\"$KLOG\">\n";
     $tmplVars{'KLOG'} = $KLOG;
 }
-$tmplVars{'pp'} = $pp;
+
+Forum->template->set_vars('TS_Pr', $TS_Pr);
+Forum->template->set_vars('TXT_T', $TXT_T);
+Forum->template->set_vars('SEL_T', $SEL_T);
+Forum->template->set_vars('cgi_f', $cgi_f);
+Forum->template->set_vars('end_ok', $end_ok);
+Forum->template->set_vars('notitle', $notitle);
+Forum->template->set_vars('noname', $noname);
+Forum->template->set_vars('atchange', $atchange);
+Forum->template->set_vars('pp', $pp);
 
 $mode_id = '';
 if ($mode eq "man")      {$mode_id = 'manual'; }
@@ -174,27 +182,18 @@ sub design ($$$$$$$$$$$$$$$$$$$$$$$$$$$) {
     Forum->template->set_vars('htype', $htype);
     # hanyo
 
-    Forum->template->set_vars('atchange', $atchange);
-    Forum->template->set_vars('r', $R);
-    Forum->template->set_vars('end_ok', $end_ok);
-    Forum->template->set_vars('mode', $mode);
-    Forum->template->set_vars('in', $IN);
-    Forum->template->set_vars('nam', $nam);
     Forum->template->set_vars('Res_i', $Res_i);
-    Forum->template->set_vars('cgi_f', $cgi_f);
-    Forum->template->set_vars('pp', $pp);
+    Forum->template->set_vars('mode', $mode);
+
+    Forum->template->set_vars('r', $R);
+    Forum->template->set_vars('nam', $nam);
     Forum->template->set_vars('ty', $ty);
     Forum->template->set_vars('sp', $sp);
     Forum->template->set_vars('rev', $rev);
     Forum->template->set_vars('fp', $fp);
     Forum->template->set_vars('PNO', $PNO);
     Forum->template->set_vars('o_mail', $o_mail);
-    Forum->template->set_vars('notitle', $notitle);
     Forum->template->set_vars('mas_c', $mas_c);
-    Forum->template->set_vars('TXT_T', $TXT_T);
-    Forum->template->set_vars('SEL_T', $SEL_T);
-    Forum->template->set_vars('TS_Pr', $TS_Pr);
-    Forum->template->set_vars('noname', $noname);
     if ($KLOG) {$tmplVars{'klog_def'} = 1; } else {$tmplVars{'klog_def'} = 0; }
     if ($type) {$tmplVars{'type_def'} = 1; } else {$tmplVars{'type_def'} = 0; }
     $HTML = '';

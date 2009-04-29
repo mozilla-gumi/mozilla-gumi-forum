@@ -10,7 +10,6 @@ $set[0] = "./set.cgi";
 $SetUpFile = $set[0];
 require $SetUpFile;
 
-$ag = $ENV{'HTTP_USER_AGENT'};
 if ($logs) {
     unless (($logs eq "$log" || $logs=~ /^[\d]+$/ || $logs eq "all" || $logs eq "recent")) {
         Forum->error->throw_error_user('invalidfile');

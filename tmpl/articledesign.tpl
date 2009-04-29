@@ -66,7 +66,7 @@
   [% IF o_mail %][メール転送/[% IF ((Se == 2) || (Se == 1)) %]ON[% ELSE %]OFF[% END %]][% END %]
   / [% INCLUDE reply_block %]
   [% IF (mode == "al2") || (mode == "res") %]
-    チェック-<input type="radio" value="[% nam %]" name="del">
+    チェック-<input type="radio" value="[% namber %]" name="del">
   [% ELSIF use_post_edit != 0 %]
     <form action="[% cgi_f %]" method="[% met %]">
       <input type="hidden" name="del" value="[% namber %]">[% nf %]
