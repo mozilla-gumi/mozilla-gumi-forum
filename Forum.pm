@@ -19,7 +19,6 @@ use Forum::Captcha;
 use Forum::CGI;
 use Forum::DB;
 use Forum::User;
-use Forum::MigUtils;
 
 %Forum::EXPORT = qw(
     new

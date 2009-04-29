@@ -4,6 +4,7 @@ require './common.pl';
 
 use Forum::Captcha;
 use Forum::CGI;
+use Forum::MigUtils;
 
 my @set;
 $set[0]="./set.cgi";
@@ -1038,7 +1039,7 @@ if($UID){
     }
 }
 &set_;
-$epasswd = Forum->MigUtils->to_hash($FORM{'delkey'});
+$epasswd = Forum::MigUtils::to_hash($FORM{'delkey'});
 if ($pUID) {
     &set_("I", "$pUID");
 }
@@ -1082,7 +1083,7 @@ if ($res_r==1 && $type != 0) {
 #			if($sml==2 || $sml==1){if($SeMail !~ /$mail/){if($q_mail){$SeMail.=" $mail";}else{$SeMail.=",$mail";}}}
             $new_line="$lines[$_]";
             if ($he_tp) {
-                if (Forum->MigUtils->match_hash($de, $de, $FORM{'delkey'}) == 0) {
+                if (Forum::MigUtils::match_hash($de, $de, $FORM{'delkey'}) == 0) {
                     &er_('notcreator',"1");
                 }
             }
@@ -1097,7 +1098,7 @@ if ($res_r==1 && $type != 0) {
             }
             push(@r_data,$lines[$_]);
             if ($he_tp) {
-                if (Forum->MigUtils->match_hash($de, $de, $FORM{'delkey'}) == 0) {
+                if (Forum::MigUtils::match_hash($de, $de, $FORM{'delkey'}) == 0) {
                     &er_('notcreator',"1");
                 }
             }
@@ -1167,7 +1168,7 @@ sub hen_ {
                 if($de eq "") { &er_('nopass'); }
                 if (Forum->user->group_check('admin') != 0) {
                     $ok = 'm';
-                } elsif (Forum->MigUtils->match_hash($de, $de, $FORM{'delkey'}) == 0) {
+                } elsif (Forum::MigUtils::match_hash($de, $de, $FORM{'delkey'}) == 0) {
                     &er_('invpass');
                 } else {
                     $ok = 'y';
@@ -1361,7 +1362,7 @@ sub h_w_ {
                 $FORM{'delkey'} = $FORM{'pass'};
                 if (Forum->user->group_check('admin') != 0) {
                     $ok = 'm';
-                } elsif (Forum->MigUtils->match_hash($epasswd, $de, $FORM{'delkey'}) == 0) {
+                } elsif (Forum::MigUtils::match_hash($epasswd, $de, $FORM{'delkey'}) == 0) {
                     &er_('invpass', "1");
                 } else {
                     $ok = 'y';
@@ -1412,7 +1413,7 @@ sub h_w_ {
                 if ($mo eq "") {
                     $de = $kd;
                     $FORM{'delkey'} = $FORM{'pass'};
-                    if (Forum->MigUtils->match_hash($epasswd, $de, $FORM{'delkey'}) == 0) {
+                    if (Forum::MigUtils::match_hash($epasswd, $de, $FORM{'delkey'}) == 0) {
                         &er_('invpass',"1");
                     }
                 }
@@ -1432,7 +1433,7 @@ sub h_w_ {
                 if ($mo eq "") {
                     $de = $kd;
                     $FORM{'delkey'} = $FORM{'pass'};
-                    if (Forum->MigUtils->match_hash($epasswd, $de, $FORM{'delkey'}) == 0) {
+                    if (Forum::MigUtils::match_hash($epasswd, $de, $FORM{'delkey'}) == 0) {
                         &er_('invpass',"1");
                     }
                 }
@@ -1462,7 +1463,7 @@ sub h_w_ {
                 if ($mo eq "") {
                     $de = $kd;
                     $FORM{'delkey'} = $FORM{'pass'};
-                    if (Forum->MigUtils->match_hash($epasswd, $de, $FORM{'delkey'}) == 0) {
+                    if (Forum::MigUtils::match_hash($epasswd, $de, $FORM{'delkey'}) == 0) {
                         &er_('invpass',"1");
                     }
                 }
