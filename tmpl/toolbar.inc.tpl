@@ -17,9 +17,6 @@
   [% IF M_Rank == 1 %]
     <a [% IF mode_id == 'postrank' %]class="act"[% END %] href="[% cgi_f %]?mode=ran&amp;[% no %][% pp %]">発言ランク</a>
   [% END %]
-  [% IF i_mode == 1 %]
-    <a [% IF mode_id == 1 %]class="act"[% END %] href="[% cgi_f %]?mode=f_a&amp;[% no %][% pp %]">アップファイル一覧</a>
-  [% END %]
   <a [% IF mode_id == 'search' %]class="act"[% END %] href="[% srch %]?[% no %][% pp %]">検索</a>
   [% IF klog_s == 1 %]
     <a [% IF mode_id == 'oldlog' %]class="act"[% END %] href="[% srch %]?mode=log&amp;[% no %][% pp %]">過去ログ</a>

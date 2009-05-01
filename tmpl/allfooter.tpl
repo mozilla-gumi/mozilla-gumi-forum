@@ -15,7 +15,8 @@
 <strong>過去ログに移動していない記事の検索</strong> : 
 <input type="hidden" name="andor" value="and">
 <input type="hidden" name="logs" value="[% log %]">
-[% nf %][% pf %]
+[% nf %]
+<input type="hidden" name="KLOG" value="[% KLOG %]">
 <input type="text" name="word" size="32" value="[% word %]">
 <input type="submit" value="検索">
 記事数 [% NS %] （親 [% total %]、返信 [% RS %]） から検索
@@ -29,7 +30,8 @@
 [% IF use_password != 0 %]
   <hr>
   <div class="Forms">
-  <form action="[% cgi_f %]" method="[% met %]">[% nf %][% pf %]
+  <form action="[% cgi_f %]" method="[% met %]">[% nf %]
+    <input type="hidden" name="KLOG" value="[% KLOG %]">
     <strong>削除 / 編集フォーム</strong><br>
     記事番号 <input type="text" name="del" size="8" value="">
     <select name="mode">

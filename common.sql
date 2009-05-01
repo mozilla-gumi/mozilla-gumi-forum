@@ -20,4 +20,12 @@ CREATE TABLE profiles (
   password      tinytext             NOT NULL                            
 );
 
+CREATE TABLE ip_blacklist (
+  ipstart       int                  NOT NULL                            ,
+  ipend         int                  NOT NULL                            ,
+  datereg       DATETIME             NOT NULL                            ,
+  dateend       DATETIME             NOT NULL                            ,
+  isread        ENUM("no", "yes")    NOT NULL                            ,
+  reason        tinytext             NOT NULL                            
+);
 

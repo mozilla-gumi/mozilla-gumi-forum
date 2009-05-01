@@ -1,0 +1,175 @@
+[% PROCESS htmlhead.tpl
+   htmltitle = "$word での検索結果"
+%]
+
+<h2>ログ内検索</h2>
+<ul>
+  <li>キーワードを複数指定する場合は 半角スペース で区切ってください。</li>
+  <li>検索条件は、(AND)=[A かつ B] (OR)=[A または B] となっています。</li>
+  <li>[返信]をクリックすると返信ページへ移動します。
+    [% IF klog_s %]
+      <li>過去ログには返信リンクは表示されません。(返信できません)</li>
+    [% END %]</li>
+  <li>過去ログから探す場合は検索範囲から過去ログを選択してください。</li>
+</ul>
+
+<hr class="Hidden">
+
+<form action="[% srch %]" method="POST">
+  <input type="hidden" name="no" value="0">
+  <table class="Submittion">
+    <tr>
+      <td class="justify"><strong>キーワード</strong></td>
+      <td><input type="text" name="word" size="32" value="[% wordlist FILTER text %]"></td>
+      <td class="justify"><strong>検索条件</strong></td>
+      <td><select name="andor">
+        <option value="and" [% IF andor == "and" %]selected="selected"[% END %]>(AND)</option>
+        <option value="or" [% IF andor == "or" %]selected="selected"[% END %]>(OR)</option>
+        </select></td>
+    </tr>
+    <tr>
+      <td class="justify"><strong>検索範囲</strong></td>
+      <td><select name="logs">
+        <option value="recent">現在のログ</option>
+        [% IF logcount > 0 %]
+          <option value="all" [% IF logs == "all" %]selected="selected"[% END %]>全過去ログ</option>
+          [% FOREACH i IN [1 .. logcount] %]
+            <option value="[% i %]" [% IF logs == i %]selected="selected"[% END %]>過去ログ [% i %]</option>
+          [% END %]
+        [% END %]
+      </select></td>
+      <td class="justify"><strong>強調表示</strong></td>
+      <td><input type="checkbox" name="KYO" value="1" [% IF FORM_KYO %]checked="checked"[% END %]>ON</td>
+    </tr>
+    <tr>
+      <td class="justify"><strong>結果表示件数</strong></td>
+      <td><select name="PAGE">
+        [% FOREACH i IN klog_h %]
+          <option value="[% i %]" [% IF i == KH %]selected="selected"[% END %]>[% i %]件</option>
+        [% END %]
+      </select></td>
+      <td colspan="2"></td>
+    </tr>
+    <tr>
+      <td colspan="2"><input type="checkbox" name="bigmin" value="1" [% IF BM == 0 %]checked="checked"[% END %]>大文字と小文字を区別する</td>
+      <td colspan="2" align="right">
+        <input type="submit" value=" 検 索 ">
+        <input type="reset" value="リセット">
+      </td>
+    </tr>
+  </table>
+</form>
+<hr>
+[% IF (logs == log) || (logs == "recent") %]
+  <div class="Caption03l">現在のログを検索</div>
+[% ELSIF logs == "all" %]
+  <div class="Caption03l">全過去ログを検索</div>
+[% ELSE %]
+  <div class="Caption03l">過去ログ[% logs %]を検索</div>
+[% END %]
+
+[% IF word != "" %]
+  [% IF count == 0 %]
+    <div class="Caption03l">該当する記事はありませんでした。</div>
+  [% ELSE %]
+    <div class="Caption03l">[% count %] 件中 [% page + 1 %] ～ [% page_end + 1 %] 件目を表示</div>
+    [% IF Next || N %]
+      <div class="Caption01c">ヒット件数が多いので
+        [% IF N %]
+          過去ログ[% N + 1 %] [% IF Next > N + 1 %]～[% Next %][% END %]
+        [% ELSE %]
+          過去ログ1 [% IF Next > 1 %]～[% Next %][% END %]
+        [% END %]
+        のみの検索結果
+        [% IF logcount > Next %] / <strong>
+          <a href="[% srch %]?mode=srch&amp;logs=[% logs %]&amp;word=[% word FILTER html %]&amp;andor=[% andor %]&amp;KYO=[% FORM_KYO %]&amp;PAGE=[% KH %]&amp;N=[% Next %],[% Stert %]">
+          過去ログ[% Next + 1 %]からさらに検索</a></strong>
+        [% END %]
+      </div>
+    [% END %]
+    [% INCLUDE page_links %]
+    [% FOREACH article IN articles %]
+      <div class="ArtMain">
+        <div class="ArtHead">
+          <a name="[% article.nam %]">
+            <strong>
+              [% IF TS_Pr == 0 %]
+                [% IF article.txt %][% TXT_T %]:[[% article.txt %]]　[% END %]
+                [% IF article.sel %][% SEL_T %]:[[% article.sel %]]　[% END %]
+                /
+              [% END %]
+              [% IF article.d_may %][% article.d_may %][% ELSE %][% notitle %][% END %]
+            </strong>
+          </a>
+          <br>
+          <span class="ArtId">(#[% article.nam %]) [% article.ResNo %]</span>
+        </div>
+        <div class="postinfo">
+          <span class="name">[% article.name %] [% article.R %]</span>
+          の投稿 :[% article.date %]
+          <br>
+          [% IF article.url %]<a href="http://[% article.url %]" target="_blank">http://[% article.url %]</a>[% END %]
+        </div>
+        <div class="ArtComment">
+          [% IF article.userenv %](環境: [% article.userenv %])<br>[% END %]
+          [% IF TS_Pr == 1 %]
+            [% IF article.txt %][% TXT_T %]:[[% article.txt %]]<br />[% END %]
+            [% IF article.sel %][% SEL_T %]:[[% article.sel %]]<br />[% END %]
+          [% END %]
+          [% IF FORM_KYO %]
+            [% article.comment FILTER auto FILTER color_text(wordlist, BM) %]
+          [% ELSE %]
+            [% article.comment FILTER auto %]
+          [% END %]
+          [% IF TS_Pr == 2 %]
+            [% IF article.txt %]<br />[% TXT_T %]:[[% article.txt %]][% END %]
+            [% IF article.sel %]<br />[% SEL_T %]:[[% article.sel %]][% END %]
+          [% END %]
+        </div>
+        <div class="Caption01r">[% article.end %]<br>
+          [% article.Pr %]
+          [% IF o_mail != 0 %][メール転送/[% IF article.Se > 0 %]On[% ELSE %]OFF[% END %]][% END %]
+          [% IF article.type > 0 %]記事No.[% article.type %]への返信[% ELSE %]親記事[% END %] /
+          [% IF article.e %] END /[% END %]
+          [% IF logs == log %]
+            <a href="[% cgi_f %]?
+              [%- IF TOPH == 0 -%]
+                mode=res&amp;namber=[% IF article.type %][% article.type %][% ELSE %][% article.nam%][% END %]
+              [%- ELSIF TOPH == 1 -%]
+                mode=one&amp;namber=[% article.nam %]&amp;type=[% article.type %]&amp;space=[% sp %]
+              [%- ELSIF TOPH == 2 -%]
+                mode=al2&amp;namber=[% IF article.type %][% article.type %][% ELSE %][% article.nam %][% END %]
+              [%- END -%]">トピック表示と返信</a> /
+          [% END %]
+          [% IF logs == "all" %]過去ログ[% article.IT %]より /[% END %]
+          <a href="[% cgi_f %]?mode=al2&amp;namber=[% IF article.type > 0 %][% article.type %][% ELSE %][% article.nam %][% END %]&amp;KLOG=[% article.IT %]">関連記事表示</a>
+        </div>
+      </div>
+      <br>
+    [% END %]
+    <hr class="Hidden">
+    <div class="Caption01r">
+    <hr />
+    [% INCLUDE page_links %]
+  [% END %]
+[% END %]
+
+[% PROCESS htmlfoot.tpl %]
+
+[% BLOCK page_links %]
+  <div class="Caption01c">
+    [% IF (page - KH) >= 0 %]
+      [<a href="[% srch %]?mode=srch&amp;logs=[% logs %]&amp;page=[% page - KH %]&amp;word=[% word %]&amp;andor=[% andor %]&amp;KYO=[% FORM_KYO %]&amp;PAGE=[% KH %][% Neq %]">前の[% KH %]件</a>] /
+    [% END %]
+    [% FOREACH i IN [0 .. page_count] %]
+      [% IF (i * KH) == page %]
+        [<strong>[% i + 1 %]</strong>]
+      [% ELSE %]
+        [<a href="[% srch %]?mode=srch&amp;logs=[% logs %]&amp;page=[% i * KH %]&amp;word=[% word %]&amp;andor=[% andor %]&amp;KYO=[% FORM_KYO %]&amp;PAGE=[% KH %][% Neq %]">[% i + 1 %]</a>]
+      [% END %]
+    [% END %]
+    [% IF page_end != count - 2 %]
+      / [<a href="[% srch %]?mode=srch&amp;logs=[% logs %]&amp;page=[% page_end + 1 %]&amp;word=[% word %]&amp;andor=[% andor %]&amp;KYO=[% FORM_KYO %]&amp;PAGE=[% KH %][% Neq %]">後の[% KH %]件</a>]
+    [% END %]
+  </div>
+[% END %]

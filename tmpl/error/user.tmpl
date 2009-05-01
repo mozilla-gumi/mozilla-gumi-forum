@@ -6,44 +6,86 @@
 [% adminerror = 0 %]
 [% IF error == 'noname' %]
   名前が未入力です。ブラウザの［戻る］ボタンを使ってもう一度入力してください
-[% ELSIF error == 'nodmay' %]
-  タイトルが未入力です。ブラウザの［戻る］ボタンを使ってもう一度入力してください
-[% ELSIF error == 'nocomment' %]
-  内容が未入力です。ブラウザの［戻る］ボタンを使ってもう一度入力してください
-[% ELSIF error == 'invalidemail' %]
-  E-メールの入力内容が正しくありません。よく確認してください。
-  ブラウザの［戻る］ボタンを使ってもう一度入力してください
-[% ELSIF error == 'invaliddeleky' %]
-  パスワードは8文字以内です。長すぎるとエラーがでます。
-  ブラウザの［戻る］ボタンを使ってもう一度入力してください
-[% ELSIF error == 'namelength' %]
-  名前は半角[% NMAX %]字以内でお願いします。
-  ブラウザの［戻る］ボタンを使ってもう一度入力してください
+
+[% ELSIF error == 'alreadyct' %]
+  すでに ChildTree 用になっています!
+[% ELSIF error == 'cannot_open_curfile' %]
+  現用のログファイルはこのモードからは開けません。
+[% ELSIF error == 'cannot_open_logfile' %]
+  ログファイル [% file %] を開けません。
+[% ELSIF error == 'cannot_write' %]
+  このエントリには書き込みできません。
+[% ELSIF error == 'cannot_write_oldlogs' %]
+  この過去ログには書き込みできません。
+[% ELSIF error == 'captcha0' %]
+  captchaの設定エラーです。
+  [% adminerror = 1 %]
+[% ELSIF error == 'captcha-1' %]
+  captchaの有効期限が切れました。再度取得してください。
+[% ELSIF error == 'captcha-2' %]
+  captchaのコードが見つかりません。同じcaptchaは一度しか利用できません。
+[% ELSIF error == 'captcha-3' %]
+  captchaのコードが一致しません。
+  入力フォームをリロードしてcaptchaを取得しなおしてやり直してください。
+  captchaには、2-9の数字とa-yまでの英小文字のみが利用されています。
+[% ELSIF error == 'captchaoth' %]
+  未知のcaptchaに関するエラーです。
+  [% adminerror = 1 %]
+[% ELSIF error == 'disabled' %]
+  この機能は設定で無効にされています。
+  必要と思われる場合は、管理者まで問い合わせてください。
 [% ELSIF error == 'dmaylength' %]
   タイトルは半角[% TMAX %]字以内でお願いします。
   ブラウザの［戻る］ボタンを使ってもう一度入力してください
-[% ELSIF error == 'commentlength' %]
-  コメントは半角[% CMAX %]字以内でお願いします。
+[% ELSIF error == 'edit_not_allowed' %]
+  このフォーラムでは投稿記事の編集・削除は許可されていません。
+[% ELSIF error == 'invaliddeleky' %]
+  パスワードは8文字以内です。長すぎるとエラーがでます。
   ブラウザの［戻る］ボタンを使ってもう一度入力してください
-[% ELSIF error == 'notxtt' %]
-  [% TXT_T %]が未入力です。
+[% ELSIF error == 'invalidemail' %]
+  E-メールの入力内容が正しくありません。よく確認してください。
   ブラウザの［戻る］ボタンを使ってもう一度入力してください
-[% ELSIF error == 'nodelkey' %]
-  トピック追加にはパスワードが必須です。
-  ブラウザの［戻る］ボタンを使ってもう一度入力してください
+[% ELSIF error == 'invpass' %]
+  パスワードが未入力か、入力されたパスワードが一致しません。
 [% ELSIF error == 'iprefused' %]
   あなたのアクセス元IPアドレスは、過去に掲示板運営に重大な支障を及ぼす行為を行った
   などの理由で拒否されています。 [% COMipaddr %]
-[% ELSIF error == 'adminicon' %]
-  管理者用アイコンは使用できません。
-[% ELSIF error == 'nopass' %]
-  指定された記事にはパスワードが設定されていません。
-[% ELSIF error == 'invpass' %]
-  パスワードが未入力か、入力されたパスワードが一致しません。
 [% ELSIF error == 'longmail' %]
   投稿されたメールアドレスが長すぎます。
 [% ELSIF error == 'longurl' %]
   投稿された URL が長すぎます。
+[% ELSIF error == 'namelength' %]
+  名前は半角[% NMAX %]字以内でお願いします。
+  ブラウザの［戻る］ボタンを使ってもう一度入力してください
+[% ELSIF error == 'no_avail_oldlog' %]
+  表示可能な過去ログがありません。
+[% ELSIF error == 'nocomment' %]
+  内容が未入力です。ブラウザの［戻る］ボタンを使ってもう一度入力してください
+[% ELSIF error == 'nodmay' %]
+  タイトルが未入力です。ブラウザの［戻る］ボタンを使ってもう一度入力してください
+[% ELSIF error == 'nodelkey' %]
+  トピック追加にはパスワードが必須です。
+  ブラウザの［戻る］ボタンを使ってもう一度入力してください
+[% ELSIF error == 'nopass' %]
+  指定された記事にはパスワードが設定されていません。
+[% ELSIF error == 'not_logged_in' %]
+  この操作にはログインが必要です。
+  このエラーは、ログインセッションの有効期限が切れたあとに操作を行おうとしても発生します。
+  念のため、ログインセッションの有効期限 [% Param.admin_authexpr %] 日
+  を確認することをお勧めします。
+[% ELSIF error == 'not_able_to_search_all' %]
+  全過去ログの検索は利用できません。
+[% ELSIF error == 'notxtt' %]
+  [% TXT_T %]が未入力です。
+  ブラウザの［戻る］ボタンを使ってもう一度入力してください
+[% ELSIF error == 'range_undefined' %]
+  範囲が指定されていません。
+
+[% ELSIF error == 'commentlength' %]
+  コメントは半角[% CMAX %]字以内でお願いします。
+  ブラウザの［戻る］ボタンを使ってもう一度入力してください
+[% ELSIF error == 'adminicon' %]
+  管理者用アイコンは使用できません。
 [% ELSIF error == 'invid' %]
   削除しようとしている投稿の登録 No が未入力もしくは無効です。
 [% ELSIF error == 'editinvid' %]
@@ -81,38 +123,6 @@
   Rename Error
 [% ELSIF error == 'nobackup' %]
   バックアップがないので修復不可能です!
-[% ELSIF error == 'alreadyct' %]
-  すでに ChildTree 用になっています!
-[% ELSIF error == 'captcha0' %]
-  captchaの設定エラーです。
-  [% adminerror = 1 %]
-[% ELSIF error == 'captcha-1' %]
-  captchaの有効期限が切れました。再度取得してください。
-[% ELSIF error == 'captcha-2' %]
-  captchaのコードが見つかりません。同じcaptchaは一度しか利用できません。
-[% ELSIF error == 'captcha-3' %]
-  captchaのコードが一致しません。
-  入力フォームをリロードしてcaptchaを取得しなおしてやり直してください。
-  captchaには、2-9の数字とa-yまでの英小文字のみが利用されています。
-[% ELSIF error == 'cannot_write' %]
-  このエントリには書き込みできません。
-[% ELSIF error == 'cannot_write_oldlogs' %]
-  この過去ログには書き込みできません。
-[% ELSIF error == 'captchaoth' %]
-  未知のcaptchaに関するエラーです。
-  [% adminerror = 1 %]
-[% ELSIF error == 'edit_not_allowed' %]
-  このフォーラムでは投稿記事の編集・削除は許可されていません。
-[% ELSIF error == 'range_undefined' %]
-  範囲が指定されていません。
-[% ELSIF error == 'disabled' %]
-  この機能は設定で無効にされています。
-  必要と思われる場合は、管理者まで問い合わせてください。
-[% ELSIF error == 'not_logged_in' %]
-  この操作にはログインが必要です。
-  このエラーは、ログインセッションの有効期限が切れたあとに操作を行おうとしても発生します。
-  念のため、ログインセッションの有効期限 [% Param.admin_authexpr %] 日
-  を確認することをお勧めします。
 [% ELSIF error == 'invalid_param' %]
   Option parameter '[% error_param %]' is invalid.
   Check and re-do.

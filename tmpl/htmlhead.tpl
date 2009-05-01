@@ -1,4 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+[% 
+  styledir = "style/default/"
+%]
 <html lang="ja">
 <head>
   <meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
@@ -28,25 +31,21 @@
   <link rel="bookmark" href="http://www.mozilla.gr.jp/docs/" title="もじら組 ドキュメント">
   <link rel="bookmark" href="http://mozillazine.jp/" title="MozillaZine 日本語版">
 
-  <!-- icon -->
-  <link rel="icon" type="image/png" href="http://www.mozilla.gr.jp/images/marumo16.png" title="もじら組アイコン">
-
   <link rel="alternate" type="application/xml" title="もじら組forum RSS" href="http://www.mozilla.gr.jp/forums/news.rdf">
-  <link rel="stylesheet" type="text/css" href="cbbs.css" title="現代版">
-  <link rel="alternate stylesheet" type="text/css" href="mozillagumi.css" title="幕末版（もじら組標準）">
-  <link rel="alternate stylesheet" type="text/css" href="monochrome.css" title="白黒版">
-  <link rel="alternate stylesheet" type="text/css" href="jlp.css" title="未来版（JLP標準）">
-  <link rel="alternate stylesheet" type="text/css" href="cjc.css" title="紅鮭版（CJ-C風）">
+  <link rel="stylesheet" type="text/css" href="[% styledir %]/cbbs.css" title="現代版">
+  <link rel="alternate stylesheet" type="text/css" href="[% styledir %]/mozillagumi.css" title="幕末版（もじら組標準）">
+  <link rel="alternate stylesheet" type="text/css" href="[% styledir %]/monochrome.css" title="白黒版">
+  <link rel="alternate stylesheet" type="text/css" href="[% styledir %]/jlp.css" title="未来版（JLP標準）">
+  <link rel="alternate stylesheet" type="text/css" href="[% styledir %]/cjc.css" title="紅鮭版（CJ-C風）">
 
-  <title>Mozilla-gumi Forum [[% htmltitle %]]</title>
+  <title>もじら組フォーラム [[% htmltitle %]]</title>
 </head>
 <body text="#003366" link="blue" vlink="purple" bgcolor="#C7D0D9">
 
 <div class="banner">
   <h1>
-    <a href="http://www.mozilla.gr.jp/"><img src="file/logo.gif" width="186"
-      height="67" border="0" alt="もじら組纏"></a>
-    <a href="./">Mozilla-gumi Forum</a>
+    <a href="http://www.mozilla.gr.jp/"><img src="common/logo.png" border="0" alt="もじら組纏"></a>
+    <a href="./">もじら組フォーラム</a>
   </h1>
 </div>
 
@@ -55,7 +54,7 @@
 [% IF kiji_exist == 2 %]
   <h2>指定された記事は削除されたか過去ログへ流れたため、<br>現行ログ内には存在しませんでした。</h2>
 [% END %]
-[% IF is_set(KLOG) %]
-  <h2>過去ログ表示</h2><br><div class="Caption03l">過去ログ1 を表示</div>
+[% IF KLOG %]
+  <h2>過去ログ表示</h2><br><div class="Caption03l">過去ログ [% KLOG %] を表示</div>
 [% END %]
 

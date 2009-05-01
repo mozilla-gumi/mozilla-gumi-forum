@@ -303,6 +303,8 @@ b.SearchMarker {
 /* banner */
 div.banner
 {
+  background-color: #663366;
+  background  : url("http://www.mozilla.gr.jp/images/toppng/h_bg.png") repeat;
   width: 100%;
   color: inherit;
 }
@@ -439,4 +441,8 @@ div.menu a:hover:active
   border-style: inset;
 }
 
+b.search-word
+{
+  background-color: #F9FF06;
+}
 
