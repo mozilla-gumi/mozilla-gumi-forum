@@ -581,7 +581,7 @@ foreach $lines (@TREE) {
             $d_may=~ s/\:\ //;
             $d_may=substr($d_may,$resuji);
         }
-        $ti="Re[$re]: $d_may";
+        $ti="Re: $d_may";
         if($i==0){$i=1;}
         $ResNo=$sp/15;
         &design($nam,$date,$name,$email,$d_may,$comment,$url,$sp,$end,$ty,$del,$Ip,$tim,$ico,
