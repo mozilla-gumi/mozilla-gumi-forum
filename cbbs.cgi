@@ -576,7 +576,7 @@ foreach $lines (@TREE) {
         $com="$comment";
         $com=~ s/<br>/\n&gt; /g; $com=~ s/&gt; &gt; /&gt;&gt;/g; $com="&gt; $com";
         if($sp==0){$re=1;}elsif($sp>0){$re=$sp/15+1;}
-        if($d_may=~ /^Re(?:\[[0-9]+\]): (.*)$/){
+        if($d_may=~ /^Re(?:\[[0-9]+\])?: (.*)$/){
             $d_may = $1;
         }
         $ti="Re: $d_may";
