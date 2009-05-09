@@ -11,15 +11,18 @@ $SetUpFile = $set[0];
 require $SetUpFile;
 
 if ($logs) {
-    unless (($logs eq "$log" || $logs=~ /^[\d]+$/ || $logs eq "all" || $logs eq "recent")) {
+    unless (($logs eq "$log") ||
+            ($logs =~ /^[\d]+$/) ||
+            ($logs eq "all") ||
+            ($logs eq "recent")) {
         Forum->error->throw_error_user('invalidfile');
     }
 }
 $SL = "$klog_d\/1$klogext";
 
-if ($mode eq "log") {
+if ($FORM{'mode'} eq "log") {
     &log_;
-} elsif ($mode eq "del") {
+} elsif ($FORM{'mode'} eq "del") {
     &del_;
 } else {
     &srch_;
@@ -51,9 +54,6 @@ sub d_code_ {
         $FORM{$name} = $value;
         if ($name eq 'del') { push(@d_,$value); }
     }
-    $word = $FORM{'word'};
-    $andor = $FORM{'andor'};
-    $mode = $FORM{'mode'};
     $logs = $FORM{'logs'};
     $FORM{'N'} =~ s/([^0-9,])*?//g;
     my $neq = $FORM{'N'};
@@ -84,8 +84,8 @@ sub srch_ {
         $BM = 1;
     }
 
-    if ($word ne "") {
-        @key_ws = split(/[ Å@\t]/, $word);
+    if ($FORM{'word'} ne "") {
+        @key_ws = split(/[ Å@\t]/, $FORM{'word'});
         if ($logs eq "all") {
             $Stert = 0;
             if ($FORM{'N'}) {
@@ -116,7 +116,7 @@ sub srch_ {
                 my $whole_hit = 0;
                 my @lcnt = split(/<>/, $Line);
                 my ($com, $env) = split(/\t/, $lcnt[5]);
-                if ($andor eq 'and') {$whole_hit = 1; }
+                if ($FORM{'andor'} eq 'and') {$whole_hit = 1; }
                 foreach $key_w (@key_ws) {
                     $key_w =~ s/^&$/&amp\;/g;
                     $key_w =~ s/^<$/\&lt\;/g;
@@ -127,15 +127,19 @@ sub srch_ {
                         if (index($com, $key_w) >= 0) {$c_hit = 1; }
                     } else {
                         if ($BM) {
+                            # regexps
+                            $key_w =~ s/\[/\\[/g;
+                            $key_w =~ s/\]/\\]/g;
+                            $key_w =~ s/\\/\\\\/g;
                             if ($com =~ /$key_w/i) {$c_hit = 1; }
                         } else {
-                            if ($com =~ /$key_w/) {$c_hit = 1; }
+                            if (index($com, $key_w) >= 0) {$c_hit = 1; }
                         }
                     }
                     if ($c_hit) {
-                        if ($andor eq "or") {$whole_hit = 1; last; }
+                        if ($FORM{'andor'} eq "or") {$whole_hit = 1; last; }
                     } else {
-                        if ($andor eq "and") {$whole_hit = 0; last; }
+                        if ($FORM{'andor'} eq "and") {$whole_hit = 0; last; }
                     }
                 }
                 if ($whole_hit) {
@@ -153,8 +157,6 @@ sub srch_ {
     if ($logs eq $log) {@new = reverse(@new); }
     my @articles;
     if ($count > 0) {
-        $word =~ s/([^0-9A-Za-z_])/"%".unpack("H2",$1)/ge;
-        $word =~ tr/ /+/;
         $page_ = int($count / $KH);
         if ($FORM{'page'} == 0) {
             $page = 0;
@@ -247,9 +249,9 @@ sub srch_ {
     Forum->template->set_vars('page_count', $page_);
     Forum->template->set_vars('page', $page);
     Forum->template->set_vars('page_end', $page_end);
-    Forum->template->set_vars('andor', $andor);
+    Forum->template->set_vars('andor', $FORM{'andor'});
     Forum->template->set_vars('srch', $srch);
-    Forum->template->set_vars('word', $word);
+    Forum->template->set_vars('word', $FORM{'word'});
     Forum->template->set_vars('wordlist', join(' ', @key_ws));
     Forum->template->set_vars('klog_s', $klog_s);
     Forum->template->set_vars('log', $log);
@@ -263,16 +265,6 @@ sub srch_ {
     Forum->template->process('search_result.tmpl', \%tmplVars);
 }
 
-
-##---
-# hed_ - output HTML header (w/ HTTP header)
-sub hed_ {
-    my ($title) = @_;
-    print Forum->cgi->header();
-    Forum->template->set_vars('htmltitle', $title);
-    Forum->template->set_vars('KLOG', $KLOG);
-    Forum->template->process('htmlhead.tpl', \%tmplVars);
-}
 
 ##---
 # log_ - output old log list
@@ -308,6 +300,7 @@ sub del_ {
     @mens = <DB>;
     close(DB);
     @CAS = ();
+    my ($mens, $word);
     foreach $mens (@mens) {
         $castam = 0;
         $mens =~ s/\n//g;
@@ -331,3 +324,4 @@ sub del_ {
     close(DB);
     &log_();
 }
+
