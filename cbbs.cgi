@@ -2507,7 +2507,7 @@ sub is_current_log {
     close(INDAT);
 
     # klog data : $klog$id.klog.cgi
-    $klogfile;
+    my $klogfile;
     if ($#idlist == -1) {return $klogid; }
     foreach (@idlist) {
         $klogid = $_;
