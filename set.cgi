@@ -137,6 +137,7 @@ $srch = "./srch.cgi";        # 検索/過去ログ閲覧用CGI
     $tmplVars{'srch'} = $srch;
 $log  = "../data/dat/cbbs_log.cgi";        # 記録ファイル
 $lockf= "../data/dat/cbbs.loc";        # ロックファイル
+$logid = "../data/dat/cbbs.ids";
 ##### DELETED FUNCTION
 #$bup  =  0;            # バックアップをとる? (NO=0 YES=x(x は更新頻度日数を入れる))
 #$bup_f= "../data/dat/cbbs.bak";        # バックアップファイル

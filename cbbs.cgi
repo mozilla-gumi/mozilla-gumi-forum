@@ -39,11 +39,11 @@ if (-e $IpFile) {
     }
 }
 # ---[設定ファイル読み込み]------------------------------------------------------------------------------------------
-$res_r=1;
-&d_code_;
-
 $SetUpFile = $set[0];
 require $SetUpFile;
+
+$res_r=1;
+&d_code_;
 
 # ---[フォームスタイルシート設定]------------------------------------------------------------------------------------
 $pf="";
@@ -1838,6 +1838,10 @@ sub d_code_ {
     $ccauth = $FORM{'auca'};
     $ccmd5 = $FORM{'aucamd5'};
     &time_;
+    if (($namber ne '') && (! defined($FORM{'KLOG'}))) {
+        $FORM{'KLOG'} = &is_current_log($namber);
+        if ($FORM{'KLOG'} eq '0') {$FORM{'KLOG'} = undef; }
+    }
 }
 
 ##------------------------------------------------------------------------------
@@ -2478,6 +2482,43 @@ sub hen_ {
 }
 sub h_w_ {
     return;
+}
+
+sub is_current_log {
+    my ($id) = @_;
+    my $klogid = 0;
+    open(INDAT, $log);
+    foreach (<INDAT>) {
+        if (substr($_, 0, index($_, '<>')) == $id) {return $klogid; }
+    }
+    close(INDAT);
+
+    # open log id list
+    my @idlist = ();
+    my @ids;
+    open(INDAT, $logid);
+    foreach (<INDAT>) {
+        chomp;
+        @ids = split(/ /, $_);
+        if (($ids[1] <= $id) && ($id <= $ids[2])) {
+            push(@idlist, $ids[0]);
+        }
+    }
+    close(INDAT);
+
+    # klog data : $klog$id.klog.cgi
+    my $klogfile;
+    if ($#idlist == -1) {return $klogid; }
+    foreach (@idlist) {
+        $klogid = $_;
+        $klogfile = $klog_d . $klogid . '.klog.cgi';
+        open(INDAT, $klogfile);
+        foreach (<INDAT>) {
+            if (substr($_, 0, index($_, '<>')) == $id) {return $klogid; }
+        }
+        close(INDAT);
+    }
+    return $klogid;
 }
 
 ################################################################################
