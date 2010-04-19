@@ -997,7 +997,7 @@ sub wri_ {
         print<<"_PV_";
 <h2>プレビュー</h2>
 $HTML
-<form action="$cgi_f" method="$met"$FORM_E>
+<form action="$cgi_f" method="$met"$FORM_E name="post">
 <input type="submit" value="送信 O K"> / <strong>[<a href="#F">書き直す</a>]</strong>
 <br><a name="F"></a>
 <h2>▽ 書き直す ▽</h2>

@@ -85,7 +85,7 @@ sub srch_ {
     }
 
     if ($FORM{'word'} ne "") {
-        @key_ws = split(/[ Å@\t]/, $FORM{'word'});
+        @key_ws = split(/[ \t]/, $FORM{'word'});
         if ($logs eq "all") {
             $Stert = 0;
             if ($FORM{'N'}) {
