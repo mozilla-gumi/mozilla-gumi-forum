@@ -397,7 +397,7 @@ sub comin_{
         $com =~ s/&gt; &gt; /&gt;&gt;/g;
     }
     $com =~ s/&nbsp;/ /g;
-    $com =~ s/\t//g;
+    #$com =~ s/\t//g;
     $FORM{"type"} = $ty;
     $type = $ty;
     $namber = $nam;
@@ -2199,10 +2199,12 @@ sub res_ {
         ($Ip, $ico, $Ent, $fimg, $TXT, $SEL, $R) = split(/:/, $ip);
         ($ICON, $ICO, $font, $hr) = split(/\|/, $TXT);
         ($txt, $sel, $yobi) = split(/\|\|/, $SEL);
-        &design($nam, $date, $name, $email, $d_may, $comment, $url, $sp, $end, $ty,
-            $del, $Ip, $tim, $ico, $Ent, $fimg, $ICON, $ICO, $font, $hr, $txt, $sel,
-            $yobi, $Se, $ToNo, "TRES");
-        push(@article_html, $HTML);
+        if ($ty == 0) {$ty = $nam; }
+        push(@article_html, 
+            &design($ty, $date, $name, $email, $d_may, $comment, 
+                    $url, $sp, $end, $ty, $del, $Ip, $tim, $ico, $Ent, 
+                    $fimg, $ICON, $ICO, $font, $hr, $txt, $sel,
+                    $yobi, $Se, $ToNo, "TRES"));
         $ToNo++;
     }
     $tmplVars{'article_html'} = \@article_html;
