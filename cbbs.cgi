@@ -1325,8 +1325,8 @@ sub alk_ {
         ($Ip,$ico,$Ent,$fimg,$TXT,$SEL,$R)=split(/:/,$ip);
         ($ICON,$ICO,$font,$hr)=split(/\|/,$TXT);
         ($txt,$sel,$yobi)=split(/\|\|/,$SEL);
-        &design($thread_oya,$date,$name,$email,$d_may,$comment,$url,$sp,$end,$ty,$del,$Ip,$tim,$ico,
-            $Ent,$fimg,$ICON,$ICO,$font,$hr,$txt,$sel,$yobi,$Se,"","TR");
+        &design($nam,$date,$name,$email,$d_may,$comment,$url,$sp,$end,$ty,$del,$Ip,$tim,$ico,
+            $Ent,$fimg,$ICON,$ICO,$font,$hr,$txt,$sel,$yobi,$Se,"0","TR");
         print"<hr><br>\n";
         if (($thread_oya > 0) && (! $type)) {
             print"</div>\n</div>\n";
